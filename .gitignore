@@ -1,0 +1,21 @@
+.DS_Store
+.Rhistory
+.RData
+
+# LaTeX build products
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+
+# Generated outputs
+results/
+*.RData
+*.rds
+*.Rds
+

@@ -1,0 +1,55 @@
+\begin{table}[htbp]
+\centering
+\caption{Type I error for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes 1{,}000 simulated null trials with $p_C = 0.40$ and $\alpha = 0.05$. Sample sizes were obtained from the usual fixed-sample two-proportion calculation with 80\% power; no event-only inflation was used for e-RTe in this comparison.}
+\label{tab:wager_policy_type1}
+\begin{tabular}{@{}lllrrrr@{}}
+\toprule
+Endpoint & Scenario & Policy & Wager ARR & $N$ & Events & Type I \\
+\midrule
+e-RTb & Null 5.0pp design & Adaptive & -- & 2{,}942 & -- & 3.5\% \\
+e-RTb & Null 5.0pp design & Fixed 5pp & 5.0pp & 2{,}942 & -- & 3.1\% \\
+e-RTb & Null 5.0pp design & Fixed 10pp & 10.0pp & 2{,}942 & -- & 5.1\% \\
+e-RTb & Null 10.0pp design & Adaptive & -- & 712 & -- & 1.8\% \\
+e-RTb & Null 10.0pp design & Fixed 5pp & 5.0pp & 712 & -- & 0.4\% \\
+e-RTb & Null 10.0pp design & Fixed 10pp & 10.0pp & 712 & -- & 2.8\% \\
+e-RTe & Null 5.0pp design & Adaptive & -- & 2{,}942 & 1{,}177 & 3.0\% \\
+e-RTe & Null 5.0pp design & Fixed 5pp & 5.0pp & 2{,}942 & 1{,}177 & 2.8\% \\
+e-RTe & Null 5.0pp design & Fixed 10pp & 10.0pp & 2{,}942 & 1{,}177 & 4.5\% \\
+e-RTe & Null 10.0pp design & Adaptive & -- & 712 & 285 & 2.1\% \\
+e-RTe & Null 10.0pp design & Fixed 5pp & 5.0pp & 712 & 285 & 0.0\% \\
+e-RTe & Null 10.0pp design & Fixed 10pp & 10.0pp & 712 & 285 & 2.6\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Power for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes 1{,}000 simulated trials with $p_C = 0.40$ and $\alpha = 0.05$. Fixed policies use full-Kelly wagers calibrated to the listed wager ARR; adaptive e-RTb uses half-Kelly and adaptive e-RTe uses full-Kelly.}
+\label{tab:wager_policy_v8}
+\begin{tabular}{@{}lllrrrrr@{}}
+\toprule
+Endpoint & Scenario & Policy & Wager ARR & $N$ & Events & Power & Median crossing \\
+\midrule
+e-RTb & True 5.0pp & Adaptive & -- & 2{,}942 & -- & 49.9\% & 1{,}523 \\
+e-RTb & True 5.0pp & Fixed under & 2.5pp & 2{,}942 & -- & 50.1\% & 2{,}084 \\
+e-RTb & True 5.0pp & Fixed matched & 5.0pp & 2{,}942 & -- & 72.3\% & 1{,}335 \\
+e-RTb & True 5.0pp & Fixed over & 10.0pp & 2{,}942 & -- & 56.7\% & 813 \\
+e-RTb & True 5.0pp & Oracle & 5.0pp & 2{,}942 & -- & 74.6\% & 1{,}428 \\
+e-RTb & True 10.0pp & Adaptive & -- & 712 & -- & 52.8\% & 402 \\
+e-RTb & True 10.0pp & Fixed under & 5.0pp & 712 & -- & 41.8\% & 569 \\
+e-RTb & True 10.0pp & Fixed matched & 10.0pp & 712 & -- & 69.1\% & 417 \\
+e-RTb & True 10.0pp & Fixed over & 15.0pp & 712 & -- & 67.4\% & 325 \\
+e-RTb & True 10.0pp & Oracle & 10.0pp & 712 & -- & 71.7\% & 404 \\
+e-RTe & True 5.0pp & Adaptive & -- & 2{,}942 & 1{,}104 & 31.0\% & 530 \\
+e-RTe & True 5.0pp & Fixed under & 2.5pp & 2{,}942 & 1{,}104 & 14.5\% & 948 \\
+e-RTe & True 5.0pp & Fixed matched & 5.0pp & 2{,}942 & 1{,}104 & 53.5\% & 668 \\
+e-RTe & True 5.0pp & Fixed over & 10.0pp & 2{,}942 & 1{,}104 & 46.8\% & 387 \\
+e-RTe & True 5.0pp & Oracle & 5.0pp & 2{,}942 & 1{,}104 & 50.6\% & 663 \\
+e-RTe & True 10.0pp & Adaptive & -- & 712 & 250 & 32.7\% & 165 \\
+e-RTe & True 10.0pp & Fixed under & 5.0pp & 712 & 250 & 5.7\% & 232 \\
+e-RTe & True 10.0pp & Fixed matched & 10.0pp & 712 & 250 & 43.7\% & 189 \\
+e-RTe & True 10.0pp & Fixed over & 15.0pp & 712 & 250 & 49.6\% & 148 \\
+e-RTe & True 10.0pp & Oracle & 10.0pp & 712 & 250 & 45.3\% & 182 \\
+\bottomrule
+\end{tabular}
+\end{table}
