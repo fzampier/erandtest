@@ -12,7 +12,7 @@ Sokolova and Sokolov (2026) recently developed a practitioner-oriented framework
 
 We propose e-RT (e-value Randomized Trial), a complementary family of methods for prospective sequential monitoring of randomized trials. Like i-bet (Duan et al. 2022), e-RT uses betting martingales for inference, but differs in key respects: e-RT monitors sequentially as patients enroll rather than analyzing completed trial data; it requires no covariates or working models; and its default wager policies can be learned from accumulating data rather than fixed by a hypothesized effect size. This yields methods with minimal assumptions suitable for real-time trial monitoring.
 
-We present six main variants: the binary e-RTb for event/no-event outcomes; e-RTe for event-only monitoring (requiring no non-event tracking); e-RTc for continuous endpoints; e-RTs for time-to-event data; e-RTms for multi-state trajectory data; and e-RTwr for pairwise win-ratio and generalized pairwise-comparison endpoints. We also discuss e-RTu, a universal abstraction under development. All share the same validity proof—the expected wealth multiplier is exactly 1 under the null—but differ in how they translate outcome data into wagers. We also distinguish the randomization-based validity engine from the wager policy. Wagers may be learned adaptively from accumulating data, preserving effect-size agnosticism, or prespecified from design alternatives to improve efficiency when those assumptions are credible. This distinction is especially relevant in sparse-update settings, where fixed or design-calibrated wagers may improve power without the same risk of catastrophic over-betting seen with dense every-patient updates.
+In this Version 8 manuscript, we focus on five active variants: the binary e-RTb for event/no-event outcomes; e-RTe for event-only monitoring (requiring no non-event tracking); e-RTwr for pairwise win-ratio and generalized pairwise-comparison endpoints; e-RTc for continuous endpoints; and e-RTs for time-to-event data. Multi-state trajectory monitoring and a universal signal-engine abstraction were explored in prior drafts but are deferred here so that V8 can concentrate on the wager-policy question. All active variants share the same validity proof—the expected wealth multiplier is exactly 1 under the null—but differ in how they translate outcome data into wagers. We also distinguish the randomization-based validity engine from the wager policy. Wagers may be learned adaptively from accumulating data, preserving effect-size agnosticism, or prespecified from design alternatives to improve efficiency when those assumptions are credible. This distinction is especially relevant in sparse-update settings, where fixed or design-calibrated wagers may improve power without the same risk of catastrophic over-betting seen with dense every-patient updates.
 
 # Overall construction: the binary e-RT (e-RTb)
 
@@ -958,265 +958,9 @@ Under the alternative (HR=0.80), the e-survival process achieved 62.8% power to 
 <figcaption> Trajectories of the e-Survival process for a trial designed to detect a Hazard Ratio of 0.80 with 80% power (<span class="math inline"><em>N</em> = 631</span>). Left: trajectories under the null hypothesis (HR = 1.00), where wealth fluctuates randomly. Right: trajectories under the alternative hypothesis (HR = 0.80), where wealth grows systematically. The red dashed line represents the rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
 </figure>
 
-# Multi-State Models
-
-Clinical trials in critical care increasingly use multi-state models to capture patient trajectories. A patient in the ICU may improve to a general ward, be discharged home, or die—and some of these transitions can reverse. Traditional analyses model the full transition matrix or use competing risks methods, requiring assumptions about the dependence structure between outcomes.
-
-The e-RT framework extends naturally to this setting. Rather than modeling the Markov structure, we classify each transition as “good” (recovery-oriented) or “bad” (deterioration-oriented) and bet on this binary outcome. The method is agnostic to the underlying stochastic process: we simply ask whether good transitions predict treatment assignment.
-
-## Setup
-
-Consider a four-state model common in ICU trials:
-
-- State 1: General Ward
-
-- State 2: ICU
-
-- State 3: Home (absorbing)
-
-- State 4: Dead (absorbing)
-
-Patients begin in the ICU and are followed for a fixed period (e.g., 28 days). Each day, a patient may transition between states according to arm-specific transition probabilities.
-
-We define good transitions as those representing clinical improvement:
-
-- ICU $`\to`$ Ward (step-down from intensive care)
-
-- Ward $`\to`$ Home (discharge)
-
-All other transitions—including ICU $`\to`$ Dead, Ward $`\to`$ Dead, and Ward $`\to`$ ICU (readmission)—are classified as bad.
-
-The null hypothesis is that the rate of good transitions is equal between arms:
-``` math
-\begin{equation}
-H_0: P(\text{good transition} \mid \text{treatment}) = P(\text{good transition} \mid \text{control})
-\end{equation}
-```
-
-## Betting Strategy
-
-Each state transition generates one betting opportunity. Unlike e-RTb where each patient contributes one observation, here a single patient may contribute multiple transitions as they move through states. A patient who goes ICU $`\to`$ Ward $`\to`$ ICU $`\to`$ Ward $`\to`$ Home contributes four transitions and four bets.
-
-Let $`\hat{\delta}_{i-1}`$ be the difference in good-transition rates between arms, estimated from all transitions observed before transition $`i`$:
-``` math
-\begin{equation}
-\hat{\delta}_{i-1} = \frac{\text{good transitions in treatment}}{\text{total transitions in treatment}} - \frac{\text{good transitions in control}}{\text{total transitions in control}}
-\end{equation}
-```
-
-The betting fraction follows the same logic as e-RTb:
-``` math
-\begin{equation}
-\lambda_i = 
-\begin{cases}
-0.5 + 0.5 \cdot c_i \cdot \hat{\delta}_{i-1} & \text{if transition } i \text{ is good} \\
-0.5 - 0.5 \cdot c_i \cdot \hat{\delta}_{i-1} & \text{if transition } i \text{ is bad}
-\end{cases}
-\end{equation}
-```
-where $`c_i`$ ramps from 0 to 1 over a burn-in period, exactly as before.
-
-The wealth update remains:
-``` math
-\begin{equation}
-W_i = W_{i-1} \times 
-\begin{cases}
-\lambda_i / 0.5 & \text{if treatment arm} \\
-(1 - \lambda_i) / 0.5 & \text{if control arm}
-\end{cases}
-\end{equation}
-```
-
-## Validity
-
-The martingale property holds by the same argument as before. Under the null, treatment assignment is independent of transition quality. Given any transition (good or bad), the probability it came from the treatment arm is 0.5. The expected wealth multiplier is therefore 1, and $`(W_i)`$ is a test martingale.
-
-The key insight is that validity does not depend on the Markov assumption or any specific transition structure. We have simply replaced “patient with event” with “transition classified as good” and applied the same betting logic. The data-generating process happens to be Markovian in our simulations, but the test would remain valid for any process that generates a sequence of binary-classified transitions from randomized patients.
-
-## Simulation Study
-
-We simulated trials with the following daily transition probabilities:
-
-<div id="tab:transition_matrices">
-
-<table>
-<caption>Daily Transition Probabilities</caption>
-<thead>
-<tr>
-<th style="text-align: left;"></th>
-<th colspan="4" style="text-align: center;">To State</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><span>2-5</span> From State</td>
-<td style="text-align: center;">Ward</td>
-<td style="text-align: center;">ICU</td>
-<td style="text-align: center;">Home</td>
-<td style="text-align: center;">Dead</td>
-</tr>
-<tr>
-<td colspan="5" style="text-align: left;"><em>Control</em></td>
-</tr>
-<tr>
-<td style="text-align: left;">Ward</td>
-<td style="text-align: center;">0.880</td>
-<td style="text-align: center;">0.070</td>
-<td style="text-align: center;">0.030</td>
-<td style="text-align: center;">0.020</td>
-</tr>
-<tr>
-<td style="text-align: left;">ICU</td>
-<td style="text-align: center;">0.070</td>
-<td style="text-align: center;">0.915</td>
-<td style="text-align: center;">0.000</td>
-<td style="text-align: center;">0.015</td>
-</tr>
-<tr>
-<td colspan="5" style="text-align: left;"><em>Treatment</em></td>
-</tr>
-<tr>
-<td style="text-align: left;">Ward</td>
-<td style="text-align: center;">0.870</td>
-<td style="text-align: center;">0.050</td>
-<td style="text-align: center;">0.050</td>
-<td style="text-align: center;">0.030</td>
-</tr>
-<tr>
-<td style="text-align: left;">ICU</td>
-<td style="text-align: center;">0.090</td>
-<td style="text-align: center;">0.900</td>
-<td style="text-align: center;">0.000</td>
-<td style="text-align: center;">0.010</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-
-<span id="tab:transition_matrices" label="tab:transition_matrices"></span>
-
-Treatment improves recovery transitions: ICU $`\to`$ Ward increases from 7% to 9% daily, and Ward $`\to`$ Home increases from 3% to 5% daily. The effect on mortality is modest.
-
-All patients started in the ICU and were followed for 28 days. At day 28, the expected state distributions were:
-
-<div id="tab:day28">
-
-| Arm        |    Ward    |    ICU     |    Home     |    Dead    |
-|:-----------|:----------:|:----------:|:-----------:|:----------:|
-| Control    |   20.8%    |   26.3%    |    18.8%    |   34.1%    |
-| Treatment  |   16.9%    |   16.6%    |    33.5%    |   33.0%    |
-| Difference | $`-3.9\%`$ | $`-9.7\%`$ | $`+14.7\%`$ | $`-1.1\%`$ |
-
-Day 28 State Distribution
-
-</div>
-
-<span id="tab:day28" label="tab:day28"></span>
-
-Treatment substantially increases discharge home ($`+14.7\%`$) while barely changing mortality ($`-1.1\%`$). This is precisely the scenario where trajectory-based analysis adds value: a mortality-only endpoint would detect little effect, while multi-state analysis captures the clinically meaningful improvement in recovery.
-
-We used burn-in = 30 transitions, ramp = 50 transitions, and threshold $`1/\alpha = 20`$. Results from 1,000 simulated trials at $`N = 1000`$ patients:
-
-<div id="tab:ertms_results">
-
-| Metric                       |         Value         |
-|:-----------------------------|:---------------------:|
-| Type I Error                 |   0.30% (SE: 0.17%)   |
-| Power                        |   89.3% (SE: 1.0%)    |
-| Median transitions per trial |         2017          |
-| Median crossing              | 898 transitions (45%) |
-
-Operating Characteristics for e-RTms ($`N = 1000`$)
-
-</div>
-
-<span id="tab:ertms_results" label="tab:ertms_results"></span>
-
-Type I error was well below the nominal 5%, consistent with the conservative behavior observed in other e-RT variants. Power was 89% at $`N = 1000`$; sample size search indicated approximately $`N = 800`$ for 80% power.
-
-The median trial generated approximately 2000 transitions from 1000 patients (roughly 2 transitions per patient). When the threshold was crossed, it occurred at 898 transitions—45% of the way through the trial.
-
-## Trajectory Examples
-
-Figure <a href="#fig:ertms" data-reference-type="ref" data-reference="fig:ertms">9</a> shows 30 example wealth trajectories under the null and alternative hypotheses. Under the null (left panel), wealth fluctuates around 1 with the characteristic downward drift from betting on noise. Under the alternative (right panel), wealth grows systematically as good transitions accumulate preferentially in the treatment arm.
-
-<figure id="fig:ertms" data-latex-placement="htbp">
-<p><embed src="e_rtms_null.pdf" style="width:48.0%" /> <embed src="e_rtms_alt.pdf" style="width:48.0%" /></p>
-<figcaption> Trajectories of e-RTms for a trial with <span class="math inline"><em>N</em> = 1000</span> patients. Left: under the null hypothesis (equal transition matrices), wealth fluctuates randomly. Right: under the alternative hypothesis, wealth grows as treatment improves recovery transitions. Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
-</figure>
-
-## Interpretation
-
-The e-RTms approach offers a philosophically clean handling of multi-state outcomes. By collapsing the transition matrix into a single binary classification, we sidestep the complexities of competing risks and counterfactual reasoning. We do not ask “what would have happened to this patient had they been in the other arm?” We simply ask “does knowing whether this transition was good help predict which arm the patient was in?”
-
-This comes at a cost: we lose information about which specific transitions drive the effect. A treatment that dramatically improves ICU $`\to`$ Ward transitions but worsens Ward $`\to`$ Home transitions might show no overall effect if the good-transition rates balance. For monitoring purposes, this limitation is acceptable—the goal is to detect *any* departure from exchangeability, not to dissect the mechanism. Detailed transition-specific analyses can follow at trial completion. e-RT is a monitoring, not a reporting, method.
-
-The method is most valuable when treatment affects trajectory without substantially changing mortality— the pattern in our simulation. For trials where mortality is the dominant signal, e-survival may be more powerful. For trials where the clinical question is “does treatment help patients recover faster?”, e-RTms provides a natural framework.
-
-# Universal e-RT (e-RTu) — Under Development
-
-## Motivation
-
-A recurring pattern across the e-RT variants is that each ultimately reduces to the same core operation: observe a signal, classify it, and bet on which arm it came from. In e-RTb, the signal is an event/no-event indicator. In e-RTe, it is the arm label on an event. In e-RTms, it is a transition classified as good or bad. Even e-RTc, despite its richer continuous signal, squashes the observation through a monotone transformation into a betting fraction that is functionally a soft binary classification.
-
-This observation motivates **e-RTu** (universal): a single, domain-agnostic betting engine that receives a stream of binary-classified signals—each tagged with an arm label and a good/bad indicator—and maintains the wealth process. The upstream logic that generates and classifies signals is separated from the downstream engine that bets on them.
-
-## The Universal Signal
-
-The e-RTu engine sees only a sequence of signals:
-``` math
-\begin{equation}
-S_i = (\text{arm}_i, \text{good}_i), \quad \text{arm}_i \in \{\text{treatment}, \text{control}\}, \quad \text{good}_i \in \{\text{true}, \text{false}\}
-\end{equation}
-```
-
-The engine does not know what generated $`S_i`$—it could be a patient outcome, a death, a state transition, a biomarker threshold, or any domain-specific event. It maintains running counts of good signals by arm and applies the same half-Kelly adaptive betting strategy as e-RTb:
-``` math
-\begin{equation}
-\lambda_i =
-\begin{cases}
-0.5 + 0.5 \cdot c_i \cdot \hat{\delta}_{i-1} & \text{if } \text{good}_i = \text{true} \\
-0.5 - 0.5 \cdot c_i \cdot \hat{\delta}_{i-1} & \text{if } \text{good}_i = \text{false}
-\end{cases}
-\end{equation}
-```
-where $`\hat{\delta}_{i-1}`$ is the difference in good-signal rates between arms estimated from all prior signals, and $`c_i`$ is the standard ramp function.
-
-The wealth update is identical to the binary case:
-``` math
-\begin{equation}
-W_i = W_{i-1} \times
-\begin{cases}
-\lambda_i / 0.5 & \text{if treatment} \\
-(1 - \lambda_i) / 0.5 & \text{if control}
-\end{cases}
-\end{equation}
-```
-
-## Validity
-
-Validity follows from the same argument as all other variants. Under the null hypothesis that arm labels are independent of signal quality, the expected wealth multiplier at each step is exactly 1, making $`(W_i)`$ a test martingale. The proof is identical to that of e-RTb (Theorem 1). The universality lies in the fact that the proof depends only on the randomization mechanism, not on the domain-specific process that generates the signals.
-
-## Relationship to Other Variants
-
-The e-RTu engine can recover e-RTb and e-RTms exactly:
-
-- **e-RTb**: Each patient generates one signal. Good $`=`$ event (or non-event, depending on convention). Arm $`=`$ treatment assignment.
-
-- **e-RTms**: Each state transition generates one signal. Good $`=`$ recovery-oriented transition. Arm $`=`$ treatment assignment.
-
-It does *not* recover the specialized strategies of e-RTe (full Kelly), e-RTs (score-based with fixed $`\lambda_{\max}`$), or e-RTc (continuous residual scores with adaptive or design-calibrated assignment probabilities). These variants exploit domain-specific structure—sparse events, risk sets, continuous residuals—to achieve better power than the generic half-Kelly approach. The wage asymmetry analysis (Section <a href="#sec:wage" data-reference-type="ref" data-reference="sec:wage">10</a>) explains why these specializations matter.
-
-The value of e-RTu is conceptual clarity and software simplicity: one engine, many signal sources. It provides a default when no domain-specific variant is available, and a reference implementation against which specialized variants can be benchmarked.
-
-## Status
-
-The e-RTu abstraction is under active development. An R implementation is provided in the supplementary code. Systematic simulation studies comparing e-RTu against specialized variants across domains are planned for a future version.
-
 # Betting Strategy Design: The Wage Asymmetry
 
-The six e-RT variants use different betting strategies. Binary and continuous methods use adaptive wagers that learn from data; survival uses a fixed wager $`\lambda = 0.25`$; event-only uses adaptive full Kelly. This section explains why these differences are principled, not accidental.
+The active e-RT variants use different betting strategies. Binary and continuous methods use adaptive or design-calibrated wagers; survival currently uses a fixed wager $`\lambda = 0.25`$; event-only uses adaptive full Kelly; and pairwise e-RTwr can use adaptive or GROW-style fixed wagers on predictably formed pairs. This section explains why these differences are principled, not accidental.
 
 ## The Core Asymmetry: Update Density and Over-Betting
 
@@ -1332,11 +1076,11 @@ The e-RTe falls between survival and binary. Like survival, it updates only at e
 
 # Discussion
 
-The e-RT family comprises nonparametric sequential tests for randomized trials based on the betting framework for e-values (i-bet (Duan et al. 2022)). All variants require only that treatment assignment is randomized—no distributional assumptions about outcomes are needed. This makes them robust complements to model-based analyses. The variants cover binary outcomes (e-RTb), event-only monitoring (e-RTe), continuous endpoints (e-RTc), time-to-event analyses (e-RTs), multi-state trajectory data (e-RTms), and pairwise win-ratio or GPC-style endpoints (e-RTwr). A universal abstraction (e-RTu) remains under development.
+The e-RT family comprises nonparametric sequential tests for randomized trials based on the betting framework for e-values (i-bet (Duan et al. 2022)). All active variants require only that treatment assignment is randomized—no distributional assumptions about outcomes are needed for validity. This makes them robust complements to model-based analyses. The Version 8 manuscript focuses on binary outcomes (e-RTb), event-only monitoring (e-RTe), pairwise win-ratio or GPC-style endpoints (e-RTwr), continuous endpoints (e-RTc), and time-to-event analyses (e-RTs).
 
 ## Operating characteristics
 
-Across the simulation-validated variants, simulations demonstrate proper Type I error control, confirming the theoretical guarantee from the martingale property. Power varies by variant and scenario: for binary outcomes, approximately 50% power for early stopping in trials designed with 80% frequentist power, and 63–66% in trials designed with 90% power. Continuous and survival variants show similar patterns. The multi-state variant achieved 89% power at $`N = 1{,}000`$ for the specific transition matrix tested. The event-only variant (e-RTe) requires approximately $`2.5\times`$ sample size inflation compared with the frequentist benchmark, the cost of discarding non-event information. The e-RTwr simulations show that fixed/design GROW-style wagers can substantially improve power over adaptive agnostic wagers, but that an e-process calibrated for 80% anytime power generally requires a larger $`N_{\max}`$ than a conventional final all-pairs win-ratio analysis.
+Across the simulation-validated variants, simulations demonstrate proper Type I error control, confirming the theoretical guarantee from the martingale property. Power varies by variant and scenario: for binary outcomes, approximately 50% power for early stopping in trials designed with 80% frequentist power, and 63–66% in trials designed with 90% power. The event-only variant (e-RTe) trades information for operational simplicity because non-events are not used by the e-process. The e-RTwr simulations show that fixed/design GROW-style wagers can substantially improve power over adaptive agnostic wagers, but that an e-process calibrated for 80% anytime power generally requires a larger $`N_{\max}`$ than a conventional final all-pairs win-ratio analysis. The e-RTc simulations show a similar wager-policy tradeoff on the Cohen’s $`d`$ scale: a matched parametric design wager can be much more powerful than the agnostic adaptive wager, while misspecification changes both power and Type M error at crossing.
 
 When early stopping occurs across all variants, it typically happens at approximately 45–56% of the planned sample size or event count.
 
@@ -1370,17 +1114,17 @@ It is possible that some of the concepts here were discussed by other authors in
 
 ## Limitations
 
-Several limitations should be noted. This is an experimental method under development. Simulations are not exhaustive, and the operating characteristics reported are specific to the scenarios tested. It is uncertain how these methods would behave in more complex models, including competing risk models.
+Several limitations should be noted. This is an experimental method under development. Simulations are not exhaustive, and the operating characteristics reported are specific to the scenarios tested. It is uncertain how these methods would behave in more complex models, including competing risk and multi-state settings, which are deliberately deferred from the active V8 scope.
 
 The methods test only whether there are differences between arms; they do not provide point estimates or confidence intervals. The adaptive learning of $`\hat{\delta}`$ requires a burn-in period during which little evidence accumulates. For trials where parametric assumptions are plausible, model-based sequential methods will generally have better power. Our simulations used specific betting strategies; other choices may yield different operating characteristics. The betting strategy design section provides guidance on strategy selection, but optimal calibration for specific clinical scenarios remains an open question. The e-RTwr composite simulations are especially preliminary: they use deterministic Gehan-style pair scoring and disjoint pairs, while more efficient all-pairs GPC analyses reuse each patient many times. More elaborate censored-data scoring rules may depend on estimated survival curves, and their use inside a real-time e-process requires additional work. Finally, it is unclear how these methods will behave when heterogeneity in treatment effects exists or there are temporal instabilities in effect size. Extensions to relative effect size approaches (e.g., odds ratio) are under development.
 
 ## Future Directions
 
-Several extensions merit exploration. First, the current betting strategy uses a cumulative estimate $`\hat{\delta}`$ that weights all historical observations equally. This makes the method vulnerable to time-varying effects: if treatment benefit reverses to harm mid-trial, the strategy continues betting on stale information and wealth erodes despite continuous violation of exchangeability. Adaptive weighting schemes—such as exponential decay, rolling windows, or hybrid estimators blending long-term and recent signals—could improve robustness to non-stationary effects. Second, the betting intensity could itself adapt to recent performance: increasing $`\lambda`$ during sustained wealth growth (exploiting a confirmed edge) and dampening it following drawdowns (protecting against regime change). This mirrors Kelly criterion extensions that incorporate drawdown constraints. These refinements trade power under stable effects against robustness to drift, and the optimal balance likely depends on the clinical context. This is under development.
+Several extensions merit exploration. First, the current betting strategy uses a cumulative estimate $`\hat{\delta}`$ that weights all historical observations equally. This makes the method vulnerable to time-varying effects: if treatment benefit reverses to harm mid-trial, the strategy continues betting on stale information and wealth erodes despite continuous violation of exchangeability. Adaptive weighting schemes—such as exponential decay, rolling windows, or hybrid estimators blending long-term and recent signals—could improve robustness to non-stationary effects. Second, the betting intensity could itself adapt to recent performance: increasing $`\lambda`$ during sustained wealth growth (exploiting a confirmed edge) and dampening it following drawdowns (protecting against regime change). Third, the multi-state and universal-signal ideas from earlier drafts remain useful but need a separate treatment, especially if transitions or patient-level repeated contributions create dependence concerns beyond the simple binary-signal story. These refinements trade power under stable effects against robustness to drift and complexity, and the optimal balance likely depends on the clinical context.
 
 ## Conclusion
 
-E-processes provide conceptually valid anytime-valid sequential inference for randomized trials using only the guarantee of randomization. Its validity is unconditional on the data-generating process, making it a potentially useful tool for trial monitoring. While it trades power for this robustness, it offers a valuable complement to traditional analysis methods.
+E-processes provide anytime-valid sequential inference for randomized trials using only the guarantee of randomization. The e-RT family separates this validity engine from the wager policy used for efficiency. Adaptive wagers preserve effect-size agnosticism, while design-calibrated wagers can improve power when the design alternative is credible. This makes e-RT a conservative, transparent complement to traditional trial monitoring rather than a replacement for the final model-based analysis.
 
 # Disclaimers and Version Control
 
@@ -1390,7 +1134,7 @@ This is an experimental method under development. Application to real patients s
 
 ## LLM use statement
 
-Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wage asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7.
+Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wage asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 repository organization, simulation refactoring, wager-policy comparisons, e-RTwr exploratory analyses, e-RTc design-wager implementation, and manuscript cleanup.
 
 ## Acknowledgments
 
@@ -1412,7 +1156,7 @@ The author is thankful to Aaditya Ramdas for their thoughtful comments on the fi
 
 7.  Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
 
-8.  Eighth Version (in preparation): Separated randomization validity from wager policy, added adaptive versus design-fixed wager simulations, introduced e-RTwr for disjoint pairwise win-ratio and GPC-style monitoring, and added exploratory `BuyseTest`-based composite endpoint simulations.
+8.  Eighth Version (in preparation): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; introduced e-RTwr for disjoint pairwise win-ratio and GPC-style monitoring with Sokolova-style GROW comparisons and exploratory `BuyseTest`-based composite endpoint simulations; added parametric normal-shift design wagers for e-RTc; committed simulation result tables for reproducibility; and deferred e-RTms/e-RTu from the active manuscript scope.
 
 # R Code
 
@@ -2060,191 +1804,6 @@ verify_staggered_equivalence <- function(n_sims = 1000, n_patients = 631,
          x = "Final e-value", y = "Density") +
     theme_minimal() +
     theme(legend.position = "bottom")
-}
-
-# --- e-RTms: Multi-State Models ---
-
-# States: 1=Ward, 2=ICU, 3=Home (absorbing), 4=Dead (absorbing)
-P_ctrl <- matrix(c(
-  0.880, 0.070, 0.030, 0.020,
-  0.070, 0.915, 0.000, 0.015,
-  0.000, 0.000, 1.000, 0.000,
-  0.000, 0.000, 0.000, 1.000
-), nrow = 4, byrow = TRUE)
-
-P_trt <- matrix(c(
-  0.870, 0.050, 0.050, 0.030,
-  0.090, 0.900, 0.000, 0.010,
-  0.000, 0.000, 1.000, 0.000,
-  0.000, 0.000, 0.000, 1.000
-), nrow = 4, byrow = TRUE)
-
-BURN_IN <- 30
-RAMP <- 50
-MAX_DAYS <- 28
-START_STATE <- 2
-THRESHOLD <- 20
-GOOD_TRANS <- c("2_1", "1_3")
-
-simulate_patient_ms <- function(P, max_days = MAX_DAYS, start_state = START_STATE) {
-  state <- start_state
-  transitions <- NULL
-  
-  for (day in 1:max_days) {
-    if (state %in% c(3, 4)) break
-    new_state <- sample(1:4, 1, prob = P[state, ])
-    if (new_state != state) {
-      transitions <- rbind(transitions, c(from = state, to = new_state, day = day))
-    }
-    state <- new_state
-  }
-  
-  list(final_state = state, transitions = transitions)
-}
-
-simulate_trial_ms <- function(n_patients, P_trt, P_ctrl) {
-  all_trans <- NULL
-  all_arms <- c()
-  final_states <- data.frame(patient = 1:n_patients, arm = NA, final_state = NA)
-  
-  for (i in 1:n_patients) {
-    arm <- sample(0:1, 1)
-    P <- if (arm == 1) P_trt else P_ctrl
-    pat <- simulate_patient_ms(P)
-    
-    final_states$arm[i] <- arm
-    final_states$final_state[i] <- pat$final_state
-    
-    if (!is.null(pat$transitions)) {
-      for (j in 1:nrow(pat$transitions)) {
-        all_trans <- rbind(all_trans, pat$transitions[j, ])
-        all_arms <- c(all_arms, arm)
-      }
-    }
-  }
-  
-  list(transitions = all_trans, arms = all_arms, final_states = final_states)
-}
-
-compute_eRTms <- function(all_transitions, all_arms,
-                          burn_in = BURN_IN, ramp = RAMP,
-                          good_trans = GOOD_TRANS) {
-  
-  n <- nrow(all_transitions)
-  if (is.null(n) || n == 0) return(1)
-  
-  wealth <- numeric(n)
-  wealth[1] <- 1
-  
-  n_good_trt <- 0; n_total_trt <- 0
-  n_good_ctrl <- 0; n_total_ctrl <- 0
-  
-  for (i in 1:n) {
-    trans <- all_transitions[i, ]
-    arm <- all_arms[i]
-    trans_key <- paste0(trans["from"], "_", trans["to"])
-    is_good <- trans_key %in% good_trans
-    
-    if (i > burn_in && n_total_trt > 0 && n_total_ctrl > 0) {
-      c_i <- min(1, max(0, (i - burn_in) / ramp))
-      rate_trt <- n_good_trt / n_total_trt
-      rate_ctrl <- n_good_ctrl / n_total_ctrl
-      delta <- rate_trt - rate_ctrl
-      
-      lambda <- if (is_good) 0.5 + 0.5 * c_i * delta else 0.5 - 0.5 * c_i * delta
-    } else {
-      lambda <- 0.5
-    }
-    
-    lambda <- max(0.01, min(0.99, lambda))
-    mult <- if (arm == 1) lambda / 0.5 else (1 - lambda) / 0.5
-    wealth[i] <- if (i > 1) wealth[i - 1] * mult else mult
-    
-    if (arm == 1) {
-      n_total_trt <- n_total_trt + 1
-      if (is_good) n_good_trt <- n_good_trt + 1
-    } else {
-      n_total_ctrl <- n_total_ctrl + 1
-      if (is_good) n_good_ctrl <- n_good_ctrl + 1
-    }
-  }
-  
-  return(wealth)
-}
-
-run_simulation_ms <- function(n_sims, n_patients, P_trt, P_ctrl,
-                              threshold = THRESHOLD, verbose = TRUE) {
-  
-  rejections <- 0
-  first_crossing <- numeric(n_sims)
-  n_transitions <- numeric(n_sims)
-  
-  if (verbose) pb <- txtProgressBar(min = 0, max = n_sims, style = 3)
-  
-  for (s in 1:n_sims) {
-    trial <- simulate_trial_ms(n_patients, P_trt, P_ctrl)
-    
-    if (is.null(trial$transitions) || nrow(trial$transitions) < BURN_IN) {
-      first_crossing[s] <- NA
-      n_transitions[s] <- 0
-      next
-    }
-    
-    wealth <- compute_eRTms(trial$transitions, trial$arms)
-    n_transitions[s] <- length(wealth)
-    
-    crossing <- which(wealth >= threshold)
-    if (length(crossing) > 0) {
-      rejections <- rejections + 1
-      first_crossing[s] <- crossing[1]
-    } else {
-      first_crossing[s] <- NA
-    }
-    
-    if (verbose) setTxtProgressBar(pb, s)
-  }
-  
-  if (verbose) close(pb)
-  
-  rate <- rejections / n_sims
-  se <- sqrt(rate * (1 - rate) / n_sims)
-  
-  list(
-    rate = rate,
-    se = se,
-    median_crossing = median(first_crossing, na.rm = TRUE),
-    median_transitions = median(n_transitions)
-  )
-}
-
-plot_trajectories_ms <- function(n_trials = 30, n_patients, P_trt, P_ctrl,
-                                 threshold = THRESHOLD, title = "") {
-  
-  trajectories <- list()
-  
-  for (i in 1:n_trials) {
-    trial <- simulate_trial_ms(n_patients, P_trt, P_ctrl)
-    if (!is.null(trial$transitions) && nrow(trial$transitions) > BURN_IN) {
-      wealth <- compute_eRTms(trial$transitions, trial$arms)
-      trajectories[[length(trajectories) + 1]] <- data.frame(
-        transition = 1:length(wealth), wealth = wealth, trial = i
-      )
-    }
-  }
-  
-  df <- bind_rows(trajectories)
-  
-  ggplot(df, aes(x = transition, y = wealth, group = trial)) +
-    geom_line(alpha = 0.4, color = "steelblue") +
-    geom_hline(yintercept = threshold, linetype = "dashed", color = "red") +
-    geom_hline(yintercept = 1, linetype = "dotted", color = "gray50") +
-    scale_y_log10() +
-    labs(title = title, x = "Transition Number", y = "e-value (log scale)") +
-    annotate("text", x = Inf, y = threshold * 1.5,
-             label = sprintf("1/alpha = %.0f", threshold),
-             color = "red", hjust = 1.1) +
-    theme_minimal() +
-    theme(plot.title = element_text(face = "bold"))
 }
 ```
 

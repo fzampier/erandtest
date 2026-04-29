@@ -27,8 +27,9 @@ This is the working add/remove/change list for Version 8.
 
 ## Remove Or Deprecate
 
-- Deprecate or remove e-RTu as currently written.
-- Replace e-RTu with a more grounded pairwise method if simulations and theory look sensible.
+- Defer e-RTu from the active V8 manuscript.
+- Defer e-RTms from the active V8 manuscript.
+- Replace the old e-RTu emphasis with the more grounded e-RTwr pairwise method.
 - Reduce language implying that adaptive wagers are the only natural e-RT implementation.
 - Reduce any overstatement that e-RT is fully tuning-free. Use "effect-size agnostic" rather than "parameter-free."
 
@@ -86,7 +87,7 @@ This is the working add/remove/change list for Version 8.
 
 ## Open Questions
 
-- Should V8 use "e-RT" as family name and "e-RTb/e-RTe/e-RTc/e-RTs/e-RTms/e-RTpw" as variants?
+- Should V8 use "e-RT" as family name and "e-RTb/e-RTe/e-RTwr/e-RTc/e-RTs" as the active variants?
 - Should the pairwise method be called `e-RTpw`, `e-RTwr`, or `e-RTgpc`?
 - Is the pairwise estimand a classical win ratio, a net benefit, or a matching-rule-specific sequential win tendency?
 - Should Type M at crossing be reported as median exaggeration, mean exaggeration, or quantiles because the ratio may be unstable when the true effect is small?

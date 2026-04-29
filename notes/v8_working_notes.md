@@ -36,3 +36,12 @@ Current e-RTc status:
 - Wager-policy simulation lives in `R/simulations/ertc_wager_policy.R`.
 - The adaptive default follows the standalone V7 script `ertc_20251215.R`: sign of the past mean difference, robust residual score, burn-in 20, ramp 50, `c_max = 0.6`.
 - The design wager is parametric by default: a normal-shift working model maps each continuous outcome to `Pr(T = 1 | Y)`.
+
+Current manuscript scope:
+
+- Active V8 variants: e-RTb, e-RTe, e-RTwr, e-RTc, and e-RTs.
+- e-RTms and e-RTu have been removed from the active manuscript and are framed
+  as future extensions.
+- Next logical technical target: revisit e-RTs with the same wager-policy,
+  design-effect, Type M, and crossing-diagnostic discipline used for e-RTb,
+  e-RTe, e-RTwr, and e-RTc.

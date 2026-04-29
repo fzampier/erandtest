@@ -41,7 +41,7 @@ V8 should introduce wager policy as a first-class design layer:
 - design-calibrated wager: derived from a design alternative, similar in spirit to GROW calibration;
 - oracle wager: uses the true simulated effect and is allowed only as a simulation benchmark.
 
-V8 should also consider replacing e-RTu with a more grounded pairwise win/loss e-process connected to generalized pairwise comparisons and win-ratio methods.
+V8 now defers e-RTu from the active manuscript and uses e-RTwr as the more grounded pairwise win/loss e-process connected to generalized pairwise comparisons and win-ratio methods.
 
 Key diagnostic additions for V8:
 
@@ -50,6 +50,7 @@ Key diagnostic additions for V8:
 - Crossing-time effect estimates versus final-study estimates.
 - For e-RTwr, WR at crossing, final-study WR, and exaggeration relative to both the true/design WR and the final-study WR.
 - For e-RTwr simple continuous endpoints, package-backed `BuyseTest` validation of the internal all-pairs WR estimator.
+- e-RTms and e-RTu are parked as future work rather than active V8 sections.
 
 ## Code Direction
 

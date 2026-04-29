@@ -33,8 +33,8 @@ The V8 draft keeps the core e-RT family while sharpening scope:
   endpoints.
 
 The multi-state and universal abstractions from V7 (`e-RTms` and `e-RTu`) are
-likely to be deprecated or moved out of the main V8 manuscript so the paper
-does not become too diffuse.
+deferred from the main V8 manuscript so the paper can stay focused on the
+wager-policy problem.
 
 ## What Is New In V8 So Far
 
@@ -53,6 +53,8 @@ does not become too diffuse.
   GROW comparison.
 - A first `BuyseTest::simBuyseTest()` composite endpoint scaffold compares
   final all-pairs GPC summaries with disjoint-pair e-RTwr monitoring.
+- The active manuscript scope has been trimmed to e-RTb, e-RTe, e-RTwr,
+  e-RTc, and e-RTs; e-RTms and e-RTu are parked for future work.
 
 ## Repository Layout
 
@@ -86,6 +88,8 @@ does not become too diffuse.
   - Working instructions and context for future Codex/research-agent sessions.
 - `shopping_list.md`
   - Active add/remove/rewrite list for V8.
+- `CHANGELOG.md`
+  - Human-readable development log for the V8 repository.
 
 ## Reproducibility
 
@@ -157,7 +161,7 @@ e-RTb/e-RTe wager-policy table. The PDF otherwise compiles successfully.
 
 ## GitHub
 
-Planned remote:
+Remote:
 
 ```sh
 git@github.com:fzampier/erandtest.git
