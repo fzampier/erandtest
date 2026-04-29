@@ -22,9 +22,11 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 - Added e-RTwr as a pairwise win-ratio/GPC-inspired monitoring prototype.
 - Added e-RTc design-wager material using a parametric normal-shift working
   model.
+- Added e-RTs wager-policy material comparing fixed-magnitude, adaptive
+  half-Kelly, and design-calibrated log-rank risk-set wagers.
 - Added Type M error at crossing as a recurring diagnostic.
-- Added Gelman and Carlin's Type S/Type M design-analysis citation and queued
-  Type S diagnostics for e-RTs.
+- Added Gelman and Carlin's Type S/Type M design-analysis citation and e-RTs
+  Type S diagnostics.
 - Updated the Version Control section to describe the V8 changes.
 - Removed the embedded R-code appendix from the manuscript and refer readers to
   the repository as the computational source of truth.
@@ -37,6 +39,8 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
   trial snapshot while keeping the e-process itself event-only.
 - Added e-RTc simulations comparing adaptive, underestimated design, matched
   design, overestimated design, and oracle policies.
+- Added e-RTs simulations comparing fixed, adaptive, underestimated design,
+  matched design, overestimated design, and oracle policies.
 - Added e-RTwr pilot, tuning, Sokolova-style GROW comparison, WRestimates
   sample-size checks, BuyseTest validation, and composite endpoint simulations.
 - Committed generated CSV result tables under `results/` because the repository

@@ -881,7 +881,7 @@ Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference
 
 Clinical trials often use time-to-event endpoints (e.g., overall survival), usually analyzed via the Log-Rank test or Cox proportional hazards models. These traditional methods require assumptions about proportional hazards or require waiting for a specific number of events. One can extend the randomization e-process to survival data, constructing a sequential Log-Rank test that updates wealth at every observed event.
 
-Grünwald et al. (2021) developed a safe logrank test using e-values under a proportional hazards model with a prior on the hazard ratio. We attempted to construct a nonparametric approach where validity derives solely from randomization, not from a correctly specified hazard model. We call this e-survival.
+Grünwald et al. (2021) developed a safe logrank test using e-values under a proportional hazards model with a prior on the hazard ratio. We attempted to construct a nonparametric approach where validity derives solely from randomization, not from a correctly specified hazard model. We call this time-to-event variant e-RTs.
 
 ## Setup and Martingale Construction
 
@@ -902,31 +902,58 @@ Let $`X_j`$ be the indicator that the event at $`t_j`$ is a treated patient ($`X
 U_j = X_j - p_j.
 \end{equation}
 ```
-Note that $`\mathbb{E}[U_j | \mathcal{R}_j] = 0`$.
+Note that $`\mathbb{E}[U_j | \mathcal{R}_j] = 0`$. The corresponding one-step variance is
+``` math
+\begin{equation}
+V_j = p_j(1-p_j).
+\end{equation}
+```
 
 ## Betting Strategy
 
-We wager on the sign of $`U_j`$. If the treatment is beneficial, events will occur more slowly in the treatment arm than expected under the null. Thus, the observed number of treatment events will be lower than the expected number, leading to a negative trend in the cumulative sum of $`U_j`$.
+We wager on the sign and magnitude of $`U_j`$. If the treatment is beneficial, events will occur more slowly in the treatment arm than expected under the null. Thus, the observed number of treatment events will be lower than the expected number, leading to a negative trend in the cumulative sum of $`U_j`$.
 
-We define the cumulative Log-Rank score at step $`j-1`$ as $`Z_{j-1} = \sum_{k=1}^{j-1} U_k`$. Our betting strategy targets this trend:
-``` math
-\begin{equation}
-\lambda_j = \text{sign}(Z_{j-1}) \cdot c_j \cdot \lambda_{\max},
-\end{equation}
-```
-where $`c_j \in [0,1]`$ is a ramping function similar to previous sections, and $`\lambda_{\max} < 1`$ is a cap on betting aggressiveness.
-
-The wealth update at event $`j`$ is:
+For any predictable $`\lambda_j`$ satisfying positivity of the multiplier, the wealth update at event $`j`$ is:
 ``` math
 \begin{equation}
 W_j = W_{j-1} \times (1 + \lambda_j U_j).
 \end{equation}
 ```
-Because $`\mathbb{E}[U_j]=0`$, the expected multiplicative factor is 1 under the null. Thus, $`(W_j)`$ is a test martingale.
+Because $`\mathbb{E}[U_j]=0`$, the expected multiplicative factor is 1 under the null. Thus, $`(W_j)`$ is a test martingale. Version 8 separates this validity engine from the wager policy.
 
-Note that unlike the binary and continuous approaches, this betting strategy uses only the *sign* of the cumulative score $`Z_{j-1}`$, not its magnitude. Once evidence favors one direction, the bet size is fixed at $`\lambda_{\max}`$ regardless of how strong the accumulated evidence is. This mirrors the Kelly criterion in betting theory: the optimal wager size depends on the expected edge, and $`\lambda_{\max} = 0.25`$ is calibrated for moderate effects (HR $`\approx 0.80`$) (Kelly 1956). The connection between the wager, $`\lambda`$, and Kelly’s ideas on fraction of betting needs to be further explored. In brief, it makes sense that wager should be higher when prospects of winning are more favorable. For time-to-event, however, adapting response to events may take a long time, and a fixed wager may be preferable.
+Let $`Z_{j-1} = \sum_{k=1}^{j-1} U_k`$ and $`I_{j-1} = \sum_{k=1}^{j-1} V_k`$. The original fixed-magnitude policy uses adaptive direction but fixed size:
+``` math
+\begin{equation}
+\lambda_j^{\mathrm{fixed}} =
+c_j \lambda_{\max}\,\mathrm{sign}(Z_{j-1}),
+\end{equation}
+```
+where $`c_j \in [0,1]`$ is a ramping function similar to previous sections, and $`\lambda_{\max} < 1`$ is a cap on betting aggressiveness.
 
-The parameters burn-in, ramp, and $`\lambda_{\max}`$ are set arbitrarily (burn-in $`= 30`$, ramp $`= 50`$, and $`\lambda_{\max} = 0.25`$ in simulations). Different choices will yield different operating characteristics. The validity of the test does not depend on these choices—only efficiency does.
+The adaptive policy estimates the log hazard ratio from the prior log-rank score:
+``` math
+\begin{equation}
+\hat{\beta}_{j-1} = \frac{Z_{j-1}}{I_{j-1}}, \qquad \hat{\theta}_{j-1} = \exp(\hat{\beta}_{j-1}),
+\end{equation}
+```
+and then converts $`\hat{\theta}_{j-1}`$ into a risk-set-specific wager. For a design or estimated hazard ratio $`\theta`$, the event probability under a proportional hazards working alternative is:
+``` math
+\begin{equation}
+q_j(\theta) =
+\frac{\theta p_j}{\theta p_j + (1-p_j)}.
+\end{equation}
+```
+The GROW-style wager for the multiplier $`1+\lambda_j U_j`$ is therefore:
+``` math
+\begin{equation}
+\lambda_j^\star(\theta) =
+\frac{q_j(\theta)-p_j}{p_j(1-p_j)}.
+\end{equation}
+```
+
+The adaptive policy uses $`c_j \kappa \lambda_j^\star(\hat{\theta}_{j-1})`$, with $`\kappa=1/2`$ in the simulations below. The Sokolova-like design policy instead prespecifies $`\theta^\star`$ at the design stage and uses $`c_j\lambda_j^\star(\theta^\star)`$ throughout monitoring. This is directional: a design HR below 1 targets treatment benefit. As in the other e-RT variants, the working hazard ratio affects efficiency but not validity; under the null, $`U_j`$ still has conditional mean zero for any predictable $`\lambda_j`$.
+
+The parameters burn-in, ramp, $`\lambda_{\max}`$, and $`\kappa`$ are tuning choices. Different choices will yield different operating characteristics. The validity of the test does not depend on these choices—only efficiency does.
 
 ## Handling Staggered Entry
 
@@ -936,31 +963,62 @@ We verified the validity of this simplification by simulating two scenarios with
 
 ## Simulation Results
 
-We simulated survival trials comparing exponential survival times with a Hazard Ratio (HR) of 0.80. Targeted power was 80% using a standard Log-Rank design, which requires approximately 631 events. A total of $`N=631`$ patients (assuming no censoring) were used for simulations. Results are shown in Table <a href="#tab:survival" data-reference-type="ref" data-reference="tab:survival">12</a>.
+We simulated exponential survival trials with no censoring and 1:1 randomization. Event counts were chosen using the Schoenfeld log-rank event formula for 80% fixed-sample power at two-sided $`\alpha=0.05`$. We compared the fixed-magnitude policy ($`\lambda_{\max}=0.25`$), adaptive half-Kelly, and design/GROW-style wagers using underestimated, matched, and overestimated design hazard ratios. Results from 1,000 simulations per scenario are shown in Tables <a href="#tab:erts_wager_policy_type1" data-reference-type="ref" data-reference="tab:erts_wager_policy_type1">12</a> and <a href="#tab:erts_wager_policy_power" data-reference-type="ref" data-reference="tab:erts_wager_policy_power">13</a>.
 
-<div id="tab:survival">
+<div id="tab:erts_wager_policy_type1">
 
-|   True HR   | Target HR | Type I Error | Power | Median Events to Stop |
-|:-----------:|:---------:|:------------:|:-----:|:---------------------:|
-| 1.00 (Null) |   0.80    |    0.039     |   –   |           –           |
-| 0.80 (Alt)  |   0.80    |      –       | 62.8% |    329 (52% of N)     |
+| Planning HR | Policy         | Events | Type I error | Median final e-value |
+|:------------|:---------------|-------:|-------------:|---------------------:|
+| 0.70        | Fixed 0.25     |    247 |         0.6% |                 0.23 |
+| 0.70        | Adaptive half  |    247 |         0.1% |                 0.73 |
+| 0.70        | Design matched |    247 |         2.2% |                 0.06 |
+| 0.80        | Fixed 0.25     |    631 |         3.5% |                 0.01 |
+| 0.80        | Adaptive half  |    631 |         0.5% |                 0.63 |
+| 0.80        | Design matched |    631 |         2.3% |                 0.03 |
+| 0.90        | Fixed 0.25     |  2,829 |         5.4% |                 0.00 |
+| 0.90        | Adaptive half  |  2,829 |         1.2% |                 0.51 |
+| 0.90        | Design matched |  2,829 |         4.3% |                 0.02 |
 
-Operating Characteristics (N=631)
+e-RTs Type I error simulations under HR $`=1`$. Planning event counts use the Schoenfeld log-rank event formula for 80% fixed-sample power at two-sided $`\alpha=0.05`$.
 
 </div>
 
-<span id="tab:survival" label="tab:survival"></span>
+<div id="tab:erts_wager_policy_power">
 
-Under the alternative (HR=0.80), the e-survival process achieved 62.8% power to reject the null, with a median stopping time of 329 events. Examples are shown in Figure <a href="#fig:survival" data-reference-type="ref" data-reference="fig:survival">8</a>.
+| True HR | Policy         | Wager HR | Power | Crossing | HR at crossing | Type M | Type S |
+|:--------|:---------------|---------:|------:|---------:|---------------:|-------:|-------:|
+| 0.70    | Fixed 0.25     |        – | 46.8% |      186 |           0.62 |   1.35 |   0.0% |
+| 0.70    | Adaptive half  |        – | 28.2% |      170 |           0.57 |   1.56 |   0.0% |
+| 0.70    | Design under   |     0.85 | 17.5% |      199 |           0.57 |   1.57 |   0.0% |
+| 0.70    | Design matched |     0.70 | 62.7% |      158 |           0.64 |   1.27 |   0.0% |
+| 0.70    | Design over    |     0.55 | 61.7% |      124 |           0.63 |   1.30 |   0.0% |
+| 0.80    | Fixed 0.25     |        – | 61.2% |      311 |           0.73 |   1.42 |   0.0% |
+| 0.80    | Adaptive half  |        – | 38.2% |      380 |           0.70 |   1.57 |   0.0% |
+| 0.80    | Design under   |     0.90 | 40.2% |      472 |           0.73 |   1.40 |   0.0% |
+| 0.80    | Design matched |     0.80 | 70.8% |      328 |           0.75 |   1.32 |   0.0% |
+| 0.80    | Design over    |     0.70 | 66.3% |      249 |           0.73 |   1.43 |   0.0% |
+| 0.90    | Fixed 0.25     |        – | 37.3% |      647 |           0.80 |   2.08 |   0.5% |
+| 0.90    | Adaptive half  |        – | 41.6% |    1,684 |           0.85 |   1.56 |   0.2% |
+| 0.90    | Design under   |     0.95 | 53.8% |    2,120 |           0.87 |   1.33 |   0.0% |
+| 0.90    | Design matched |     0.90 | 75.4% |    1,366 |           0.87 |   1.30 |   0.0% |
+| 0.90    | Design over    |     0.85 | 70.4% |    1,014 |           0.85 |   1.49 |   0.0% |
+
+e-RTs power and crossing diagnostics. Sample sizes use the Schoenfeld log-rank event formula for 80% fixed-sample power at two-sided $`\alpha=0.05`$. Type M and Type S are summarized among trials that crossed the e-value threshold. Type M is computed on the $`|\log(\mathrm{HR})|`$ scale.
+
+</div>
+
+Type I error remained controlled in these simulations. The matched design wager was the most powerful policy at the fixed-sample event counts: 75.4% power for HR $`=0.90`$, 70.8% for HR $`=0.80`$, and 62.7% for HR $`=0.70`$. These are below the nominal 80% fixed-sample log-rank design because the e-process must cross the anytime-valid threshold before or by the maximum event count. The fixed $`\lambda_{\max}=0.25`$ policy remained competitive, especially at HR $`=0.80`$, but it was less efficient than a matched design wager. Adaptive half-Kelly was conservative, reflecting the difficulty of estimating the hazard-ratio scale early from sparse events.
+
+Misspecification behaved as expected. Underestimating the treatment effect delayed crossings and reduced power. Overestimating the effect crossed earlier and sometimes retained high power, but with greater Type M exaggeration. Type S error was essentially absent: only the two-sided fixed and adaptive policies at HR $`=0.90`$ showed small wrong-direction crossing rates below 1%. Examples for the fixed-magnitude policy at HR $`=0.80`$ are shown in Figure <a href="#fig:survival" data-reference-type="ref" data-reference="fig:survival">8</a>.
 
 <figure id="fig:survival" data-latex-placement="H">
 <p><embed src="traj_survivaleRT_null.pdf" style="width:48.0%" /> <embed src="traj_survivaleRT_08.pdf" style="width:48.0%" /></p>
-<figcaption> Trajectories of the e-Survival process for a trial designed to detect a Hazard Ratio of 0.80 with 80% power (<span class="math inline"><em>N</em> = 631</span>). Left: trajectories under the null hypothesis (HR = 1.00), where wealth fluctuates randomly. Right: trajectories under the alternative hypothesis (HR = 0.80), where wealth grows systematically. The red dashed line represents the rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
+<figcaption> Trajectories of the fixed-magnitude e-RTs process for a trial designed to detect a Hazard Ratio of 0.80 with 80% fixed-sample log-rank power (<span class="math inline">631</span> events). Left: trajectories under the null hypothesis (HR = 1.00), where wealth fluctuates randomly. Right: trajectories under the alternative hypothesis (HR = 0.80), where wealth grows systematically. The red dashed line represents the rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
 </figure>
 
 # Betting Strategy Design: The Wage Asymmetry
 
-The active e-RT variants use different betting strategies. Binary and continuous methods use adaptive or design-calibrated wagers; survival currently uses a fixed wager $`\lambda = 0.25`$; event-only uses adaptive full Kelly; and pairwise e-RTwr can use adaptive or GROW-style fixed wagers on predictably formed pairs. This section explains why these differences are principled, not accidental.
+The active e-RT variants use different betting strategies. Binary and continuous methods use adaptive or design-calibrated wagers; survival can use fixed, adaptive, or design-calibrated risk-set wagers; event-only uses adaptive full Kelly or design-calibrated event-coin wagers; and pairwise e-RTwr can use adaptive or GROW-style fixed wagers on predictably formed pairs. This section explains why these differences are principled, not accidental.
 
 ## The Core Asymmetry: Update Density and Over-Betting
 
@@ -976,37 +1034,11 @@ The answer depends on how frequently the product updates:
 
 In plain language: imagine a gambler who bets too aggressively. If they play once a week (survival), a bad streak hurts but they can recover. If they play every hour (binary), the same over-bet compounds into ruin. If they play every hour *and* each bet has extra noise on top of the sizing error (continuous), the ruin is faster still.
 
-## Survival: Why Fixed $`\lambda = 0.25`$ Works
+## Survival: Fixed and Design Wagers
 
-For survival data, the bet has fixed magnitude but adaptive direction:
-``` math
-\begin{equation}
-b_i = c_i \times \lambda_{\max} \times \text{sign}(Z_{i-1})
-\end{equation}
-```
-where $`\lambda_{\max} = 0.25`$ is fixed and $`Z_{i-1}`$ is the cumulative log-rank score.
+Survival data update only at observed events, so the wealth product is much shorter than in every-patient binary or continuous monitoring. This makes fixed-magnitude wagers more tolerable. The original e-RTs policy uses a fixed magnitude, $`\lambda_{\max}=0.25`$, with adaptive direction from the cumulative log-rank score.
 
-Simulation studies across the clinically relevant range of hazard ratios show that $`\lambda = 0.25`$ is not universally optimal but is robustly adequate:
-
-<div id="tab:wage_survival">
-
-| True HR | $`|\log(\text{HR})|`$ | Fixed $`\lambda = 0.25`$ | Adaptive $`\frac{1}{2}`$-Kelly | Difference |
-|:--:|:--:|:--:|:--:|:--:|
-| 0.70 | 0.357 | 43.1% | 26.6% | $`+`$<!-- -->16.5pp |
-| 0.75 | 0.288 | 58.9% | 35.0% | $`+`$<!-- -->23.9pp |
-| 0.80 | 0.223 | 62.6% | 35.9% | $`+`$<!-- -->26.7pp |
-| 0.85 | 0.163 | 55.2% | 37.8% | $`+`$<!-- -->17.4pp |
-| 0.90 | 0.105 | 40.5% | 41.6% | $`-`$<!-- -->1.1pp |
-
-Survival: Fixed $`\lambda = 0.25`$ vs. Adaptive Half-Kelly
-
-</div>
-
-<span id="tab:wage_survival" label="tab:wage_survival"></span>
-
-Fixed $`\lambda = 0.25`$ outperforms adaptive half-Kelly by 17–27 percentage points across HR $`= 0.70`$–$`0.85`$. At HR $`= 0.90`$ (a small effect), the strategies are approximately equivalent. The adaptive approach converges correctly to the true $`\log(\text{HR})`$ but produces bets that are systematically too conservative: for HR $`= 0.80`$, half-Kelly yields $`\lambda \approx 0.11`$, which is well below $`0.25`$.
-
-The fixed strategy succeeds because events are sparse. A trial with approximately 500 events tolerates moderate over-betting without catastrophic wealth destruction. Pre-specifying $`\lambda`$ is analogous to pre-specifying the alternative hypothesis for sample size calculation—every frequentist trial makes a similar design choice.
+The V8 simulations in Table <a href="#tab:erts_wager_policy_power" data-reference-type="ref" data-reference="tab:erts_wager_policy_power">13</a> show the broader picture. The fixed policy remains a useful robust baseline, but it is not uniquely optimal. A Sokolova-like design wager derived from the planned hazard ratio can be more powerful when the design alternative is credible. Adaptive half-Kelly is safer but conservative, because early risk-set data estimate the hazard-ratio scale imprecisely. Thus e-RTs follows the same V8 principle as the other variants: randomization supplies validity, while the wager policy encodes the efficiency/robustness tradeoff.
 
 ## Binary: Why Adaptive Half-Kelly Remains the Default
 
@@ -1061,8 +1093,8 @@ The parametric design wager is therefore useful in continuous endpoints, but it 
 |:---|:--:|:--:|:--:|:--:|
 | Update frequency | Events only | Events only | Every patient | Dense or pairwise |
 | Over-bet cost | Low (slow bleed) | Moderate | Catastrophic | High |
-| Universal $`\lambda`$ possible? | Yes | Marginal | No | No |
-| Kelly fraction | Fixed ($`\lambda = 0.25`$) | Full | Half default | Adaptive or design-fixed |
+| Universal $`\lambda`$ possible? | Partial | Marginal | No | No |
+| Kelly fraction | Fixed/design | Full | Half default | Adaptive or design-fixed |
 
 Summary: Betting Strategy by e-RT Variant
 
@@ -1080,7 +1112,7 @@ The e-RT family comprises nonparametric sequential tests for randomized trials b
 
 ## Operating characteristics
 
-Across the simulation-validated variants, simulations demonstrate proper Type I error control, confirming the theoretical guarantee from the martingale property. Power varies by variant and scenario: for binary outcomes, approximately 50% power for early stopping in trials designed with 80% frequentist power, and 63–66% in trials designed with 90% power. The event-only variant (e-RTe) trades information for operational simplicity because non-events are not used by the e-process. The e-RTwr simulations show that fixed/design GROW-style wagers can substantially improve power over adaptive agnostic wagers, but that an e-process calibrated for 80% anytime power generally requires a larger $`N_{\max}`$ than a conventional final all-pairs win-ratio analysis. The e-RTc simulations show a similar wager-policy tradeoff on the Cohen’s $`d`$ scale: a matched parametric design wager can be much more powerful than the agnostic adaptive wager, while misspecification changes both power and Type M error at crossing.
+Across the simulation-validated variants, simulations demonstrate proper Type I error control, confirming the theoretical guarantee from the martingale property. Power varies by variant and scenario: for binary outcomes, approximately 50% power for early stopping in trials designed with 80% frequentist power, and 63–66% in trials designed with 90% power. The event-only variant (e-RTe) trades information for operational simplicity because non-events are not used by the e-process. The e-RTwr simulations show that fixed/design GROW-style wagers can substantially improve power over adaptive agnostic wagers, but that an e-process calibrated for 80% anytime power generally requires a larger $`N_{\max}`$ than a conventional final all-pairs win-ratio analysis. The e-RTc simulations show a similar wager-policy tradeoff on the Cohen’s $`d`$ scale: a matched parametric design wager can be much more powerful than the agnostic adaptive wager, while misspecification changes both power and Type M error at crossing. The e-RTs simulations extend this pattern to time-to-event monitoring: a design hazard-ratio wager is most efficient when calibrated, while the fixed-magnitude policy remains a robust baseline and adaptive half-Kelly is conservative.
 
 When early stopping occurs across all variants, it typically happens at approximately 45–56% of the planned sample size or event count.
 
@@ -1104,7 +1136,7 @@ This framing clarifies both the method’s strength and its limitation. The stre
 
 The betting framework for hypothesis testing was developed by Shafer (2021). E-values and e-processes have been extensively studied (Vovk and Wang 2021; Ramdas et al. 2022; Ramdas and Wang 2025). Duan et al. (2022) introduced interactive rank testing by betting (i-bet), which applies the betting framework directly to randomized experiments: an analyst sequentially bets on treatment assignments based on observed outcomes, with wealth forming a test martingale under the null. The binary approach implements this framework with a specific adaptive betting strategy tied to outcome values. Betting approaches have been established for estimating means of bounded random variables (Waudby-Smith and Ramdas 2023). The continuous extension adapts these principles to the two-sample randomization setting using a standardization strategy.
 
-Koning (2025) develops e-values for group invariance, including permutation tests, using batch-based likelihood ratio statistics normalized by permutation expectations. Grünwald et al. (2021) developed the ‘Safe Log-rank Test’ based on evaluating likelihood ratios with specific priors on the hazard ratio to ensure growth rate optimality. In contrast, the survival approach constructs a linear test martingale directly from the score function using an adaptive betting strategy. Rather than relying on likelihood integration or specific priors, the survival approach process uses a heuristic ‘plug-in’ estimate of the effect direction, modulated by a ramping function. This offers a computationally simple, algorithmic alternative that derives validity strictly from the randomization probabilities within the risk set, without requiring the full apparatus of partial likelihood theory.
+Koning (2025) develops e-values for group invariance, including permutation tests, using batch-based likelihood ratio statistics normalized by permutation expectations. Grünwald et al. (2021) developed the ‘Safe Log-rank Test’ based on evaluating likelihood ratios with specific priors on the hazard ratio to ensure growth rate optimality. In contrast, e-RTs constructs a linear test martingale directly from the log-rank score increment. Rather than requiring likelihood integration or a correct proportional-hazards model for validity, e-RTs derives validity from the randomization probabilities within each risk set. The wager policy may be fixed, adaptive from the prior score, or design-calibrated from a prespecified hazard ratio; the working hazard ratio affects efficiency, not Type I error control.
 
 The e-RTwr connects the e-RT framework to generalized pairwise comparisons and win-ratio methods (Buyse 2010; Wang and Pocock 2016). In the current implementation, `BuyseTest` is used as the final all-pairs GPC reference and as a way to export pair scores for exploratory simulations (Ozenne and Peron 2025). This should not be confused with an all-pairs e-process: the martingale construction presently uses disjoint or predictably formed pairs, whereas all-pairs GPC reuses observations and requires separate dependence handling.
 
@@ -1134,7 +1166,7 @@ This is an experimental method under development. Application to real patients s
 
 ## LLM use statement
 
-Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wage asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 repository organization, simulation refactoring, wager-policy comparisons, e-RTwr exploratory analyses, e-RTc design-wager implementation, and manuscript cleanup.
+Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wage asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 repository organization, simulation refactoring, wager-policy comparisons, e-RTwr exploratory analyses, e-RTc and e-RTs design-wager implementation, and manuscript cleanup.
 
 ## Acknowledgments
 
@@ -1160,7 +1192,7 @@ The manuscript source, R implementation files, simulation scripts, generated CSV
 
 7.  Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
 
-8.  Eighth Version (in preparation): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; introduced e-RTwr for disjoint pairwise win-ratio and GPC-style monitoring with Sokolova-style GROW comparisons and exploratory `BuyseTest`-based composite endpoint simulations; added parametric normal-shift design wagers for e-RTc; committed simulation result tables for reproducibility; deferred e-RTms/e-RTu from the active manuscript scope; and removed the embedded code appendix in favor of the project repository.
+8.  Eighth Version (in preparation): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; introduced e-RTwr for disjoint pairwise win-ratio and GPC-style monitoring with Sokolova-style GROW comparisons and exploratory `BuyseTest`-based composite endpoint simulations; added parametric normal-shift design wagers for e-RTc; added fixed, adaptive, and design-calibrated wager-policy simulations for e-RTs with Type M and Type S diagnostics; committed simulation result tables for reproducibility; deferred e-RTms/e-RTu from the active manuscript scope; and removed the embedded code appendix in favor of the project repository.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
@@ -1185,12 +1217,6 @@ Gelman, Andrew, and John Carlin. 2014. “Beyond Power Calculations: Assessing T
 <div id="ref-pmlr-v146-grunwald21a" class="csl-entry">
 
 Grünwald, Peter, Alexander Ly, Muriel Perez-Ortiz, and Judith Ter Schure. 2021. “The Safe Logrank Test: Error Control Under Optional Stopping, Continuation and Prior Misspecification.” In *Proceedings of AAAI Spring Symposium on Survival Prediction - Algorithms, Challenges, and Applications 2021*, edited by Russell Greiner, Neeraj Kumar, Thomas Alexander Gerds, and Mihaela van der Schaar, vol. 146. Proceedings of Machine Learning Research. PMLR. <https://proceedings.mlr.press/v146/grunwald21a.html>.
-
-</div>
-
-<div id="ref-kelly1956" class="csl-entry">
-
-Kelly, J. L. 1956. “A New Interpretation of Information Rate.” *Bell System Technical Journal* 35 (4): 917–26.
 
 </div>
 

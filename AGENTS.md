@@ -47,6 +47,8 @@ Key diagnostic additions for V8:
 
 - Type M error at first e-process crossing for e-RTb and e-RTe; for e-RTe, report ARR from the full randomized-trial snapshot when denominators are available, while keeping the event-only tilt as the native monitoring scale.
 - Type M error at first e-process crossing for e-RTc, reported on the Cohen's `d` scale.
+- Type M and Type S error at first e-process crossing for e-RTs, reported on
+  the hazard-ratio scale.
 - Crossing-time effect estimates versus final-study estimates.
 - For e-RTwr, WR at crossing, final-study WR, and exaggeration relative to both the true/design WR and the final-study WR.
 - For e-RTwr simple continuous endpoints, package-backed `BuyseTest` validation of the internal all-pairs WR estimator.
@@ -59,6 +61,7 @@ Initial active code files:
 - `R/ertb.R`: binary e-RTb baseline from V7.
 - `R/erte.R`: event-only e-RTe baseline from V7.
 - `R/ertc.R`: continuous e-RTc V8 module, preserving the standalone V7 adaptive sign-direction wager and adding parametric normal-shift design/oracle wagers.
+- `R/erts.R`: time-to-event e-RTs module with fixed, adaptive, design, and oracle log-rank risk-set wager policies.
 - `R/ertwr.R`: pairwise win/loss e-RTwr prototype.
 - `R/simulations/`: V8 simulation scripts.
 
@@ -67,10 +70,31 @@ Current code direction:
 - Refactor e-RTb to support `wager = c("adaptive", "design", "fixed", "oracle")`.
 - Refactor e-RTe similarly, noting that design mode operates on the event-coin scale.
 - Refactor e-RTc similarly, noting that design mode uses a normal-shift working model for `Pr(T = 1 | Y)` and is parametric by default.
+- e-RTs now supports fixed-magnitude, adaptive half-Kelly, design-calibrated,
+  and oracle-for-simulation-only risk-set wagers.
 - Add misspecification grids comparing adaptive, design-calibrated, fixed, and oracle wagers.
 - Type M error at crossing has been added to e-RTb/e-RTe simulation outputs. The e-RTe simulation now feeds only event arm labels to the e-process but computes crossing-time ARR from the full simulated trial snapshot.
 - e-RTwr simulations now use `WRestimates`/Yu-Ganju sample sizes.
 - e-RTwr WR diagnostics use both the sequential disjoint-pair WR and an internal all-pairs continuous WR; `BuyseTest` is available as a validation/reference check.
+
+## e-RTs Conventions
+
+The current e-RTs implementation uses the log-rank risk-set identity:
+
+- at each event, compute the randomized treatment proportion among patients
+  still at risk;
+- update wealth using `W_j = W_{j-1}(1 + lambda_j U_j)`, where
+  `U_j = X_j - p_j`;
+- fixed mode uses adaptive direction with a constant magnitude
+  `lambda_max = 0.25`;
+- adaptive mode estimates the prior log hazard ratio from the cumulative score
+  and uses half-Kelly by default;
+- design mode maps a prespecified hazard ratio to a risk-set-specific
+  GROW-style wager.
+
+For HR below 1, treatment benefit corresponds to a negative log-rank score and
+a negative design wager on this increment scale. The working hazard ratio is an
+efficiency assumption, not a validity assumption.
 
 ## e-RTwr Conventions
 

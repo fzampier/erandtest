@@ -48,6 +48,9 @@ wager-policy problem.
   design wager based on prespecified means and SD.
 - e-RTc simulations report Type I error, power, and Type M error at crossing
   on the Cohen's `d` scale.
+- e-RTs now has fixed-magnitude, adaptive half-Kelly, and design-calibrated
+  log-rank risk-set wagers, with Type I error, power, Type M, and Type S
+  diagnostics.
 - e-RTwr has a disjoint-pair prototype, Yu-Ganju/`WRestimates`-compatible
   design sample sizes, final-study win-ratio diagnostics, and a Sokolova-style
   GROW comparison.
@@ -68,6 +71,7 @@ wager-policy problem.
   - `ertb.R`: binary e-RTb implementation.
   - `erte.R`: event-only e-RTe implementation.
   - `ertc.R`: continuous e-RTc implementation.
+  - `erts.R`: time-to-event e-RTs implementation.
   - `ertwr.R`: pairwise win-ratio/GPC prototype.
 - `R/simulations/`
   - `wager_policy_comparison.R`: e-RTb/e-RTe adaptive versus design-fixed
@@ -75,6 +79,8 @@ wager-policy problem.
   - `wager_policy_figures.R`: figures and manuscript tables for e-RTb/e-RTe.
   - `ertc_wager_policy.R`: e-RTc adaptive versus parametric design wager
     simulations.
+  - `erts_wager_policy.R`: e-RTs fixed, adaptive, and design-calibrated
+    log-rank risk-set simulations.
   - `ertwr_pilot.R`, `ertwr_adaptive_tuning.R`, `ertwr_sokolova_comparison.R`,
     `ertwr_buysetest_check.R`, and `ertwr_composite_buysetest.R`: e-RTwr
     simulation and validation scripts.
@@ -98,6 +104,7 @@ The main V8 simulation scripts use fixed seeds:
 - e-RTb/e-RTe wager policy comparison: `set.seed(20260428)`.
 - e-RTb/e-RTe figure generation: `set.seed(20260429)`.
 - e-RTc wager policy comparison: `set.seed(20260430)`.
+- e-RTs wager policy comparison: `set.seed(20260501)`.
 
 Regenerate the main V8 outputs from the repository root:
 
@@ -105,6 +112,7 @@ Regenerate the main V8 outputs from the repository root:
 Rscript R/simulations/wager_policy_comparison.R 1000
 Rscript R/simulations/wager_policy_figures.R
 Rscript R/simulations/ertc_wager_policy.R 1000
+Rscript R/simulations/erts_wager_policy.R 1000
 Rscript R/simulations/ertwr_pilot.R 1000
 Rscript R/simulations/ertwr_sokolova_comparison.R 1000
 Rscript R/simulations/ertwr_composite_buysetest.R 300 250
@@ -153,8 +161,9 @@ e-RTb/e-RTe wager-policy table. The PDF otherwise compiles successfully.
 - Design-calibrated wagers improve efficiency when the design alternative is
   credible, but misspecification can reduce power or inflate the apparent
   effect at crossing.
-- Type M error at crossing is now tracked for e-RTb, e-RTe, e-RTc, and e-RTwr
-  because early stopping enriches for favorable random fluctuation.
+- Type M error at crossing is now tracked for e-RTb, e-RTe, e-RTc, e-RTs, and
+  e-RTwr because early stopping enriches for favorable random fluctuation. e-RTs
+  also reports Type S sign error among crossing trials.
 - e-RTwr currently uses predictable/disjoint pair updates for monitoring.
   All-pairs GPC/win-ratio summaries are used as final-trial descriptive
   comparators unless a dependence-safe all-pairs e-process is developed.
