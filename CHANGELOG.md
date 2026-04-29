@@ -20,6 +20,9 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 - Clarified in the relationship-to-existing-work section that the first e-RT
   draft predated the Sokolova/Sokolov manuscript while acknowledging their work
   as a central influence on the V8 design-calibrated framing.
+- Replaced the inherited e-RTs staggered-entry paragraph with a standalone V8
+  check, distinguishing exact complete-follow-up time-on-study identity from a
+  separate calendar-event-order monitoring simulation.
 - Reorganized the binary and event-only sections around adaptive versus
   design-fixed wager policies.
 - Added e-RTwr as a pairwise win-ratio/GPC-inspired monitoring prototype.
@@ -46,6 +49,8 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
   matched design, overestimated design, and oracle policies.
 - Added e-RTs manuscript figures for wager-policy power and Type M error at
   crossing.
+- Added a standalone e-RTs staggered-entry script with 1,000-replicate results,
+  summary notes, and a refreshed supplement figure.
 - Added e-RTwr pilot, tuning, Sokolova-style GROW comparison, WRestimates
   sample-size checks, BuyseTest validation, and composite endpoint simulations.
 - Committed generated CSV result tables under `results/` because the repository

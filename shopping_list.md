@@ -22,6 +22,8 @@ This is the working add/remove/change list for Version 8.
 - e-RTs fixed-magnitude, adaptive half-Kelly, design-calibrated, misspecified
   design, and oracle simulation framework, with Type I error, power, Type M, and
   Type S diagnostics.
+- e-RTs staggered-entry check comparing paired complete-follow-up
+  time-on-study identity with calendar-event-order monitoring.
 - Yu-Ganju/`WRestimates`-compatible win-ratio sample-size formula for e-RTwr design sizes.
 - Final-study WR and WR at crossing for e-RTwr using internal sequential and all-pairs continuous WR estimators.
 - Package-backed `BuyseTest` validation for simple continuous all-pairs WR estimates, kept as a reference check rather than the main simulation engine.
@@ -79,6 +81,9 @@ This is the working add/remove/change list for Version 8.
 - e-RTs:
   - compare current fixed-magnitude wager, adaptive log-rank-score wager, design/Sokolova-like wager from prespecified HR, misspecified design HRs, and oracle benchmark; **implemented**
   - report Type I error, power, median crossing event, HR at crossing, final HR, Type M on the `|log(HR)|` scale, and Type S sign error at crossing; **implemented**
+  - include a standalone staggered-entry check for complete-follow-up
+    time-on-study analyses and a separate calendar-event-order stream;
+    **implemented**
 - Pairwise win/loss:
   - disjoint or predictably matched treatment-control pairs only at first;
   - avoid all-pairs products until dependence is handled;

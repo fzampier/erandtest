@@ -51,6 +51,8 @@ wager-policy problem.
 - e-RTs now has fixed-magnitude, adaptive half-Kelly, and design-calibrated
   log-rank risk-set wagers, with Type I error, power, Type M, and Type S
   diagnostics.
+- e-RTs now includes a standalone staggered-entry check comparing paired
+  complete-follow-up time-on-study analyses with a calendar-event-order stream.
 - e-RTwr has a disjoint-pair prototype, Yu-Ganju/`WRestimates`-compatible
   design sample sizes, final-study win-ratio diagnostics, and a Sokolova-style
   GROW comparison.
@@ -83,6 +85,8 @@ wager-policy problem.
     log-rank risk-set simulations.
   - `erts_wager_policy_figures.R`: manuscript figures for e-RTs power and
     Type M diagnostics.
+  - `erts_staggered_entry_check.R`: standalone check of complete-follow-up
+    staggered-entry time-on-study identity and calendar-order monitoring.
   - `ertwr_pilot.R`, `ertwr_adaptive_tuning.R`, `ertwr_sokolova_comparison.R`,
     `ertwr_buysetest_check.R`, and `ertwr_composite_buysetest.R`: e-RTwr
     simulation and validation scripts.
@@ -107,6 +111,7 @@ The main V8 simulation scripts use fixed seeds:
 - e-RTb/e-RTe figure generation: `set.seed(20260429)`.
 - e-RTc wager policy comparison: `set.seed(20260430)`.
 - e-RTs wager policy comparison: `set.seed(20260501)`.
+- e-RTs staggered-entry check: `set.seed(20260502)`.
 
 Regenerate the main V8 outputs from the repository root:
 
@@ -116,6 +121,7 @@ Rscript R/simulations/wager_policy_figures.R
 Rscript R/simulations/ertc_wager_policy.R 1000
 Rscript R/simulations/erts_wager_policy.R 1000
 Rscript R/simulations/erts_wager_policy_figures.R
+Rscript R/simulations/erts_staggered_entry_check.R 1000
 Rscript R/simulations/ertwr_pilot.R 1000
 Rscript R/simulations/ertwr_sokolova_comparison.R 1000
 Rscript R/simulations/ertwr_composite_buysetest.R 300 250
