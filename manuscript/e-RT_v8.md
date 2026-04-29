@@ -173,14 +173,14 @@ This represents a free option: anytime-valid monitoring with no alpha spending a
 
 ## Trajectory Examples
 
-Figure <a href="#fig:null" data-reference-type="ref" data-reference="fig:null">1</a> shows example wealth trajectories from 30 simulated trials under the null hypothesis (both arms 40% event rate). Sample sizes correspond to trials designed for 80% power (n = 712, left) and 90% power (n = 954, right) to detect a 10% ARR. Under the null, wealth fluctuates randomly around 1. Some trajectories temporarily rise toward the threshold but eventually drift back down. The downward drift over time reflects the accumulating “cost” of betting on noise.
+Figure <a href="#fig:null" data-reference-type="ref" data-reference="fig:null">1</a> shows representative wealth trajectories from 30 simulated trials under the null hypothesis (both arms 40% event rate). Sample sizes correspond to trials designed for 80% power (n = 712, left) and 90% power (n = 954, right) to detect a 10% ARR. Under the null, wealth fluctuates randomly around 1 and, in these panels, gradually drifts downward as repeated bets are placed on noise.
 
 <figure id="fig:null" data-latex-placement="htbp">
 <p><embed src="traj_null_10pct_80pow.pdf" style="width:48.0%" /> <embed src="traj_null_10pct_90pow.pdf" style="width:48.0%" /></p>
 <figcaption>Wealth trajectories under the null hypothesis. Left: n = 712 (80% power design). Right: n = 954 (90% power design). Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). Dotted gray line: neutral (wealth = 1). Under the null, no trajectory crosses the threshold.</figcaption>
 </figure>
 
-Figure <a href="#fig:alt" data-reference-type="ref" data-reference="fig:alt">2</a> shows trajectories under the alternative hypothesis (40% vs 30% event rates, true ARR = 10%). With a real treatment effect, wealth grows systematically. Many trajectories cross the rejection threshold before enrollment completes, and some reach values far exceeding 20 — providing strong evidence against the null.
+Figure <a href="#fig:alt" data-reference-type="ref" data-reference="fig:alt">2</a> shows representative trajectories under the alternative hypothesis (40% vs 30% event rates, true ARR = 10%). With a real treatment effect, many wealth paths grow, cross the rejection threshold before enrollment completes, and reach values far exceeding 20—providing strong evidence against the null.
 
 <figure id="fig:alt" data-latex-placement="htbp">
 <p><embed src="traj_alt_10pct_80pow.pdf" style="width:48.0%" /> <embed src="traj_alt_10pct_90pow.pdf" style="width:48.0%" /></p>
@@ -385,11 +385,11 @@ When the threshold was crossed, it occurred at approximately 40–50% of total e
 
 ## Trajectory Examples
 
-Figure <a href="#fig:erte" data-reference-type="ref" data-reference="fig:erte">3</a> shows example wealth trajectories for e-RTe. Under the null (left), the event coin is fair and wealth fluctuates around 1. Under the alternative (right), treatment events arrive less frequently than control events, the adaptive wager learns this imbalance, and wealth grows.
+Figure <a href="#fig:erte" data-reference-type="ref" data-reference="fig:erte">3</a> shows representative wealth trajectories for e-RTe. Under the null (left), the event coin is fair and wealth fluctuates near or below 1. Under the alternative (right), treatment events arrive less frequently than control events; in this 500-event illustration, 12 of 30 paths cross the threshold as the adaptive wager learns the event-coin imbalance.
 
 <figure id="fig:erte" data-latex-placement="htbp">
 <p><embed src="traj_eRTe_null.pdf" style="width:48.0%" /> <embed src="traj_eRTe_alt.pdf" style="width:48.0%" /></p>
-<figcaption> Trajectories of the e-RTe process (25% baseline event rate, 5pp ARR, 500 events). Left: under the null hypothesis (event coin <span class="math inline"> = 0.50</span>), wealth fluctuates randomly. Right: under the alternative hypothesis, wealth grows as the adaptive wager learns the event-coin imbalance. Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
+<figcaption> Trajectories of the e-RTe process (25% baseline event rate, 5pp ARR, 500 events). Left: under the null hypothesis (event coin <span class="math inline"> = 0.50</span>), wealth fluctuates randomly. Right: under the alternative hypothesis, some paths cross as the adaptive wager learns the event-coin imbalance. Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
 </figure>
 
 ## Head-to-Head Comparison with e-RTb
@@ -1027,7 +1027,7 @@ Figure <a href="#fig:erts_wager_policy_type_m" data-reference-type="ref" data-r
 
 <figure id="fig:survival" data-latex-placement="H">
 <p><embed src="traj_survivaleRT_null.pdf" style="width:48.0%" /> <embed src="traj_survivaleRT_08.pdf" style="width:48.0%" /></p>
-<figcaption> Trajectories of the fixed-magnitude e-RTs process for a trial designed to detect a Hazard Ratio of 0.80 with 80% fixed-sample log-rank power (<span class="math inline">631</span> events). Left: trajectories under the null hypothesis (HR = 1.00), where wealth fluctuates randomly. Right: trajectories under the alternative hypothesis (HR = 0.80), where wealth grows systematically. The red dashed line represents the rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
+<figcaption> Trajectories of the fixed-magnitude e-RTs process for a trial designed to detect a Hazard Ratio of 0.80 with 80% fixed-sample log-rank power (<span class="math inline">631</span> events). Left: trajectories under the null hypothesis (HR = 1.00), where wealth fluctuates randomly. Right: trajectories under the alternative hypothesis (HR = 0.80), where many paths grow and cross the rejection threshold. The red dashed line represents the rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
 </figure>
 
 # Betting Strategy Design: The Wager Asymmetry

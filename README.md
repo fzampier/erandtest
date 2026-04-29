@@ -71,6 +71,8 @@ wager-policy problem.
   - `e-RT_v8.pdf`: compiled manuscript.
   - `references.bib`: bibliography.
   - manuscript figures and generated LaTeX tables.
+  - Manuscript-ready figure PDFs live here so LaTeX can include them directly;
+    the top-level `figures/` directory is not used.
 - `R/`
   - `ertb.R`: binary e-RTb implementation.
   - `erte.R`: event-only e-RTe implementation.
