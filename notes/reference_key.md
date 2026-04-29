@@ -20,3 +20,13 @@ Use these bracket labels in working notes or comments when quick author names ar
 
 - [S1] `sokolova2026evalues`: Sokolova and Sokolov, 2026. E-values for adaptive clinical trials: anytime-valid monitoring in practice.
 - [S2] `evalinger2026`: Sokolova and Sokolov, 2026. `evalinger` R package for e-value adaptive clinical trial monitoring.
+- [W1] `yu2022sample`: Yu and Ganju, 2022. Sample size formula for a win ratio endpoint.
+- [W2] `pocock2012winratio`: Pocock et al., 2012. Win ratio for prioritized clinical outcomes.
+- [W3] `buyse2010gpc`: Buyse, 2010. Generalized pairwise comparisons.
+- [W4] `wrestimates`: `WRestimates` R package for win-ratio sample size, power, and confidence intervals.
+- [W5] `buysetest`: `BuyseTest` R package for generalized pairwise comparisons and win-ratio estimation.
+
+## Package Roles
+
+- `WRestimates`: use for e-RTwr design sample size via `wr.ss()` or the equivalent Yu-Ganju formula.
+- `BuyseTest`: use for final-study all-pairs GPC/win-ratio estimates and as an external reference against the sequential disjoint-pair e-RTwr estimand.
