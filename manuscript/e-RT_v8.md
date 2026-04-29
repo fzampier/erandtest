@@ -8,7 +8,7 @@ E-values and e-processes offer an alternative framework (Shafer 2021; Vovk and W
 
 Duan et al. (2022) introduced interactive rank testing by betting (i-bet), which tests treatment effects by wagering on treatment assignments given observed outcomes. The intuition is discussed by (Ramdas 2021). Under the null hypothesis, randomization ensures that assignments are independent of outcomes, so no betting strategy can systematically accumulate wealth.
 
-Sokolova and Sokolov (2026) recently developed a practitioner-oriented framework for e-value monitoring in adaptive clinical trials, including design-calibrated binary e-processes, safe logrank monitoring, futility tools, platform-trial extensions, and an open-source implementation in the `evalinger` package. Their work emphasizes a design-calibrated view of e-process construction: the betting strategy is chosen to optimize expected evidence growth under a prespecified clinically meaningful alternative. They refer to this as a growth-rate-optimal (GROW) wager.
+Sokolova and Sokolov (2026b) recently developed a practitioner-oriented framework for e-value monitoring in adaptive clinical trials, including design-calibrated binary e-processes, safe logrank monitoring, futility tools, platform-trial extensions, and an open-source implementation in the `evalinger` package. Their work emphasizes a design-calibrated view of e-process construction: the betting strategy is chosen to optimize expected evidence growth under a prespecified clinically meaningful alternative. They refer to this as a growth-rate-optimal (GROW) wager.
 
 We propose e-RT (e-value Randomized Trial), a complementary family of methods for prospective sequential monitoring of randomized trials. Like i-bet (Duan et al. 2022), e-RT uses betting martingales for inference, but differs in key respects: e-RT monitors sequentially as patients enroll rather than analyzing completed trial data; it requires no covariates or working models; and its default wager policies can be learned from accumulating data rather than fixed by a hypothesized effect size. This yields methods with minimal assumptions suitable for real-time trial monitoring.
 
@@ -430,9 +430,9 @@ Use e-RTe when (i) the baseline event rate is 15–25%, (ii) the expected ARR is
 
 ## Adaptive and Design-Fixed Wager Policies
 
-The preceding simulations used the default wager policies: adaptive half-Kelly for e-RTb and adaptive full-Kelly for e-RTe. In Version 8 we explicitly separate the validity engine from the wager policy. The martingale argument requires only that the wager be predictable: it may be learned from prior trial data, or it may be fixed in advance from the design alternative. This distinction parallels Sokolova and Sokolov (2026), where the e-process is calibrated to a clinically meaningful design effect.
+The preceding simulations used the default wager policies: adaptive half-Kelly for e-RTb and adaptive full-Kelly for e-RTe. In Version 8 we explicitly separate the validity engine from the wager policy. The martingale argument requires only that the wager be predictable: it may be learned from prior trial data, or it may be fixed in advance from the design alternative. This distinction parallels Sokolova and Sokolov (2026b), where the e-process is calibrated to a clinically meaningful design effect.
 
-In the terminology of Sokolova and Sokolov (2026), a GROW wager is the value $`\lambda^\star`$ that maximizes the expected log-growth of the e-process under a specified design alternative:
+In the terminology of Sokolova and Sokolov (2026b), a GROW wager is the value $`\lambda^\star`$ that maximizes the expected log-growth of the e-process under a specified design alternative:
 ``` math
 \begin{equation}
 \lambda^\star = \arg\max_\lambda \; \mathbb{E}_{\text{design}}\{\log M(\lambda)\},
@@ -588,7 +588,7 @@ For a fixed design win ratio $`WR^\star`$, the natural GROW-style wager is
 \label{eq:wr_lambda}
 \end{equation}
 ```
-This is the same algebraic scale used by the paired binary GROW construction of Sokolova and Sokolov (2026), applied here to pairwise win/loss signs. Adaptive e-RTwr instead estimates the pairwise edge from previous wins and losses and ramps toward a full-Kelly wager. The two policies answer different operational questions: adaptive e-RTwr is effect-size agnostic, whereas fixed/design e-RTwr is more efficient when the design win ratio is credible.
+This is the same algebraic scale used by the paired binary GROW construction of Sokolova and Sokolov (2026b), applied here to pairwise win/loss signs. Adaptive e-RTwr instead estimates the pairwise edge from previous wins and losses and ramps toward a full-Kelly wager. The two policies answer different operational questions: adaptive e-RTwr is effect-size agnostic, whereas fixed/design e-RTwr is more efficient when the design win ratio is credible.
 
 ## Simple win-ratio simulations
 
@@ -1150,6 +1150,8 @@ This framing clarifies both the method’s strength and its limitation. The stre
 
 The betting framework for hypothesis testing was developed by Shafer (2021). E-values and e-processes have been extensively studied (Vovk and Wang 2021; Ramdas et al. 2022; Ramdas and Wang 2025). Duan et al. (2022) introduced interactive rank testing by betting (i-bet), which applies the betting framework directly to randomized experiments: an analyst sequentially bets on treatment assignments based on observed outcomes, with wealth forming a test martingale under the null. The binary approach implements this framework with a specific adaptive betting strategy tied to outcome values. Betting approaches have been established for estimating means of bounded random variables (Waudby-Smith and Ramdas 2023). The continuous extension adapts these principles to the two-sample randomization setting using a standardization strategy.
 
+Sokolova and Sokolov (2026b) and the accompanying `evalinger` implementation (Sokolova and Sokolov 2026a) are especially important comparators for the present work. The first draft of e-RT was dated December 4, 2025, so the randomization-betting construction developed independently of that manuscript. This chronology is noted only to clarify the origin of e-RT, not to diminish the importance of their contribution. Their work provides a mature design-calibrated perspective on clinical-trial e-processes, particularly through growth-rate-optimal (GROW) wagers chosen from prespecified alternatives. Version 8 of e-RT adopts this distinction explicitly: randomization supplies the validity engine, while adaptive and design-calibrated wagers represent different efficiency choices.
+
 Koning (2025) develops e-values for group invariance, including permutation tests, using batch-based likelihood ratio statistics normalized by permutation expectations. Grünwald et al. (2021) developed the ‘Safe Log-rank Test’ based on evaluating likelihood ratios with specific priors on the hazard ratio to ensure growth rate optimality. In contrast, e-RTs constructs a linear test martingale directly from the log-rank score increment. Rather than requiring likelihood integration or a correct proportional-hazards model for validity, e-RTs derives validity from the randomization probabilities within each risk set. The wager policy may be fixed, adaptive from the prior score, or design-calibrated from a prespecified hazard ratio; the working hazard ratio affects efficiency, not Type I error control.
 
 The e-RTwr connects the e-RT framework to generalized pairwise comparisons and win-ratio methods (Buyse 2010; Wang and Pocock 2016). In the current implementation, `BuyseTest` is used as the final all-pairs GPC reference and as a way to export pair scores for exploratory simulations (Ozenne and Peron 2025). This should not be confused with an all-pairs e-process: the martingale construction presently uses disjoint or predictably formed pairs, whereas all-pairs GPC reuses observations and requires separate dependence handling.
@@ -1276,9 +1278,15 @@ Shafer, Glenn. 2021. “Testing by Betting: A Strategy for Statistical and Scien
 
 </div>
 
+<div id="ref-evalinger2026" class="csl-entry">
+
+Sokolova, Alexandra, and Vadim Sokolov. 2026a. *Evalinger: E-Values for Adaptive Clinical Trial Monitoring*. <a href="https://github.com/VadimSokolov/evalinger" class="uri">Https://github.com/VadimSokolov/evalinger</a>.
+
+</div>
+
 <div id="ref-sokolova2026evalues" class="csl-entry">
 
-Sokolova, Alexandra, and Vadim Sokolov. 2026. *E-Values for Adaptive Clinical Trials: Anytime-Valid Monitoring in Practice*. <https://arxiv.org/abs/2602.06379>.
+Sokolova, Alexandra, and Vadim Sokolov. 2026b. *E-Values for Adaptive Clinical Trials: Anytime-Valid Monitoring in Practice*. <https://arxiv.org/abs/2602.06379>.
 
 </div>
 

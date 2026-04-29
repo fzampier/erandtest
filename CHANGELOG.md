@@ -17,6 +17,9 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 
 - Added Sokolova and Sokolov as a central external comparison for
   design-calibrated e-processes and GROW-style wagers.
+- Clarified in the relationship-to-existing-work section that the first e-RT
+  draft predated the Sokolova/Sokolov manuscript while acknowledging their work
+  as a central influence on the V8 design-calibrated framing.
 - Reorganized the binary and event-only sections around adaptive versus
   design-fixed wager policies.
 - Added e-RTwr as a pairwise win-ratio/GPC-inspired monitoring prototype.
