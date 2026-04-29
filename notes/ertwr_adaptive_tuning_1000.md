@@ -20,9 +20,9 @@ Seed:
 set.seed(20260430)
 ```
 
-## Coarse Grid
+These runs use Yu-Ganju win-ratio sample sizes: 1:1 allocation, no ties, two-sided alpha 0.05 as one-sided alpha 0.025, and 80% power.
 
-These tuning runs still use the temporary e-RTwr pilot sample-size anchor. The recommended adaptive wager policy can carry forward, but the design-size calculations should be rerun after switching to `WRestimates`/Yu-Ganju sample sizes.
+## Coarse Grid
 
 The coarse grid compared half Kelly and full Kelly over burn-ins 0, 10, 30 and ramps 1, 20, 50.
 
@@ -30,14 +30,14 @@ Best average alternative power by tuning setting:
 
 | Kelly fraction | Burn-in | Ramp | Max type I | Mean power |
 |---:|---:|---:|---:|---:|
-| 1.0 | 0 | 50 | 3.3% | 33.5% |
-| 1.0 | 30 | 50 | 2.6% | 31.6% |
-| 1.0 | 10 | 20 | 3.7% | 31.5% |
-| 1.0 | 10 | 50 | 3.3% | 31.2% |
-| 1.0 | 30 | 20 | 3.7% | 31.2% |
-| 0.5 | 0 | 20 | 2.1% | 21.9% |
+| 1.0 | 0 | 50 | 3.5% | 34.0% |
+| 1.0 | 10 | 50 | 3.7% | 33.2% |
+| 1.0 | 10 | 20 | 3.8% | 32.2% |
+| 1.0 | 30 | 50 | 3.8% | 32.0% |
+| 1.0 | 30 | 20 | 4.2% | 31.8% |
+| 0.5 | 0 | 20 | 2.6% | 23.4% |
 
-Full Kelly dominated half Kelly for power. The only clearly bad full-Kelly setting was burn-in 0 / ramp 1: it remained type-I-safe but had only 4.0% mean power because it reacts too strongly to the first few pairs and can drive wealth close to zero early.
+Full Kelly again dominated half Kelly for power. The only clearly poor full-Kelly setting remains burn-in 0 / ramp 1: type I was controlled, but mean power was only 4.9% because the wager can drive wealth down after the first few random pairs.
 
 ## Fine Full-Kelly Grid
 
@@ -47,30 +47,34 @@ Best average alternative power:
 
 | Burn-in | Ramp | Max type I | Mean power |
 |---:|---:|---:|---:|
-| 10 | 50 | 4.2% | 33.2% |
-| 0 | 75 | 3.4% | 32.6% |
-| 0 | 100 | 3.5% | 32.5% |
-| 10 | 35 | 4.6% | 32.4% |
-| 20 | 75 | 3.5% | 31.5% |
-| 30 | 50 | 3.7% | 31.5% |
+| 0 | 100 | 3.6% | 34.0% |
+| 10 | 75 | 3.4% | 33.9% |
+| 30 | 50 | 3.7% | 33.6% |
+| 10 | 50 | 2.7% | 33.2% |
+| 0 | 50 | 3.7% | 33.2% |
+| 20 | 75 | 3.3% | 33.0% |
 
-One fine-grid setting, burn-in 20 / ramp 50, showed 5.4% maximum null rejection across the four design WRs. With 1,000 replicates this is compatible with Monte Carlo error around the Ville bound, but it is not a good default because nearby settings are cleaner.
+The differences among the top settings are small. A slower ramp can replace a burn-in: burn-in 0 / ramp 100 was best on mean power, while burn-in 10 / ramp 50 was slightly more conservative and remains easier to explain as a default.
 
 ## Best Settings by Design WR
 
 | Design WR | Best setting | Power | Max type I | Median crossing |
 |---:|---|---:|---:|---:|
-| 1.10 | burn-in 30, ramp 75 | 33.4% | 2.5% | 1,108 |
-| 1.20 | burn-in 30, ramp 100 | 36.0% | 3.7% | 360 |
-| 1.30 | burn-in 10, ramp 50 | 36.9% | 4.2% | 159 |
-| 1.50 | burn-in 0, ramp 50 | 34.6% | 4.1% | 76 |
+| 1.10 | burn-in 30, ramp 75 | 34.9% | 3.3% | 1,057 |
+| 1.20 | burn-in 30, ramp 100 | 39.5% | 3.9% | 320 |
+| 1.30 | burn-in 20, ramp 35 | 38.1% | 3.7% | 166 |
+| 1.50 | burn-in 0, ramp 50 | 37.9% | 3.7% | 73 |
 
-Low-WR designs benefit from a longer warm-up because the planned pair count is large and the true edge is subtle. High-WR designs have fewer pairs, so long burn-ins waste a substantial fraction of monitoring time.
+Low-WR designs benefit from a longer warm-up because the planned pair count is large and the true edge is subtle. High-WR designs have fewer pairs, so long burn-ins or very long ramps consume a substantial fraction of monitoring time.
 
 ## Recommendation
 
-Use adaptive full Kelly for e-RTwr. A pragmatic default is burn-in 10 and ramp 50: it had the best average power in the fine grid while keeping simulated type I error below 5%.
+Use adaptive full Kelly for e-RTwr. A pragmatic default remains burn-in 10 and ramp 50: it had 33.2% mean power in the fine grid with the lowest max type I error among the top settings (2.7%).
 
-For low anticipated WRs, especially around 1.10-1.20, also report sensitivity analyses with a longer ramp or burn-in, such as burn-in 30 / ramp 75 or burn-in 30 / ramp 100. For short, higher-effect designs, avoid long burn-ins.
+For sensitivity analyses:
+
+- report burn-in 0 / ramp 100 as the best-average-power policy;
+- report burn-in 30 / ramp 75 or 30 / ramp 100 for low anticipated WRs around 1.10-1.20;
+- report burn-in 0 / ramp 50 for short, higher-effect designs.
 
 This tuning does not affect validity. Burn-in, ramp, and Kelly fraction only define predictable bounded wagers; the martingale property still follows from the null symmetry of future pairwise wins/losses conditional on the past.

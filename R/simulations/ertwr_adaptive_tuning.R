@@ -80,7 +80,7 @@ run_adaptive_policy <- function(n_sims, n_pairs, true_wr,
 
 run_tuning_row <- function(true_wr, kelly_fraction, burn_in, ramp,
                            scenario_type) {
-  n_pairs <- design_n_pairs_continuous(
+  n_pairs <- design_n_pairs_wr(
     true_wr,
     target_power = target_power,
     alpha = alpha
@@ -109,6 +109,7 @@ run_tuning_row <- function(true_wr, kelly_fraction, burn_in, ramp,
     design_d = wr_to_d(true_wr),
     n_pairs = n_pairs,
     n_patients = 2 * n_pairs,
+    design_method = "Yu-Ganju WR",
     kelly_fraction = kelly_fraction,
     burn_in = burn_in,
     ramp = ramp,

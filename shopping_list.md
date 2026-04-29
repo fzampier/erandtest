@@ -11,11 +11,17 @@ This is the working add/remove/change list for Version 8.
 - Add simulations comparing adaptive, fixed, design-calibrated, and oracle wagers.
 - Add design-effect misspecification simulations.
 - Include Type I error simulations for every real wager policy.
-- Add Type M error at crossing for e-RTb and e-RTe simulations.
 - Add a pairwise win/loss e-process concept connected to generalized pairwise comparisons and win-ratio methods.
 - Add citations for Buyse generalized pairwise comparisons and Pocock win ratio if the pairwise section survives.
-- Use `WRestimates`/Yu-Ganju win-ratio sample-size formula for e-RTwr design sizes.
-- Calculate final-study WR and WR at crossing for e-RTwr, likely using `BuyseTest` as the GPC reference implementation.
+
+## Added In Code, Needs Manuscript Integration
+
+- Type M error at crossing for e-RTb and e-RTe simulations.
+- Yu-Ganju/`WRestimates`-compatible win-ratio sample-size formula for e-RTwr design sizes.
+- Final-study WR and WR at crossing for e-RTwr using internal sequential and all-pairs continuous WR estimators.
+- Package-backed `BuyseTest` validation for simple continuous all-pairs WR estimates, kept as a reference check rather than the main simulation engine.
+- Sokolova-style GROW comparison showing same-N fixed/GROW e-RTwr versus e-process-calibrated GROW `Nmax`.
+- Composite endpoint simulation using `BuyseTest::simBuyseTest()`, final all-pairs GPC, and disjoint-pair e-RTwr on exported pair scores.
 
 ## Remove Or Deprecate
 
@@ -62,11 +68,13 @@ This is the working add/remove/change list for Version 8.
   - avoid all-pairs products until dependence is handled;
   - compare power and estimand behavior against ordinary e-RTc and classical win-ratio summaries.
 - e-RTwr WR diagnostics:
-  - use `WRestimates::wr.ss()` or the same Yu-Ganju formula for design sample size;
-  - calculate full-study WR at final N;
-  - calculate WR using only data accrued up to first e-process crossing;
-  - report crossing-WR exaggeration relative to the true/design WR and relative to the final-study WR;
-  - distinguish disjoint-pair sequential WR from all-pairs GPC/BuyseTest WR.
+  - use the package-backed `BuyseTest` all-pairs GPC check as a validation/reference estimator;
+  - keep the internal all-pairs continuous WR as the fast simulation estimator after confirming agreement with `BuyseTest` on simple continuous examples;
+  - distinguish disjoint-pair sequential WR from all-pairs GPC/BuyseTest WR in the manuscript.
+- Sokolova/GROW comparison:
+  - present fixed/design e-RTwr as the same paired GROW wager applied to continuous pairwise signs;
+  - distinguish Yu-Ganju final-analysis N from e-process-calibrated `Nmax`;
+  - report the observed 1.6-1.7x pair-count increase needed to recover about 80% anytime power in the simple WR-sign simulation.
 
 ## Open Questions
 

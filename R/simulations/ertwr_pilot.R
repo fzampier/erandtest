@@ -26,14 +26,43 @@ alpha <- 0.05
 target_power <- 0.80
 wr_grid <- c(1.10, 1.20, 1.30, 1.50)
 
-summarize_runs <- function(crossings, finals) {
+median_na <- function(x) {
+  if (all(is.na(x))) NA_real_ else median(x, na.rm = TRUE)
+}
+
+quantile_na <- function(x, prob) {
+  if (all(is.na(x))) NA_real_ else unname(quantile(x, prob, na.rm = TRUE))
+}
+
+summarize_runs <- function(crossings, finals,
+                           seq_wr_crossing, seq_wr_final,
+                           all_pairs_wr_crossing, all_pairs_wr_final,
+                           true_wr) {
   reject <- !is.na(crossings)
   rate <- mean(reject)
+
+  true_wr_exaggeration <- if (true_wr == 1) {
+    rep(NA_real_, length(crossings))
+  } else {
+    all_pairs_wr_crossing / true_wr
+  }
+
+  final_wr_exaggeration <- all_pairs_wr_crossing / all_pairs_wr_final
+
   data.frame(
     rejection_rate = rate,
     se = sqrt(rate * (1 - rate) / length(crossings)),
     median_crossing = if (any(reject)) median(crossings[reject]) else NA_real_,
     median_final_evalue = median(finals),
+    median_seq_wr_crossing = median_na(seq_wr_crossing[reject]),
+    median_seq_wr_final = median_na(seq_wr_final),
+    median_all_pairs_wr_crossing = median_na(all_pairs_wr_crossing[reject]),
+    median_all_pairs_wr_final = median_na(all_pairs_wr_final),
+    median_wr_exaggeration_vs_true = median_na(true_wr_exaggeration[reject]),
+    wr_exaggeration_vs_true_q25 = quantile_na(true_wr_exaggeration[reject], 0.25),
+    wr_exaggeration_vs_true_q75 = quantile_na(true_wr_exaggeration[reject], 0.75),
+    wr_exaggeration_vs_true_q90 = quantile_na(true_wr_exaggeration[reject], 0.90),
+    median_wr_exaggeration_vs_final = median_na(final_wr_exaggeration[reject]),
     stringsAsFactors = FALSE
   )
 }
@@ -43,6 +72,10 @@ run_policy <- function(n_sims, n_pairs, true_wr, policy, wager_wr = NA_real_,
   d_true <- wr_to_d(true_wr)
   crossings <- rep(NA_integer_, n_sims)
   finals <- numeric(n_sims)
+  seq_wr_crossing <- rep(NA_real_, n_sims)
+  seq_wr_final <- rep(NA_real_, n_sims)
+  all_pairs_wr_crossing <- rep(NA_real_, n_sims)
+  all_pairs_wr_final <- rep(NA_real_, n_sims)
 
   for (s in seq_len(n_sims)) {
     trial <- simulate_pairwise_continuous(n_pairs, d_true = d_true)
@@ -65,13 +98,37 @@ run_policy <- function(n_sims, n_pairs, true_wr, policy, wager_wr = NA_real_,
 
     crossings[[s]] <- threshold_crossing(wealth, alpha)
     finals[[s]] <- tail(wealth, 1)
+
+    seq_final <- sequential_wr(trial$d_pair)
+    all_final <- all_pairs_wr_continuous(trial$y_trt, trial$y_ctrl)
+    seq_wr_final[[s]] <- seq_final$wr
+    all_pairs_wr_final[[s]] <- all_final$wr
+
+    if (!is.na(crossings[[s]])) {
+      k <- crossings[[s]]
+      seq_cross <- sequential_wr(trial$d_pair, upto = k)
+      all_cross <- all_pairs_wr_continuous(
+        trial$y_trt[seq_len(k)],
+        trial$y_ctrl[seq_len(k)]
+      )
+      seq_wr_crossing[[s]] <- seq_cross$wr
+      all_pairs_wr_crossing[[s]] <- all_cross$wr
+    }
   }
 
-  summarize_runs(crossings, finals)
+  summarize_runs(
+    crossings = crossings,
+    finals = finals,
+    seq_wr_crossing = seq_wr_crossing,
+    seq_wr_final = seq_wr_final,
+    all_pairs_wr_crossing = all_pairs_wr_crossing,
+    all_pairs_wr_final = all_pairs_wr_final,
+    true_wr = true_wr
+  )
 }
 
 run_null_scenario <- function(wr_design) {
-  n_pairs <- design_n_pairs_continuous(
+  n_pairs <- design_n_pairs_wr(
     wr_design,
     target_power = target_power,
     alpha = alpha
@@ -108,6 +165,7 @@ run_null_scenario <- function(wr_design) {
       wager_misspecification = policies$wager_misspecification[[i]],
       n_pairs = n_pairs,
       n_patients = 2 * n_pairs,
+      design_method = "Yu-Ganju WR",
       res,
       stringsAsFactors = FALSE
     )
@@ -117,7 +175,7 @@ run_null_scenario <- function(wr_design) {
 }
 
 run_alt_scenario <- function(true_wr) {
-  n_pairs <- design_n_pairs_continuous(
+  n_pairs <- design_n_pairs_wr(
     true_wr,
     target_power = target_power,
     alpha = alpha
@@ -168,6 +226,7 @@ run_alt_scenario <- function(true_wr) {
       wager_misspecification = policies$wager_misspecification[[i]],
       n_pairs = n_pairs,
       n_patients = 2 * n_pairs,
+      design_method = "Yu-Ganju WR",
       res,
       stringsAsFactors = FALSE
     )
@@ -193,8 +252,14 @@ results$n_sims <- n_sims
 results <- results[, c(
   "scenario_type", "true_wr", "design_wr", "wager_wr", "wager_lambda",
   "true_d", "design_d", "policy", "wager_misspecification",
-  "n_pairs", "n_patients", "rejection_rate", "se", "median_crossing",
-  "median_final_evalue", "target_power", "alpha", "n_sims"
+  "n_pairs", "n_patients", "design_method",
+  "rejection_rate", "se", "median_crossing", "median_final_evalue",
+  "median_seq_wr_crossing", "median_seq_wr_final",
+  "median_all_pairs_wr_crossing", "median_all_pairs_wr_final",
+  "median_wr_exaggeration_vs_true", "wr_exaggeration_vs_true_q25",
+  "wr_exaggeration_vs_true_q75", "wr_exaggeration_vs_true_q90",
+  "median_wr_exaggeration_vs_final",
+  "target_power", "alpha", "n_sims"
 )]
 
 output_file <- sprintf("results/ertwr_pilot_%s.csv", n_sims)

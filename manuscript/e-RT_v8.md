@@ -12,7 +12,7 @@ Sokolova and Sokolov (2026) recently developed a practitioner-oriented framework
 
 We propose e-RT (e-value Randomized Trial), a complementary family of methods for prospective sequential monitoring of randomized trials. Like i-bet (Duan et al. 2022), e-RT uses betting martingales for inference, but differs in key respects: e-RT monitors sequentially as patients enroll rather than analyzing completed trial data; it requires no covariates or working models; and its default wager policies can be learned from accumulating data rather than fixed by a hypothesized effect size. This yields methods with minimal assumptions suitable for real-time trial monitoring.
 
-We present six variants: the binary e-RTb for event/no-event outcomes; e-RTe for event-only monitoring (requiring no non-event tracking); e-RTc for continuous endpoints; e-RTs for time-to-event data; e-RTms for multi-state trajectory data; and e-RTu, a universal abstraction under development. All share the same validity proof—the expected wealth multiplier is exactly 1 under the null—but differ in how they translate outcome data into wagers. We also distinguish the randomization-based validity engine from the wager policy. Wagers may be learned adaptively from accumulating data, preserving effect-size agnosticism, or prespecified from design alternatives to improve efficiency when those assumptions are credible. This distinction is especially relevant in sparse-update settings, where fixed or design-calibrated wagers may improve power without the same risk of catastrophic over-betting seen with dense every-patient updates.
+We present six main variants: the binary e-RTb for event/no-event outcomes; e-RTe for event-only monitoring (requiring no non-event tracking); e-RTc for continuous endpoints; e-RTs for time-to-event data; e-RTms for multi-state trajectory data; and e-RTwr for pairwise win-ratio and generalized pairwise-comparison endpoints. We also discuss e-RTu, a universal abstraction under development. All share the same validity proof—the expected wealth multiplier is exactly 1 under the null—but differ in how they translate outcome data into wagers. We also distinguish the randomization-based validity engine from the wager policy. Wagers may be learned adaptively from accumulating data, preserving effect-size agnosticism, or prespecified from design alternatives to improve efficiency when those assumptions are credible. This distinction is especially relevant in sparse-update settings, where fixed or design-calibrated wagers may improve power without the same risk of catastrophic over-betting seen with dense every-patient updates.
 
 # Overall construction: the binary e-RT (e-RTb)
 
@@ -523,6 +523,112 @@ The key result is that design-fixed full-Kelly wagers can substantially increase
 <figcaption>Example wealth trajectories under a true 5pp ARR with control event rate 40%. Top: e-RTb using all enrolled patients. Bottom: e-RTe using only events. Each panel shows 30 simulated trials.</figcaption>
 </figure>
 
+# Pairwise Win-Ratio and Composite Endpoints (e-RTwr)
+
+## Motivation
+
+Many contemporary trials use prioritized composite endpoints rather than a single binary or continuous endpoint. Generalized pairwise comparisons (GPC) compare every treated patient with every control patient using a prespecified clinical hierarchy, classifying each pair as favorable, unfavorable, neutral, or uninformative (Buyse 2010). The win ratio is a closely related summary, commonly defined as the ratio of favorable to unfavorable treatment-control pairs (Wang and Pocock 2016). These methods are attractive in acute care trials because they can express priorities such as survival first, serious complications second, and functional recovery third.
+
+This motivates a pairwise member of the e-RT family, denoted **e-RTwr**. The goal is not to multiply all GPC pair scores into an e-process: all-pairs GPC reuses each patient many times, creating dependence that is not automatically compatible with a simple product martingale. Instead, e-RTwr uses disjoint or predictably formed treatment-control pairs for monitoring. Each pair contributes a score $`D_j`$:
+``` math
+\begin{equation}
+D_j =
+\begin{cases}
+1 & \text{if the treatment patient wins the pair},\\
+-1 & \text{if the control patient wins the pair},\\
+0 & \text{if the pair is neutral or uninformative}.
+\end{cases}
+\end{equation}
+```
+The wealth process is
+``` math
+\begin{equation}
+W_j = W_{j-1}(1 + \lambda_j D_j).
+\end{equation}
+```
+Under the null, a predictably formed treatment-control pair is exchangeable: treatment and control wins are balanced in expectation. Thus, for any predictable $`\lambda_j \in (-1,1)`$,
+``` math
+\begin{equation}
+\mathbb{E}(1 + \lambda_j D_j \mid \mathcal{F}_{j-1}) = 1,
+\end{equation}
+```
+and the usual Ville bound applies.
+
+For a fixed design win ratio $`WR^\star`$, the natural GROW-style wager is
+``` math
+\begin{equation}
+\lambda^\star = \frac{WR^\star - 1}{WR^\star + 1}.
+\label{eq:wr_lambda}
+\end{equation}
+```
+This is the same algebraic scale used by the paired binary GROW construction of Sokolova and Sokolov (2026), applied here to pairwise win/loss signs. Adaptive e-RTwr instead estimates the pairwise edge from previous wins and losses and ramps toward a full-Kelly wager. The two policies answer different operational questions: adaptive e-RTwr is effect-size agnostic, whereas fixed/design e-RTwr is more efficient when the design win ratio is credible.
+
+## Simple win-ratio simulations
+
+We first evaluated e-RTwr using normally distributed continuous outcomes converted to pairwise wins and losses. The true mean difference was chosen to yield target win ratios of 1.10, 1.20, 1.30, or 1.50. Sample sizes used the Yu–Ganju win-ratio formula, implemented through the `WRestimates` package when available (O’Donnell 2023). These are final-analysis sample sizes: they are designed to give approximately 80% power for a conventional final win-ratio test, not necessarily 80% anytime crossing probability for an e-process.
+
+Table <a href="#tab:ertwr_sokolova" data-reference-type="ref" data-reference="tab:ertwr_sokolova">7</a> compares four quantities: a conventional final all-pairs win-ratio test, adaptive e-RTwr at the same sample size, fixed/GROW e-RTwr at the same sample size, and a Sokolova-style e-design analogue in which the same GROW wager is used but $`N_{\max}`$ is calibrated to achieve approximately 80% e-process crossing power.
+
+<div id="tab:ertwr_sokolova">
+
+| True WR | Comparator                   | Pairs | N/YG | Null Reject | Power |
+|:--------|:-----------------------------|------:|-----:|------------:|------:|
+| 1.10    | Final all-pairs WR test      | 2,305 | 1.00 |        5.0% | 80.0% |
+| 1.10    | e-RTwr adaptive              | 2,305 | 1.00 |        4.2% | 31.4% |
+| 1.10    | e-RTwr fixed/GROW same N     | 2,305 | 1.00 |        3.1% | 57.3% |
+| 1.10    | Sokolova-style GROW e-design | 3,861 | 1.68 |        3.9% | 80.0% |
+| 1.20    | Final all-pairs WR test      |   630 | 1.00 |        5.0% | 80.0% |
+| 1.20    | e-RTwr adaptive              |   630 | 1.00 |        3.2% | 35.1% |
+| 1.20    | e-RTwr fixed/GROW same N     |   630 | 1.00 |        2.7% | 56.6% |
+| 1.20    | Sokolova-style GROW e-design | 1,095 | 1.74 |        3.1% | 80.0% |
+| 1.30    | Final all-pairs WR test      |   305 | 1.00 |        5.0% | 80.1% |
+| 1.30    | e-RTwr adaptive              |   305 | 1.00 |        1.8% | 36.9% |
+| 1.30    | e-RTwr fixed/GROW same N     |   305 | 1.00 |        2.9% | 56.7% |
+| 1.30    | Sokolova-style GROW e-design |   517 | 1.70 |        3.6% | 80.0% |
+| 1.50    | Final all-pairs WR test      |   128 | 1.00 |        5.0% | 80.2% |
+| 1.50    | e-RTwr adaptive              |   128 | 1.00 |        1.3% | 33.4% |
+| 1.50    | e-RTwr fixed/GROW same N     |   128 | 1.00 |        2.5% | 53.3% |
+| 1.50    | Sokolova-style GROW e-design |   206 | 1.61 |        2.9% | 80.3% |
+
+Simple win-ratio simulations comparing final WR analysis, adaptive e-RTwr, fixed/GROW e-RTwr, and e-process-calibrated GROW design. Each e-process row uses 1,000 simulations.
+
+</div>
+
+<span id="tab:ertwr_sokolova" label="tab:ertwr_sokolova"></span>
+
+The main lesson is that the power gap is not primarily a failure of the GROW wager. At the Yu–Ganju final-analysis sample size, fixed/GROW e-RTwr achieved approximately 53–57% anytime power. To recover approximately 80% anytime power, the GROW e-design needed about 1.6–1.7 times as many disjoint pairs. Adaptive e-RTwr was less powerful, about 31–37%, reflecting the cost of learning the wager without specifying a design effect.
+
+## Composite endpoint simulations with BuyseTest
+
+We then used the `BuyseTest` package (Ozenne and Peron 2025) to simulate and analyze a prioritized composite endpoint. The data were generated with `simBuyseTest()` and analyzed with a three-level hierarchy:
+
+1.  time-to-event outcome, with longer event time favorable;
+
+2.  binary toxicity, with no toxicity favorable;
+
+3.  continuous score, with higher score favorable.
+
+The final reference analysis was the all-pairs GPC/win-ratio estimate from `BuyseTest`. For the sequential e-RTwr monitor, we used `getPairScore()` to export the cumulative pair scores and then sampled disjoint treatment-control pairs to form the e-process. This deliberately preserves the distinction between the final all-pairs estimand and the sequential disjoint-pair monitoring process.
+
+The null scenario used identical treatment and control distributions for all three endpoints. The composite alternative used longer treatment event times, lower treatment toxicity (20% vs. 30%), and a higher treatment mean score (mean difference 0.25 standard deviations). Each simulation used 250 patients per arm and 300 replicates. Fixed/design e-RTwr used a design win ratio of 1.30.
+
+<div id="tab:ertwr_composite">
+
+| Scenario | BuyseTest | Adaptive | Fixed/design | Buyse WR | Disjoint WR |
+|:---|---:|---:|---:|---:|---:|
+| Null | 4.3% (1.2%) | 1.7% (0.7%) | 1.7% (0.7%) | 1.00 | 1.02 |
+| Composite alternative | 82.3% (2.2%) | 27.7% (2.6%) | 51.3% (2.9%) | 1.31 | 1.31 |
+
+Composite endpoint simulation using `BuyseTest` and disjoint-pair e-RTwr. Rates are shown with Monte Carlo standard errors.
+
+</div>
+
+<span id="tab:ertwr_composite" label="tab:ertwr_composite"></span>
+
+These simulations reproduce the same qualitative pattern in a clinically richer endpoint setting. The final all-pairs `BuyseTest` analysis was highly powered at the chosen sample size. Fixed/design e-RTwr was less powerful but substantially stronger than the adaptive agnostic monitor. Encouragingly, the median all-pairs win ratio and the median disjoint-pair win ratio were both approximately 1.31 under the composite alternative, suggesting that the disjoint monitor targets a clinically interpretable composite win tendency even though it uses many fewer pairwise comparisons.
+
+This section should be interpreted as exploratory. With Gehan scoring, the exported pair scores are deterministic functions of observed pair data, which is the safest first setting for martingale construction. More elaborate GPC scoring rules, such as Peron or Efron handling of censored survival outcomes, may depend on estimated survival curves and require additional work before the resulting scores can be used as predictable e-process increments.
+
 # Continuous Outcomes
 
 The e-RTb treats each patient as a single Bernoulli trial: the outcome (event vs. no event) is observed, and we bet on which arm that patient came from. For continuous endpoints, the logic is the same but the signal is richer. Each patient now contributes a continuous measurement (for example, ventilator-free days, change in biomarker, or a physiologic score), and the betting strategy uses how extreme that value is relative to past data. Therefore, defining wager is slightly more granular.
@@ -677,7 +783,7 @@ so rejecting the null when $`W_\tau \geq 1/\alpha`$ controls Type I error at lev
 
 We evaluated e-RTC using the same design philosophy as for binary approach. For a given standardized effect size (Cohen’s $`d`$) and target power, we first computed the fixed-sample size required for a two-sample $`t`$-test at $`\alpha = 0.05`$. We then simulated trials with that sample size, assigning patients 1:1 to intervention or control, with outcomes drawn from normal distributions of equal variance and means differing by $`d`$ under the alternative.
 
-The test was run sequentially with a burn-in period and ramp (burn-in = 50 patients, ramp = 100 patients, $`c_{\max} = 0.6`$). Under the null (no mean difference between arms), Type I error was close to or below the nominal level. Under the alternative, the implementation for continuous endpoints rejected the null with moderate power and typically crossed the threshold at an intermediate sample size (Table <a href="#tab:simulations_continuous" data-reference-type="ref" data-reference="tab:simulations_continuous">7</a>). Again, we believe that this may not be a replacement for the fixed-sample $`t`$-test but a conservative, anytime-valid monitoring tool that can trigger early stopping when effects are larger or clearer than anticipated.
+The test was run sequentially with a burn-in period and ramp (burn-in = 50 patients, ramp = 100 patients, $`c_{\max} = 0.6`$). Under the null (no mean difference between arms), Type I error was close to or below the nominal level. Under the alternative, the implementation for continuous endpoints rejected the null with moderate power and typically crossed the threshold at an intermediate sample size (Table <a href="#tab:simulations_continuous" data-reference-type="ref" data-reference="tab:simulations_continuous">9</a>). Again, we believe that this may not be a replacement for the fixed-sample $`t`$-test but a conservative, anytime-valid monitoring tool that can trigger early stopping when effects are larger or clearer than anticipated.
 
 <div id="tab:simulations_continuous">
 
@@ -764,7 +870,7 @@ We verified the validity of this simplification by simulating two scenarios with
 
 ## Simulation Results
 
-We simulated survival trials comparing exponential survival times with a Hazard Ratio (HR) of 0.80. Targeted power was 80% using a standard Log-Rank design, which requires approximately 631 events. A total of $`N=631`$ patients (assuming no censoring) were used for simulations. Results are shown in Table <a href="#tab:survival" data-reference-type="ref" data-reference="tab:survival">8</a>.
+We simulated survival trials comparing exponential survival times with a Hazard Ratio (HR) of 0.80. Targeted power was 80% using a standard Log-Rank design, which requires approximately 631 events. A total of $`N=631`$ patients (assuming no censoring) were used for simulations. Results are shown in Table <a href="#tab:survival" data-reference-type="ref" data-reference="tab:survival">10</a>.
 
 <div id="tab:survival">
 
@@ -1034,7 +1140,7 @@ The e-RTu engine can recover e-RTb and e-RTms exactly:
 
 - **e-RTms**: Each state transition generates one signal. Good $`=`$ recovery-oriented transition. Arm $`=`$ treatment assignment.
 
-It does *not* recover the specialized strategies of e-RTe (full Kelly), e-RTs (score-based with fixed $`\lambda_{\max}`$), or e-RTc (doubly adaptive with $`g`$-score). These variants exploit domain-specific structure—sparse events, risk sets, continuous residuals—to achieve better power than the generic half-Kelly approach. The wage asymmetry analysis (Section <a href="#sec:wage" data-reference-type="ref" data-reference="sec:wage">9</a>) explains why these specializations matter.
+It does *not* recover the specialized strategies of e-RTe (full Kelly), e-RTs (score-based with fixed $`\lambda_{\max}`$), or e-RTc (doubly adaptive with $`g`$-score). These variants exploit domain-specific structure—sparse events, risk sets, continuous residuals—to achieve better power than the generic half-Kelly approach. The wage asymmetry analysis (Section <a href="#sec:wage" data-reference-type="ref" data-reference="sec:wage">10</a>) explains why these specializations matter.
 
 The value of e-RTu is conceptual clarity and software simplicity: one engine, many signal sources. It provides a default when no domain-specific variant is available, and a reference implementation against which specialized variants can be benchmarked.
 
@@ -1155,12 +1261,12 @@ At Cohen’s $`d = 0.20`$ (a typical clinical trial effect size), fixed $`c = 0.
 
 <div id="tab:wage_summary">
 
-| Property | e-RTs | e-RTe | e-RTb | e-RTc |  |
-|:---|:--:|:--:|:--:|:--:|:--:|
-| Update frequency | Events only | Events only | Every patient | Every patient |  |
-| Over-bet cost | Low (slow bleed) | Moderate | Catastrophic | Catastrophic |  |
-| Universal $`\lambda`$ possible? | Yes | Marginal | No | No |  |
-| Kelly fraction | Fixed ($`\lambda = 0.25`$) | Full | Half default | Doubly adaptive |  |
+| Property | e-RTs | e-RTe | e-RTb | e-RTc/e-RTwr |
+|:---|:--:|:--:|:--:|:--:|
+| Update frequency | Events only | Events only | Every patient | Dense or pairwise |
+| Over-bet cost | Low (slow bleed) | Moderate | Catastrophic | High |
+| Universal $`\lambda`$ possible? | Yes | Marginal | No | No |
+| Kelly fraction | Fixed ($`\lambda = 0.25`$) | Full | Half default | Adaptive or design-fixed |
 
 Summary: Betting Strategy by e-RT Variant
 
@@ -1168,17 +1274,17 @@ Summary: Betting Strategy by e-RT Variant
 
 <span id="tab:wage_summary" label="tab:wage_summary"></span>
 
-The hierarchy of over-betting risk is: **continuous $`>`$ binary $`\gg`$ survival**. This maps directly to how frequently the wealth product is updated. More frequent updates mean more opportunities for over-betting to compound, requiring increasingly conservative or adaptive strategies.
+The hierarchy of over-betting risk is: **continuous and dense pairwise $`>`$ binary $`\gg`$ survival**. This maps directly to how frequently the wealth product is updated. More frequent updates mean more opportunities for over-betting to compound, requiring increasingly conservative or adaptive strategies.
 
-The e-RTe falls between survival and binary. Like survival, it updates only at events, making the product length moderate. This permits full Kelly rather than half-Kelly. However, unlike survival where $`\lambda_{\max} = 0.25`$ is fixed, e-RTe uses the plug-in $`\hat{p}`$ directly because the event-coin estimator converges quickly and the natural scale of the problem ($`p \in [0, 1]`$) bounds the wager without external calibration.
+The e-RTe falls between survival and binary. Like survival, it updates only at events, making the product length moderate. This permits full Kelly rather than half-Kelly. However, unlike survival where $`\lambda_{\max} = 0.25`$ is fixed, e-RTe uses the plug-in $`\hat{p}`$ directly because the event-coin estimator converges quickly and the natural scale of the problem ($`p \in [0, 1]`$) bounds the wager without external calibration. The e-RTwr occupies a separate sparse-pairwise category: disjoint-pair updates make full-Kelly and fixed GROW-style wagers plausible, but all-pairs GPC products would be much denser and require a separate dependence argument.
 
 # Discussion
 
-The e-RT family comprises six nonparametric sequential tests for randomized trials based on the betting framework for e-values (i-bet (Duan et al. 2022)). All variants require only that treatment assignment is randomized—no distributional assumptions about outcomes are needed. This makes them robust complements to model-based analyses. The variants cover binary outcomes (e-RTb), event-only monitoring (e-RTe), continuous endpoints (e-RTc), time-to-event analyses (e-RTs), multi-state trajectory data (e-RTms), and a universal abstraction (e-RTu, under development).
+The e-RT family comprises nonparametric sequential tests for randomized trials based on the betting framework for e-values (i-bet (Duan et al. 2022)). All variants require only that treatment assignment is randomized—no distributional assumptions about outcomes are needed. This makes them robust complements to model-based analyses. The variants cover binary outcomes (e-RTb), event-only monitoring (e-RTe), continuous endpoints (e-RTc), time-to-event analyses (e-RTs), multi-state trajectory data (e-RTms), and pairwise win-ratio or GPC-style endpoints (e-RTwr). A universal abstraction (e-RTu) remains under development.
 
 ## Operating characteristics
 
-Across all five simulation-validated variants, simulations demonstrate proper Type I error control (consistently 2–4% vs. nominal 5%), confirming the theoretical guarantee from the martingale property. Power varies by variant and scenario: for binary outcomes, approximately 50% power for early stopping in trials designed with 80% frequentist power, and 63–66% in trials designed with 90% power. Continuous and survival variants show similar patterns. The multi-state variant achieved 89% power at $`N = 1{,}000`$ for the specific transition matrix tested. The event-only variant (e-RTe) requires approximately $`2.5\times`$ sample size inflation compared with the frequentist benchmark, the cost of discarding non-event information.
+Across the simulation-validated variants, simulations demonstrate proper Type I error control, confirming the theoretical guarantee from the martingale property. Power varies by variant and scenario: for binary outcomes, approximately 50% power for early stopping in trials designed with 80% frequentist power, and 63–66% in trials designed with 90% power. Continuous and survival variants show similar patterns. The multi-state variant achieved 89% power at $`N = 1{,}000`$ for the specific transition matrix tested. The event-only variant (e-RTe) requires approximately $`2.5\times`$ sample size inflation compared with the frequentist benchmark, the cost of discarding non-event information. The e-RTwr simulations show that fixed/design GROW-style wagers can substantially improve power over adaptive agnostic wagers, but that an e-process calibrated for 80% anytime power generally requires a larger $`N_{\max}`$ than a conventional final all-pairs win-ratio analysis.
 
 When early stopping occurs across all variants, it typically happens at approximately 45–56% of the planned sample size or event count.
 
@@ -1204,6 +1310,8 @@ The betting framework for hypothesis testing was developed by Shafer (2021). E-v
 
 Koning (2025) develops e-values for group invariance, including permutation tests, using batch-based likelihood ratio statistics normalized by permutation expectations. Grünwald et al. (2021) developed the ‘Safe Log-rank Test’ based on evaluating likelihood ratios with specific priors on the hazard ratio to ensure growth rate optimality. In contrast, the survival approach constructs a linear test martingale directly from the score function using an adaptive betting strategy. Rather than relying on likelihood integration or specific priors, the survival approach process uses a heuristic ‘plug-in’ estimate of the effect direction, modulated by a ramping function. This offers a computationally simple, algorithmic alternative that derives validity strictly from the randomization probabilities within the risk set, without requiring the full apparatus of partial likelihood theory.
 
+The e-RTwr connects the e-RT framework to generalized pairwise comparisons and win-ratio methods (Buyse 2010; Wang and Pocock 2016). In the current implementation, `BuyseTest` is used as the final all-pairs GPC reference and as a way to export pair scores for exploratory simulations (Ozenne and Peron 2025). This should not be confused with an all-pairs e-process: the martingale construction presently uses disjoint or predictably formed pairs, whereas all-pairs GPC reuses observations and requires separate dependence handling.
+
 The e-RTb shares the same martingale foundation as i-bet but differs in key respects: it operates prospectively as patients enroll rather than retrospectively on completed data; it requires no covariates or working models; and it uses betting fractions that adapt continuously to running outcome estimates rather than fixed-magnitude wagers guided by covariate-based predictions. This yields a simpler method that may be suitable for real-time trial monitoring.
 
 It is possible that some of the concepts here were discussed by other authors in different contexts that were not immediately available for this author. Reader is encouraged to reach out if that is the case, and the author will happily adjust accordingly.
@@ -1212,7 +1320,7 @@ It is possible that some of the concepts here were discussed by other authors in
 
 Several limitations should be noted. This is an experimental method under development. Simulations are not exhaustive, and the operating characteristics reported are specific to the scenarios tested. It is uncertain how these methods would behave in more complex models, including competing risk models.
 
-The methods test only whether there are differences between arms; they do not provide point estimates or confidence intervals. The adaptive learning of $`\hat{\delta}`$ requires a burn-in period during which little evidence accumulates. For trials where parametric assumptions are plausible, model-based sequential methods will generally have better power. Our simulations used specific betting strategies; other choices may yield different operating characteristics. The betting strategy design section provides guidance on strategy selection, but optimal calibration for specific clinical scenarios remains an open question. Finally, it is unclear how these methods will behave when heterogeneity in treatment effects exists or there are temporal instabilities in effect size. Extensions to relative effect size approaches (e.g., odds ratio) are under development.
+The methods test only whether there are differences between arms; they do not provide point estimates or confidence intervals. The adaptive learning of $`\hat{\delta}`$ requires a burn-in period during which little evidence accumulates. For trials where parametric assumptions are plausible, model-based sequential methods will generally have better power. Our simulations used specific betting strategies; other choices may yield different operating characteristics. The betting strategy design section provides guidance on strategy selection, but optimal calibration for specific clinical scenarios remains an open question. The e-RTwr composite simulations are especially preliminary: they use deterministic Gehan-style pair scoring and disjoint pairs, while more efficient all-pairs GPC analyses reuse each patient many times. More elaborate censored-data scoring rules may depend on estimated survival curves, and their use inside a real-time e-process requires additional work. Finally, it is unclear how these methods will behave when heterogeneity in treatment effects exists or there are temporal instabilities in effect size. Extensions to relative effect size approaches (e.g., odds ratio) are under development.
 
 ## Future Directions
 
@@ -1251,6 +1359,8 @@ The author is thankful to Aaditya Ramdas for their thoughtful comments on the fi
 6.  Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wage asymmetry across variants. Reconciled e-RTc parameters (burn-in 50, ramp 100) and direction formula (full Cohen’s $`d`$ clamped to $`[-1,1]`$). Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
 
 7.  Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
+
+8.  Eighth Version (in preparation): Separated randomization validity from wager policy, added adaptive versus design-fixed wager simulations, introduced e-RTwr for disjoint pairwise win-ratio and GPC-style monitoring, and added exploratory `BuyseTest`-based composite endpoint simulations.
 
 # R Code
 
@@ -2093,6 +2203,12 @@ plot_trajectories_ms <- function(n_trials = 30, n_patients, P_trt, P_ctrl,
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
+<div id="ref-buyse2010gpc" class="csl-entry">
+
+Buyse, Marc. 2010. “Generalized Pairwise Comparisons of Prioritized Outcomes in the Two-Sample Problem.” *Statistics in Medicine* 29: 3245–57. <https://doi.org/10.1002/sim.3923>.
+
+</div>
+
 <div id="ref-pmlr-v177-duan22a" class="csl-entry">
 
 Duan, Boyan, Aaditya Ramdas, and Larry Wasserman. 2022. “Interactive Rank Testing by Betting.” In *Proceedings of the First Conference on Causal Learning and Reasoning*, edited by Bernhard Schölkopf, Caroline Uhler, and Kun Zhang, vol. 177. Proceedings of Machine Learning Research. PMLR. <https://proceedings.mlr.press/v177/duan22a.html>.
@@ -2114,6 +2230,18 @@ Kelly, J. L. 1956. “A New Interpretation of Information Rate.” *Bell System 
 <div id="ref-koning2025" class="csl-entry">
 
 Koning, Nick W. 2025. “Measuring Evidence Against Exchangeability and Group Invariance with e-Values.” Unpublished manuscript.
+
+</div>
+
+<div id="ref-odonnell2023wrestimates" class="csl-entry">
+
+O’Donnell, Autumn. 2023. *WRestimates: Sample Size, Power and CI for the Win Ratio*. <https://doi.org/10.32614/CRAN.package.WRestimates>.
+
+</div>
+
+<div id="ref-ozenne2025buysetest" class="csl-entry">
+
+Ozenne, Brice, and Julien Peron. 2025. *BuyseTest: Implementation of the Generalized Pairwise Comparisons*.
 
 </div>
 
@@ -2156,6 +2284,12 @@ Ville, Jean. 1939. “Étude Critique de La Notion de Collectif.” PhD thesis, 
 <div id="ref-vovk2021" class="csl-entry">
 
 Vovk, Vladimir, and Ruodu Wang. 2021. “E-Values: Calibration, Combination and Applications.” *Annals of Statistics* 49 (3): 1736–54. <https://doi.org/10.1214/20-AOS2020>.
+
+</div>
+
+<div id="ref-wang2016winratio" class="csl-entry">
+
+Wang, Dong, and Stuart Pocock. 2016. “A Win Ratio Approach to Comparing Continuous Non-Normal Outcomes in Clinical Trials.” *Pharmaceutical Statistics* 15: 238–45. <https://doi.org/10.1002/pst.1743>.
 
 </div>
 

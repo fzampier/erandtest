@@ -30,14 +30,38 @@ threshold_crossing <- function(wealth, alpha) {
   if (length(crossing) == 0) NA_integer_ else crossing[[1]]
 }
 
-summarize_crossings <- function(crossings, finals, n_sims) {
+median_na <- function(x) {
+  if (all(is.na(x))) NA_real_ else median(x, na.rm = TRUE)
+}
+
+quantile_na <- function(x, prob) {
+  if (all(is.na(x))) NA_real_ else unname(quantile(x, prob, na.rm = TRUE))
+}
+
+summarize_crossings <- function(crossings, finals, n_sims,
+                                crossing_effects = rep(NA_real_, n_sims),
+                                final_effects = rep(NA_real_, n_sims),
+                                true_effect = NA_real_) {
   reject <- !is.na(crossings)
   rate <- mean(reject)
+
+  type_m <- if (is.finite(true_effect) && true_effect != 0) {
+    crossing_effects / true_effect
+  } else {
+    rep(NA_real_, n_sims)
+  }
+
   data.frame(
     rejection_rate = rate,
     se = sqrt(rate * (1 - rate) / n_sims),
     median_crossing = if (any(reject)) median(crossings[reject]) else NA_real_,
     median_final_evalue = median(finals),
+    median_crossing_effect = median_na(crossing_effects[reject]),
+    median_final_effect = median_na(final_effects),
+    median_type_m_at_crossing = median_na(type_m[reject]),
+    type_m_q25 = quantile_na(type_m[reject], 0.25),
+    type_m_q75 = quantile_na(type_m[reject], 0.75),
+    type_m_q90 = quantile_na(type_m[reject], 0.90),
     stringsAsFactors = FALSE
   )
 }
@@ -52,11 +76,29 @@ design_n_binary <- function(p_ctrl, design_arr, target_power, alpha) {
   2 * ceiling(ss$n)
 }
 
+arr_estimate <- function(treatment, outcome, upto = length(treatment)) {
+  if (is.na(upto) || upto < 1) return(NA_real_)
+  upto <- min(length(treatment), as.integer(upto))
+  idx <- seq_len(upto)
+  trt <- treatment[idx] == 1
+  ctrl <- treatment[idx] == 0
+  if (!any(trt) || !any(ctrl)) return(NA_real_)
+  mean(outcome[idx][ctrl]) - mean(outcome[idx][trt])
+}
+
+event_coin_tilt <- function(events, upto = length(events)) {
+  if (is.na(upto) || upto < 1) return(NA_real_)
+  upto <- min(length(events), as.integer(upto))
+  0.5 - mean(events[seq_len(upto)])
+}
+
 run_ertb_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
                             policy, p_ctrl_wager = NULL, p_trt_wager = NULL,
                             burn_in = 50, ramp = 100) {
   crossings <- rep(NA_integer_, n_sims)
   finals <- numeric(n_sims)
+  crossing_effects <- rep(NA_real_, n_sims)
+  final_effects <- rep(NA_real_, n_sims)
 
   for (s in seq_len(n_sims)) {
     trial <- simulate_trial(n_patients, rate_trt = p_trt, rate_ctrl = p_ctrl)
@@ -82,9 +124,24 @@ run_ertb_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
 
     crossings[[s]] <- threshold_crossing(wealth, alpha)
     finals[[s]] <- tail(wealth, 1)
+    final_effects[[s]] <- arr_estimate(trial$treatment, trial$outcome)
+    if (!is.na(crossings[[s]])) {
+      crossing_effects[[s]] <- arr_estimate(
+        trial$treatment,
+        trial$outcome,
+        upto = crossings[[s]]
+      )
+    }
   }
 
-  summarize_crossings(crossings, finals, n_sims)
+  summarize_crossings(
+    crossings = crossings,
+    finals = finals,
+    n_sims = n_sims,
+    crossing_effects = crossing_effects,
+    final_effects = final_effects,
+    true_effect = p_ctrl - p_trt
+  )
 }
 
 run_erte_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
@@ -94,6 +151,8 @@ run_erte_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
   p_coin <- event_coin(p_ctrl, p_trt)
   crossings <- rep(NA_integer_, n_sims)
   finals <- numeric(n_sims)
+  crossing_effects <- rep(NA_real_, n_sims)
+  final_effects <- rep(NA_real_, n_sims)
 
   for (s in seq_len(n_sims)) {
     events <- simulate_events(n_events, p_coin)
@@ -122,9 +181,20 @@ run_erte_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
 
     crossings[[s]] <- res$crossed_at
     finals[[s]] <- tail(res$wealth, 1)
+    final_effects[[s]] <- event_coin_tilt(events)
+    if (!is.na(crossings[[s]])) {
+      crossing_effects[[s]] <- event_coin_tilt(events, upto = crossings[[s]])
+    }
   }
 
-  out <- summarize_crossings(crossings, finals, n_sims)
+  out <- summarize_crossings(
+    crossings = crossings,
+    finals = finals,
+    n_sims = n_sims,
+    crossing_effects = crossing_effects,
+    final_effects = final_effects,
+    true_effect = 0.5 - p_coin
+  )
   out$n_events <- n_events
   out$event_coin <- p_coin
   out
@@ -207,6 +277,8 @@ run_scenario <- function(p_ctrl, sample_size_arr, true_arr,
       n_patients = n_ertb,
       n_events = NA_real_,
       event_coin = NA_real_,
+      effect_scale = "ARR",
+      true_effect = true_arr,
       stringsAsFactors = FALSE
     )
   }
@@ -251,6 +323,8 @@ run_scenario <- function(p_ctrl, sample_size_arr, true_arr,
       wager_misspecification = erte_policies$wager_misspecification[[j]],
       res,
       n_patients = n_erte,
+      effect_scale = "event_coin_tilt",
+      true_effect = 0.5 - event_coin(p_ctrl, p_trt_true),
       stringsAsFactors = FALSE
     )
   }
@@ -292,7 +366,10 @@ results <- results[, c(
   "p_ctrl", "p_trt_true", "sample_size_arr", "true_arr",
   "wager_arr", "wager_misspecification",
   "n_patients", "n_events", "event_coin",
+  "effect_scale", "true_effect",
   "rejection_rate", "se", "median_crossing", "median_final_evalue",
+  "median_crossing_effect", "median_final_effect",
+  "median_type_m_at_crossing", "type_m_q25", "type_m_q75", "type_m_q90",
   "n_freq", "erte_inflation", "target_power", "alpha", "n_sims"
 )]
 

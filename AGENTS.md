@@ -48,6 +48,7 @@ Key diagnostic additions for V8:
 - Type M error at first e-process crossing for e-RTb and e-RTe.
 - Crossing-time effect estimates versus final-study estimates.
 - For e-RTwr, WR at crossing, final-study WR, and exaggeration relative to both the true/design WR and the final-study WR.
+- For e-RTwr simple continuous endpoints, package-backed `BuyseTest` validation of the internal all-pairs WR estimator.
 
 ## Code Direction
 
@@ -58,14 +59,14 @@ Initial active code files:
 - `R/ertwr.R`: pairwise win/loss e-RTwr prototype.
 - `R/simulations/`: V8 simulation scripts.
 
-Planned code changes:
+Current code direction:
 
 - Refactor e-RTb to support `wager = c("adaptive", "design", "fixed", "oracle")`.
 - Refactor e-RTe similarly, noting that design mode operates on the event-coin scale.
 - Add misspecification grids comparing adaptive, design-calibrated, fixed, and oracle wagers.
-- Add Type M error at crossing to e-RTb/e-RTe simulation outputs.
-- Extend e-RTwr simulations to use `WRestimates`/Yu-Ganju sample sizes.
-- Add e-RTwr WR diagnostics using both the sequential disjoint-pair WR and an all-pairs `BuyseTest`/GPC WR where appropriate.
+- Type M error at crossing has been added to e-RTb/e-RTe simulation outputs.
+- e-RTwr simulations now use `WRestimates`/Yu-Ganju sample sizes.
+- e-RTwr WR diagnostics use both the sequential disjoint-pair WR and an internal all-pairs continuous WR; `BuyseTest` is available as a validation/reference check.
 
 ## e-RTwr Conventions
 
@@ -77,4 +78,4 @@ The current e-RTwr prototype is intentionally conservative about dependence:
 - use fixed/design wagers with `lambda = (WR - 1) / (WR + 1)`;
 - use adaptive full Kelly by default, currently burn-in 10 and ramp 50.
 
-Do not treat the sequential disjoint-pair WR as identical to the all-pairs GPC win ratio. The all-pairs WR is a useful final-trial descriptive/reference estimand, likely computed through `BuyseTest`, but the monitoring estimand is tied to the prespecified sequential pairing rule.
+Do not treat the sequential disjoint-pair WR as identical to the all-pairs GPC win ratio. The all-pairs WR is a useful final-trial descriptive/reference estimand, and `R/simulations/ertwr_buysetest_check.R` confirms agreement between the internal simple-continuous estimator and `BuyseTest`; the monitoring estimand remains tied to the prespecified sequential pairing rule.
