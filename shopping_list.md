@@ -24,6 +24,7 @@ This is the working add/remove/change list for Version 8.
   Type S diagnostics.
 - e-RTs staggered-entry check comparing paired complete-follow-up
   time-on-study identity with calendar-event-order monitoring.
+- Curated fixed-seed trajectory examples for e-RTb, e-RTe, e-RTc, and e-RTs.
 - Yu-Ganju/`WRestimates`-compatible win-ratio sample-size formula for e-RTwr design sizes.
 - Final-study WR and WR at crossing for e-RTwr using internal sequential and all-pairs continuous WR estimators.
 - Package-backed `BuyseTest` validation for simple continuous all-pairs WR estimates, kept as a reference check rather than the main simulation engine.
@@ -84,6 +85,9 @@ This is the working add/remove/change list for Version 8.
   - include a standalone staggered-entry check for complete-follow-up
     time-on-study analyses and a separate calendar-event-order stream;
     **implemented**
+- Manuscript figures:
+  - regenerate didactic trajectory examples from a standalone fixed-seed script
+    rather than inherited interactive artifacts; **implemented**
 - Pairwise win/loss:
   - disjoint or predictably matched treatment-control pairs only at first;
   - avoid all-pairs products until dependence is handled;

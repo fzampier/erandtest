@@ -51,6 +51,8 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
   crossing.
 - Added a standalone e-RTs staggered-entry script with 1,000-replicate results,
   summary notes, and a refreshed supplement figure.
+- Added a standalone fixed-seed trajectory-example generator and rebuilt the
+  manuscript e-RTb, e-RTe, e-RTc, and e-RTs didactic trajectory figures.
 - Added e-RTwr pilot, tuning, Sokolova-style GROW comparison, WRestimates
   sample-size checks, BuyseTest validation, and composite endpoint simulations.
 - Committed generated CSV result tables under `results/` because the repository

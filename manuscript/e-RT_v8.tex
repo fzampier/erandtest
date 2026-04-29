@@ -210,13 +210,13 @@ Figure~\ref{fig:null} shows example wealth trajectories from 30 simulated trials
 \label{fig:null}
 \end{figure}
 
-Figure~\ref{fig:alt} shows trajectories under the alternative hypothesis (40\% vs 30\% event rates, true ARR = 10\%). With a real treatment effect, wealth grows systematically. Most trajectories cross the rejection threshold before enrollment completes, and many reach values far exceeding 20 --- providing strong evidence against the null.
+Figure~\ref{fig:alt} shows trajectories under the alternative hypothesis (40\% vs 30\% event rates, true ARR = 10\%). With a real treatment effect, wealth grows systematically. Many trajectories cross the rejection threshold before enrollment completes, and some reach values far exceeding 20 --- providing strong evidence against the null.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.48\textwidth]{traj_alt_10pct_80pow.pdf}
 \includegraphics[width=0.48\textwidth]{traj_alt_10pct_90pow.pdf}
-\caption{E-processes trajectories under the alternative hypothesis (true ARR = 10\%). Left: n = 712 (80\% power design). Right: n = 954 (90\% power design). Dashed red line: rejection threshold ($1/\alpha = 20$). Under the alternative, approximately half of trajectories cross the threshold, typically around the midpoint of enrollment.}
+\caption{E-process trajectories under the alternative hypothesis (true ARR = 10\%). Left: n = 712 (80\% power design). Right: n = 954 (90\% power design). Dashed red line: rejection threshold ($1/\alpha = 20$). Under the alternative, approximately half to two thirds of the representative trajectories cross the threshold, typically around the midpoint of enrollment.}
 \label{fig:alt}
 \end{figure}
 
@@ -784,19 +784,19 @@ We evaluated e-RTc using the same design philosophy as the binary and event-only
 
 Type I error remained controlled in these simulations. The adaptive sign-direction wager is conservative for small effects: at true $d=0.20$, it crossed in only 9.8\% of trials and did so very early when it crossed, producing a high median Type M ratio of 2.98. The parametric design wager improved power substantially when the design effect was close to the truth: at $d=0.20$, matched design wagering increased power to 73.4\% and reduced median Type M to 1.28. The tradeoff is visible under misspecification. Overestimating the design effect generally caused earlier crossings and more Type M inflation, while underestimating the effect delayed crossings and sometimes reduced power. These results support design-calibrated e-RTc as an optional efficiency mode, not as a replacement for the adaptive effect-size-agnostic monitor.
 
-A visual representation is shown in Figure~\ref{fig:eRTC_null_d04_80}.
+A visual representation of the matched normal-shift design wager is shown in Figure~\ref{fig:eRTC_null_d04_80}.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.48\textwidth]{traj_eRTC_null_d0.4_80pow.pdf}
 \includegraphics[width=0.48\textwidth]{traj_eRTC_alt_d0.4_80pow.pdf}
 \caption{
-Trajectories of the continuous randomization e-process for a trial  designed to detect a standardized mean difference of $d = 0.40$ with 80\% power. Left: trajectories under the null hypothesis ($d = 0$), where wealth wanders near or below 1 and rarely approaches the rejection threshold ($1/\alpha = 20$). Right: trajectories under the alternative hypothesis ($d = 0.40$), where  wealth grows systematically and many paths cross the rejection threshold before the planned sample size is reached.
+Trajectories of the continuous randomization e-process using the matched normal-shift design wager for a trial designed to detect a standardized mean difference of $d = 0.40$ with 80\% power. Left: trajectories under the null hypothesis ($d = 0$), where wealth usually drifts below 1 and does not cross in the representative panel. Right: trajectories under the alternative hypothesis ($d = 0.40$), where wealth grows systematically and many paths cross the rejection threshold before the planned sample size is reached.
 }
 \label{fig:eRTC_null_d04_80}
 \end{figure}
 
-Figure~\ref{fig:eRTC_null_d04_80} illustrates 30 simulated trajectories of the process for continuous endpoints under a design targeting a standardized effect size of $d = 0.40$ with 80\% power. Under the null hypothesis (left panel), wealth fluctuates around 1 and gradually drifts downward as repeated small bets accumulate against noise. No trajectory crosses the rejection threshold of $1/\alpha = 20$. Under the corresponding alternative (right panel), outcomes begin to separate between arms, the bets become systematically correct, and the wealth grows. Some trajectories cross the rejection threshold before the planned sample size, demonstrating the potential for early stopping.
+Figure~\ref{fig:eRTC_null_d04_80} illustrates 30 simulated trajectories of the process for continuous endpoints under a design targeting a standardized effect size of $d = 0.40$ with 80\% power. Under the null hypothesis (left panel), the prespecified design wager tends to spend wealth against noise, and no trajectory crosses the rejection threshold of $1/\alpha = 20$ in this representative panel. Under the corresponding alternative (right panel), outcomes separate between arms, the design wager is systematically favorable, and many trajectories cross before the planned sample size, demonstrating the potential for early stopping.
 
 \section{Time-to-Event Outcomes}
 
@@ -914,7 +914,7 @@ wealth grows systematically. The red dashed line represents the rejection thresh
 \end{figure}
 
 
-\section{Betting Strategy Design: The Wage Asymmetry}
+\section{Betting Strategy Design: The Wager Asymmetry}
 \label{sec:wage}
 
 The active e-RT variants use different betting strategies. Binary and continuous methods use adaptive or design-calibrated wagers; survival can use fixed, adaptive, or design-calibrated risk-set wagers; event-only uses adaptive full Kelly or design-calibrated event-coin wagers; and pairwise e-RTwr can use adaptive or GROW-style fixed wagers on predictably formed pairs. This section explains why these differences are principled, not accidental.
@@ -1065,7 +1065,7 @@ This is an experimental method under development. Application to real patients s
 
 \subsection{LLM use statement}
 
-Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wage asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 repository organization, simulation refactoring, wager-policy comparisons, e-RTwr exploratory analyses, e-RTc and e-RTs design-wager implementation, and manuscript cleanup.
+Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wager asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 repository organization, simulation refactoring, wager-policy comparisons, e-RTwr exploratory analyses, e-RTc and e-RTs design-wager implementation, and manuscript cleanup.
 
 \subsection{Acknowledgments}
 
@@ -1082,7 +1082,7 @@ The manuscript source, R implementation files, simulation scripts, generated CSV
     \item Third Version (Dec 11, 2025): Added continuous and survival endpoints; text adjustments.
     \item Fourth Version (Dec 17, 2025): Correction on signal direction on e-RTC. Text adjustments.
     \item Fifth Version (Dec 31, 2025): Added multi-state extension (e-RTms).
-    \item Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wage asymmetry across variants. Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
+    \item Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wager asymmetry across variants. Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
     \item Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
     \item Eighth Version (in preparation): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; introduced e-RTwr for disjoint pairwise win-ratio and GPC-style monitoring with Sokolova-style GROW comparisons and exploratory \texttt{BuyseTest}-based composite endpoint simulations; added parametric normal-shift design wagers for e-RTc; added fixed, adaptive, and design-calibrated wager-policy simulations for e-RTs with Type M and Type S diagnostics; committed simulation result tables for reproducibility; deferred e-RTms/e-RTu from the active manuscript scope; and removed the embedded code appendix in favor of the project repository.
 \end{enumerate}

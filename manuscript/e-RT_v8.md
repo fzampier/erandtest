@@ -180,11 +180,11 @@ Figure <a href="#fig:null" data-reference-type="ref" data-reference="fig:null">
 <figcaption>Wealth trajectories under the null hypothesis. Left: n = 712 (80% power design). Right: n = 954 (90% power design). Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). Dotted gray line: neutral (wealth = 1). Under the null, no trajectory crosses the threshold.</figcaption>
 </figure>
 
-Figure <a href="#fig:alt" data-reference-type="ref" data-reference="fig:alt">2</a> shows trajectories under the alternative hypothesis (40% vs 30% event rates, true ARR = 10%). With a real treatment effect, wealth grows systematically. Most trajectories cross the rejection threshold before enrollment completes, and many reach values far exceeding 20 — providing strong evidence against the null.
+Figure <a href="#fig:alt" data-reference-type="ref" data-reference="fig:alt">2</a> shows trajectories under the alternative hypothesis (40% vs 30% event rates, true ARR = 10%). With a real treatment effect, wealth grows systematically. Many trajectories cross the rejection threshold before enrollment completes, and some reach values far exceeding 20 — providing strong evidence against the null.
 
 <figure id="fig:alt" data-latex-placement="htbp">
 <p><embed src="traj_alt_10pct_80pow.pdf" style="width:48.0%" /> <embed src="traj_alt_10pct_90pow.pdf" style="width:48.0%" /></p>
-<figcaption>E-processes trajectories under the alternative hypothesis (true ARR = 10%). Left: n = 712 (80% power design). Right: n = 954 (90% power design). Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). Under the alternative, approximately half of trajectories cross the threshold, typically around the midpoint of enrollment.</figcaption>
+<figcaption>E-process trajectories under the alternative hypothesis (true ARR = 10%). Left: n = 712 (80% power design). Right: n = 954 (90% power design). Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). Under the alternative, approximately half to two thirds of the representative trajectories cross the threshold, typically around the midpoint of enrollment.</figcaption>
 </figure>
 
 # Event-Only Monitoring (e-RTe)
@@ -868,14 +868,14 @@ Power and Type M error for e-RTc adaptive and parametric design wagers. The effe
 
 Type I error remained controlled in these simulations. The adaptive sign-direction wager is conservative for small effects: at true $`d=0.20`$, it crossed in only 9.8% of trials and did so very early when it crossed, producing a high median Type M ratio of 2.98. The parametric design wager improved power substantially when the design effect was close to the truth: at $`d=0.20`$, matched design wagering increased power to 73.4% and reduced median Type M to 1.28. The tradeoff is visible under misspecification. Overestimating the design effect generally caused earlier crossings and more Type M inflation, while underestimating the effect delayed crossings and sometimes reduced power. These results support design-calibrated e-RTc as an optional efficiency mode, not as a replacement for the adaptive effect-size-agnostic monitor.
 
-A visual representation is shown in Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference="fig:eRTC_null_d04_80">7</a>.
+A visual representation of the matched normal-shift design wager is shown in Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference="fig:eRTC_null_d04_80">7</a>.
 
 <figure id="fig:eRTC_null_d04_80" data-latex-placement="htbp">
 <p><embed src="traj_eRTC_null_d0.4_80pow.pdf" style="width:48.0%" /> <embed src="traj_eRTC_alt_d0.4_80pow.pdf" style="width:48.0%" /></p>
-<figcaption> Trajectories of the continuous randomization e-process for a trial designed to detect a standardized mean difference of <span class="math inline"><em>d</em> = 0.40</span> with 80% power. Left: trajectories under the null hypothesis (<span class="math inline"><em>d</em> = 0</span>), where wealth wanders near or below 1 and rarely approaches the rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). Right: trajectories under the alternative hypothesis (<span class="math inline"><em>d</em> = 0.40</span>), where wealth grows systematically and many paths cross the rejection threshold before the planned sample size is reached. </figcaption>
+<figcaption> Trajectories of the continuous randomization e-process using the matched normal-shift design wager for a trial designed to detect a standardized mean difference of <span class="math inline"><em>d</em> = 0.40</span> with 80% power. Left: trajectories under the null hypothesis (<span class="math inline"><em>d</em> = 0</span>), where wealth usually drifts below 1 and does not cross in the representative panel. Right: trajectories under the alternative hypothesis (<span class="math inline"><em>d</em> = 0.40</span>), where wealth grows systematically and many paths cross the rejection threshold before the planned sample size is reached. </figcaption>
 </figure>
 
-Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference="fig:eRTC_null_d04_80">7</a> illustrates 30 simulated trajectories of the process for continuous endpoints under a design targeting a standardized effect size of $`d = 0.40`$ with 80% power. Under the null hypothesis (left panel), wealth fluctuates around 1 and gradually drifts downward as repeated small bets accumulate against noise. No trajectory crosses the rejection threshold of $`1/\alpha = 20`$. Under the corresponding alternative (right panel), outcomes begin to separate between arms, the bets become systematically correct, and the wealth grows. Some trajectories cross the rejection threshold before the planned sample size, demonstrating the potential for early stopping.
+Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference="fig:eRTC_null_d04_80">7</a> illustrates 30 simulated trajectories of the process for continuous endpoints under a design targeting a standardized effect size of $`d = 0.40`$ with 80% power. Under the null hypothesis (left panel), the prespecified design wager tends to spend wealth against noise, and no trajectory crosses the rejection threshold of $`1/\alpha = 20`$ in this representative panel. Under the corresponding alternative (right panel), outcomes separate between arms, the design wager is systematically favorable, and many trajectories cross before the planned sample size, demonstrating the potential for early stopping.
 
 # Time-to-Event Outcomes
 
@@ -1030,7 +1030,7 @@ Figure <a href="#fig:erts_wager_policy_type_m" data-reference-type="ref" data-r
 <figcaption> Trajectories of the fixed-magnitude e-RTs process for a trial designed to detect a Hazard Ratio of 0.80 with 80% fixed-sample log-rank power (<span class="math inline">631</span> events). Left: trajectories under the null hypothesis (HR = 1.00), where wealth fluctuates randomly. Right: trajectories under the alternative hypothesis (HR = 0.80), where wealth grows systematically. The red dashed line represents the rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). </figcaption>
 </figure>
 
-# Betting Strategy Design: The Wage Asymmetry
+# Betting Strategy Design: The Wager Asymmetry
 
 The active e-RT variants use different betting strategies. Binary and continuous methods use adaptive or design-calibrated wagers; survival can use fixed, adaptive, or design-calibrated risk-set wagers; event-only uses adaptive full Kelly or design-calibrated event-coin wagers; and pairwise e-RTwr can use adaptive or GROW-style fixed wagers on predictably formed pairs. This section explains why these differences are principled, not accidental.
 
@@ -1182,7 +1182,7 @@ This is an experimental method under development. Application to real patients s
 
 ## LLM use statement
 
-Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wage asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 repository organization, simulation refactoring, wager-policy comparisons, e-RTwr exploratory analyses, e-RTc and e-RTs design-wager implementation, and manuscript cleanup.
+Large language models were extensively used in this work. The author had the idea that perhaps the e-value and e-process machinery could be used to bet against randomization which would result in a continuous trial monitoring tool. They uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming, which quickly resulted in a preliminary version. This was refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Gemini 3.0 Pro aided with coding for survival approach. Claude Opus 4.6 aided with the deaths-only extension and the wager asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 repository organization, simulation refactoring, wager-policy comparisons, e-RTwr exploratory analyses, e-RTc and e-RTs design-wager implementation, and manuscript cleanup.
 
 ## Acknowledgments
 
@@ -1204,7 +1204,7 @@ The manuscript source, R implementation files, simulation scripts, generated CSV
 
 5.  Fifth Version (Dec 31, 2025): Added multi-state extension (e-RTms).
 
-6.  Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wage asymmetry across variants. Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
+6.  Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wager asymmetry across variants. Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
 
 7.  Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
 
