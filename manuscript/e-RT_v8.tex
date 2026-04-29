@@ -9,6 +9,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{natbib}
 \usepackage{hyperref}
+\hypersetup{hypertexnames=false}
 \usepackage{setspace}
 \usepackage{float}
 
@@ -166,37 +167,21 @@ Thus rejecting when wealth ever exceeds $1/\alpha$ controls Type I error at leve
 
 \section{Simulation Studies}
 
-We evaluated operating characteristics or e-RT by simulation. For each scenario, we calculated the sample size required for a chi-square test to achieve the target power at $\alpha = 0.05$, then ran 5,000 simulated trials at that sample size. We used burn-in = 50 patients and ramp = 100 patients. Control arm event rate was 40\% in all scenarios.
+We evaluated operating characteristics of e-RTb by simulation. For each scenario, we calculated the sample size required for a chi-square test to achieve the target power at $\alpha = 0.05$, then ran 5{,}000 simulated trials at that sample size. We used burn-in = 50 patients and ramp = 100 patients. Control arm event rate was 40\% in all scenarios.
 
 \subsection{Results}
 
 Table~\ref{tab:simulations} presents Type I error and power for trials designed to detect 5\% or 10\% absolute risk reductions (ARR) with 80\% or 90\% power.
 
-\begin{table}[htbp]
-\centering
-\caption{Operating Characteristics for e-RTb (Binary)}
-\begin{tabular}{@{}cccccc@{}}
-\toprule
-ARR & Target Power & $n$ & Type I Error & e-RTb Power & Median Crossing \\
-\midrule
-5\%  & 80\% & 2942 & 0.032 & 48.6\% & 1392 (47\%) \\
-10\% & 80\% & 712  & 0.021 & 50.4\% & 401 (56\%) \\
-5\%  & 90\% & 3938 & 0.035 & 62.8\% & 1842 (47\%) \\
-10\% & 90\% & 954  & 0.025 & 65.9\% & 478 (50\%) \\
-\bottomrule
-\end{tabular}
-\label{tab:simulations}
-\end{table}
+\input{ertb_baseline_table.tex}
 
-Type I error was well controlled across all scenarios (0.021 -- 0.035), below the nominal $\alpha = 0.05$. This confirms the theoretical guarantee from the martingale property.
-
-Power was approximately 50\% for trials designed with 80\% power, and 63--66\% for trials designed with 90\% power. When the process rejected the null, it did so at approximately half the planned sample size (median crossing 47--56\% of total enrollment).
+Type I error was controlled below the nominal $\alpha = 0.05$ level across the tested scenarios, consistent with the martingale guarantee. Power was lower than the corresponding fixed-sample design power because the e-process must cross an anytime-valid threshold. When the process rejected the null, it generally did so around the middle of planned enrollment.
 
 \subsection{Interpretation}
 
-This method seems to be appealing as a continuous monitoring tool. A trial designed for 80\% power with a traditional test gains a 50\% chance of stopping early, at roughly the halfway point. If the threshold is not crossed, the trial proceeds to completion and the planned analysis is conducted with no penalty.
+These simulations suggest that e-RTb may be useful as a continuous monitoring layer. A trial designed for 80\% fixed-sample power has a meaningful chance of crossing early when the design effect is true, often before full enrollment. If the threshold is not crossed, the trial can still proceed to completion and the planned primary analysis can be interpreted as usual, while the e-process provides a separate anytime-valid monitoring record.
 
-This represents a free option: anytime-valid monitoring with no alpha spending and no pre-specified interim looks. The ``cost'' is that this method alone has lower power than a fixed-sample test. But when layered on top of a properly powered trial, it provides early stopping when effects are larger than anticipated.
+The practical cost is reduced early-stopping power relative to the fixed-sample analysis. The practical benefit is continuous monitoring without alpha spending or pre-specified interim looks.
 
 \subsection{Trajectory Examples}
 
@@ -349,24 +334,7 @@ This is an 11.2-point tilt from 0.5---more than double the 5-point ARR. The sign
 
 This advantage diminishes as the baseline event rate increases. At higher event rates, e-RTb sees more informative events per patient, and the event-coin tilt shrinks because both numerator and denominator grow:
 
-\begin{table}[htbp]
-\centering
-\caption{Signal Concentration: Event-Coin Tilt vs.\ ARR for a 5pp Risk Reduction}
-\begin{tabular}{@{}ccccc@{}}
-\toprule
-Baseline Event Rate & Treatment Event Rate & Event Coin $p_{\text{alt}}$ & Tilt from 0.5 & Tilt / ARR \\
-\midrule
-10\% & 5\%  & 0.333 & 16.7 pp & 3.33$\times$ \\
-15\% & 10\% & 0.400 & 10.0 pp & 2.00$\times$ \\
-20\% & 15\% & 0.429 & 7.1 pp  & 1.43$\times$ \\
-25\% & 20\% & 0.444 & 5.6 pp  & 1.11$\times$ \\
-30\% & 25\% & 0.455 & 4.5 pp  & 0.91$\times$ \\
-35\% & 30\% & 0.462 & 3.8 pp  & 0.77$\times$ \\
-40\% & 35\% & 0.467 & 3.3 pp  & 0.67$\times$ \\
-\bottomrule
-\end{tabular}
-\label{tab:signal_concentration}
-\end{table}
+\input{erte_signal_concentration_table.tex}
 
 The crossover with e-RTb occurs at approximately 25\% baseline event rate (Table~\ref{tab:compare_erte_binary}). Below that, the concentrated event-coin signal more than compensates for the smaller number of observations; above it, e-RTb's access to all patients provides the advantage.
 
@@ -374,25 +342,9 @@ The crossover with e-RTb occurs at approximately 25\% baseline event rate (Table
 
 We evaluated e-RTe operating characteristics using the same simulation framework as for e-RTb. For each scenario, we calculated the frequentist sample size (two-proportion $z$-test) and applied a $2.5\times$ inflation factor to account for the reduced efficiency of event-only monitoring. We used burn-in $= 30$ events, ramp $= 50$ events, threshold $1/\alpha = 20$, and 2{,}000 simulations per scenario. The simulations use mortality as the event of interest, but the method applies to any binary event.
 
-\begin{table}[htbp]
-\centering
-\caption{Operating Characteristics for e-RTe (Event-Only)}
-\begin{tabular}{@{}cccccccc@{}}
-\toprule
-Baseline & ARR & Event Coin & N (freq) & N (e-RTe) & Type I & Power & Median Crossing \\
-\midrule
-15\% & 5pp  & 0.400 & 1{,}372 & 3{,}430 & 2.20\% & 90.3\% & 179 events (42\%) \\
-15\% & 10pp & 0.250 & 282    & 705     & 0.35\% & 59.6\% & 63 events (89\%) \\
-25\% & 5pp  & 0.444 & 2{,}188 & 5{,}470 & 2.90\% & 86.0\% & 490 events (40\%) \\
-25\% & 10pp & 0.375 & 500    & 1{,}250 & 2.15\% & 87.1\% & 123 events (49\%) \\
-35\% & 5pp  & 0.462 & 2{,}754 & 6{,}885 & 3.05\% & 76.1\% & 1{,}036 events (46\%) \\
-35\% & 10pp & 0.417 & 658    & 1{,}645 & 3.15\% & 81.1\% & 232 events (47\%) \\
-\bottomrule
-\end{tabular}
-\label{tab:erte_simulations}
-\end{table}
+\input{erte_operating_characteristics_table.tex}
 
-Type I error was well controlled across all scenarios (0.35--3.15\%), consistently below the nominal $\alpha = 0.05$. Power ranged from 59.6\% to 90.3\%, with the strongest performance at low baseline event rates where the signal concentration effect is most pronounced: at 15\% baseline event rate with a 5pp ARR, the event-coin tilt of 10 points from 0.5 yielded 90.3\% power. At higher baseline rates (35\%), the event-coin tilt shrinks and power decreases, consistent with the signal concentration analysis above.
+Type I error was controlled below the nominal $\alpha = 0.05$ level across the tested scenarios. Power was strongest at lower baseline event rates when the signal concentration effect was largest. At higher baseline rates, the event-coin tilt shrank and power decreased, consistent with the signal concentration analysis above.
 
 When the threshold was crossed, it occurred at approximately 40--50\% of total expected events for most scenarios. The exception is 15\% baseline with 10pp ARR, where the very strong event-coin tilt (0.250, a 25-point deviation from 0.5) drives rapid crossing at the cost of requiring very few events overall (median 63), so the 89\% figure reflects that the total expected event count (71) is small and crossing happens close to the end.
 
@@ -417,26 +369,9 @@ Dashed red line: rejection threshold ($1/\alpha = 20$).
 
 To quantify the signal concentration crossover, we ran both e-RTe and e-RTb on the \emph{same} simulated trials across a range of baseline event rates with a fixed 5pp ARR. For each baseline rate, we computed the frequentist sample size (two-proportion $z$-test, 80\% power), enrolled that many patients, and analyzed the data with both methods: e-RTb processed all patients; e-RTe processed only the event stream. We used 2{,}000 simulations per scenario.
 
-\begin{table}[htbp]
-\centering
-\caption{Head-to-Head Comparison: e-RTe vs.\ e-RTb (5pp ARR, same trial data)}
-\begin{tabular}{@{}cccccccl@{}}
-\toprule
-Baseline & Event Coin & $N$ & Events & e-RTb Power & e-RTe Power & $\Delta$ & Winner \\
-\midrule
-10\% & 0.333 & 870    & 66     & 12.2\% & 8.4\%  & $-3.7$pp  & e-RTb \\
-15\% & 0.400 & 1{,}372 & 172  & 26.7\% & 44.6\% & $+17.9$pp & e-RTe \\
-20\% & 0.429 & 1{,}812 & 318  & 32.4\% & 44.0\% & $+11.6$pp & e-RTe \\
-25\% & 0.444 & 2{,}188 & 493  & 40.6\% & 41.3\% & $+0.7$pp  & $\sim$Tied \\
-30\% & 0.455 & 2{,}502 & 689  & 42.3\% & 38.4\% & $-3.9$pp  & e-RTb \\
-35\% & 0.462 & 2{,}754 & 896  & 45.3\% & 36.1\% & $-9.2$pp  & e-RTb \\
-40\% & 0.467 & 2{,}942 & 1{,}104 & 48.8\% & 33.1\% & $-15.6$pp & e-RTb \\
-\bottomrule
-\end{tabular}
-\label{tab:compare_erte_binary}
-\end{table}
+\input{erte_head_to_head_table.tex}
 
-The crossover occurs at exactly 25\% baseline event rate, confirming the analytical prediction from Table~\ref{tab:signal_concentration}. At 15--20\% baseline, e-RTe outperforms e-RTb by 12--18 percentage points despite seeing fewer observations, because the event-coin tilt (10--7 points from 0.5) more than compensates for the smaller sample. Above 30\%, e-RTb's access to all patients provides an increasingly large advantage.
+The crossover occurs near 25\% baseline event rate, consistent with the analytical prediction from Table~\ref{tab:signal_concentration}. At 15--20\% baseline, e-RTe outperforms e-RTb despite seeing fewer observations, because the event-coin tilt more than compensates for the smaller event stream. Above 30\%, e-RTb's access to all patients provides an increasingly large advantage.
 
 \paragraph{The 10\% exception.} At 10\% baseline, the frequentist $N = 870$ produces only $\sim$66 expected events---fewer than the burn-in (30) plus ramp (50) = 80 events required for e-RTe to reach full betting strength. The e-RTe process literally never completes its learning phase, so it cannot leverage the strong 16.7-point event-coin tilt. This highlights a practical constraint: e-RTe requires sufficient events ($> 80$) to be effective.
 
@@ -478,27 +413,7 @@ Because e-RT methods may stop early, the apparent treatment effect at the first 
 
 We therefore summarized the apparent effect at first crossing among simulated trials that crossed. For both e-RTb and e-RTe, the displayed effect scale is the apparent absolute risk reduction using all randomized patients observed by the time of first crossing. For e-RTe, this is a diagnostic snapshot rather than information used by the event-only e-process: the e-RTe wealth process itself still sees only event arm labels, but when denominators are available at the crossing time, the clinical effect size can be estimated on the same scale as e-RTb. If denominators are not available operationally, only the native event-coin diagnostic can be reported.
 
-\begin{table}[htbp]
-\centering
-\small
-\caption{Type M error at first e-process crossing for e-RTb and e-RTe. Crossing and final effects are absolute risk reductions in percentage points. For e-RTe, the e-process itself remains event-only; the absolute risk reduction is a full-data diagnostic computed from all randomized patients observed by the crossing time. Type M is computed among trials that crossed.}
-\begin{tabular}{@{}lllrrrrr@{}}
-\toprule
-True & Endpoint & Policy & Crossing & Final & Median M & Q75 & Q90 \\
-\midrule
-5pp & e-RTb & Adaptive & 7.84 & 4.92 & 1.57 & 2.17 & 3.12 \\
-5pp & e-RTb & Fixed matched & 6.49 & 4.97 & 1.30 & 1.67 & 2.09 \\
-5pp & e-RTe & Adaptive & 8.23 & 4.97 & 1.65 & 2.13 & 2.74 \\
-5pp & e-RTe & Fixed matched & 6.77 & 4.88 & 1.35 & 1.68 & 2.03 \\
-\midrule
-10pp & e-RTb & Adaptive & 14.44 & 10.07 & 1.44 & 1.82 & 2.25 \\
-10pp & e-RTb & Fixed matched & 12.83 & 9.92 & 1.28 & 1.58 & 1.90 \\
-10pp & e-RTe & Adaptive & 14.74 & 9.94 & 1.47 & 1.76 & 2.11 \\
-10pp & e-RTe & Fixed matched & 13.10 & 9.94 & 1.31 & 1.55 & 1.82 \\
-\bottomrule
-\end{tabular}
-\label{tab:type_m_crossing}
-\end{table}
+\input{wager_policy_type_m_table.tex}
 
 The inflation is clinically meaningful. In the 5pp ARR scenario, adaptive e-RTb crossings had a median apparent ARR of 7.84 percentage points, with a median Type M ratio of 1.57. Adaptive e-RTe crossings had a similar but slightly larger full-data snapshot ARR of 8.23 percentage points, with a median Type M ratio of 1.65. Fixed matched wagers reduced this inflation for both methods, with median ratios of 1.30 for e-RTb and 1.35 for e-RTe. These results reinforce that e-RT crossings should be interpreted as valid evidence for a treatment difference, not as unbiased estimates of its magnitude.
 
@@ -562,36 +477,7 @@ We first evaluated e-RTwr using normally distributed continuous outcomes convert
 
 Table~\ref{tab:ertwr_sokolova} compares four quantities: a conventional final all-pairs win-ratio test, adaptive e-RTwr at the same sample size, fixed/GROW e-RTwr at the same sample size, and a Sokolova-style e-design analogue in which the same GROW wager is used but $N_{\max}$ is calibrated to achieve approximately 80\% e-process crossing power.
 
-\begin{table}[htbp]
-\centering
-\caption{Simple win-ratio simulations comparing final WR analysis, adaptive e-RTwr, fixed/GROW e-RTwr, and e-process-calibrated GROW design. Each e-process row uses 1{,}000 simulations.}
-\begin{tabular}{@{}llrrrr@{}}
-\toprule
-True WR & Comparator & Pairs & N/YG & Null Reject & Power \\
-\midrule
-1.10 & Final all-pairs WR test & 2{,}305 & 1.00 & 5.0\% & 80.0\% \\
-1.10 & e-RTwr adaptive & 2{,}305 & 1.00 & 4.2\% & 31.4\% \\
-1.10 & e-RTwr fixed/GROW same N & 2{,}305 & 1.00 & 3.1\% & 57.3\% \\
-1.10 & Sokolova-style GROW e-design & 3{,}861 & 1.68 & 3.9\% & 80.0\% \\
-\midrule
-1.20 & Final all-pairs WR test & 630 & 1.00 & 5.0\% & 80.0\% \\
-1.20 & e-RTwr adaptive & 630 & 1.00 & 3.2\% & 35.1\% \\
-1.20 & e-RTwr fixed/GROW same N & 630 & 1.00 & 2.7\% & 56.6\% \\
-1.20 & Sokolova-style GROW e-design & 1{,}095 & 1.74 & 3.1\% & 80.0\% \\
-\midrule
-1.30 & Final all-pairs WR test & 305 & 1.00 & 5.0\% & 80.1\% \\
-1.30 & e-RTwr adaptive & 305 & 1.00 & 1.8\% & 36.9\% \\
-1.30 & e-RTwr fixed/GROW same N & 305 & 1.00 & 2.9\% & 56.7\% \\
-1.30 & Sokolova-style GROW e-design & 517 & 1.70 & 3.6\% & 80.0\% \\
-\midrule
-1.50 & Final all-pairs WR test & 128 & 1.00 & 5.0\% & 80.2\% \\
-1.50 & e-RTwr adaptive & 128 & 1.00 & 1.3\% & 33.4\% \\
-1.50 & e-RTwr fixed/GROW same N & 128 & 1.00 & 2.5\% & 53.3\% \\
-1.50 & Sokolova-style GROW e-design & 206 & 1.61 & 2.9\% & 80.3\% \\
-\bottomrule
-\end{tabular}
-\label{tab:ertwr_sokolova}
-\end{table}
+\input{ertwr_sokolova_table.tex}
 
 The main lesson is that the power gap is not primarily a failure of the GROW wager. At the Yu--Ganju final-analysis sample size, fixed/GROW e-RTwr achieved approximately 53--57\% anytime power. To recover approximately 80\% anytime power, the GROW e-design needed about 1.6--1.7 times as many disjoint pairs. Adaptive e-RTwr was less powerful, about 31--37\%, reflecting the cost of learning the wager without specifying a design effect.
 
@@ -607,19 +493,7 @@ The final reference analysis was the all-pairs GPC/win-ratio estimate from \text
 
 The null scenario used identical treatment and control distributions for all three endpoints. The composite alternative used longer treatment event times, lower treatment toxicity (20\% vs.\ 30\%), and a higher treatment mean score (mean difference 0.25 standard deviations). Each simulation used 250 patients per arm and 300 replicates. Fixed/design e-RTwr used a design win ratio of 1.30.
 
-\begin{table}[htbp]
-\centering
-\caption{Composite endpoint simulation using \texttt{BuyseTest} and disjoint-pair e-RTwr. Rates are shown with Monte Carlo standard errors.}
-\begin{tabular}{@{}lrrrrr@{}}
-\toprule
-Scenario & BuyseTest & Adaptive & Fixed/design & Buyse WR & Disjoint WR \\
-\midrule
-Null & 4.3\% (1.2\%) & 1.7\% (0.7\%) & 1.7\% (0.7\%) & 1.00 & 1.02 \\
-Composite alternative & 82.3\% (2.2\%) & 27.7\% (2.6\%) & 51.3\% (2.9\%) & 1.31 & 1.31 \\
-\bottomrule
-\end{tabular}
-\label{tab:ertwr_composite}
-\end{table}
+\input{ertwr_composite_table.tex}
 
 These simulations reproduce the same qualitative pattern in a clinically richer endpoint setting. The final all-pairs \texttt{BuyseTest} analysis was highly powered at the chosen sample size. Fixed/design e-RTwr was less powerful but substantially stronger than the adaptive agnostic monitor. Encouragingly, the median all-pairs win ratio and the median disjoint-pair win ratio were both approximately 1.31 under the composite alternative, suggesting that the disjoint monitor targets a clinically interpretable composite win tendency even though it uses many fewer pairwise comparisons.
 
@@ -947,23 +821,9 @@ For binary data, the wager scales with the running risk difference:
 \end{equation}
 The factor of $0.5$ before $c_i \hat{\delta}$ implements half-Kelly betting. Why not use the full estimate, or a fixed wager as the default?
 
-Earlier stress tests demonstrate the catastrophic cost of naively over-betting in binary trials. For a true ARR of 5\%, fixed single-magnitude wagers that are too aggressive can destroy wealth:
+Fixed-seed stress tests demonstrate the catastrophic cost of naively over-betting in binary trials. For a true ARR of 5\%, fixed single-magnitude wagers that are too aggressive can destroy wealth:
 
-\begin{table}[htbp]
-\centering
-\caption{Binary: Cost of Naive Over-Betting (True ARR = 5\%, N $= 2{,}942$)}
-\begin{tabular}{@{}cccc@{}}
-\toprule
-Fixed wager magnitude & Relative scale & Power & Median Final E-value \\
-\midrule
-0.05 & $1\times$ & 56.3\% & 1.15 \\
-0.10 & $2\times$ & 21.9\% & $\approx 0$ \\
-0.15 & $3\times$ & 16.5\% & $\approx 0$ \\
-0.20 & $4\times$ & 10.0\% & $\approx 0$ \\
-\bottomrule
-\end{tabular}
-\label{tab:wage_binary}
-\end{table}
+\input{wager_asymmetry_binary_table.tex}
 
 At twice the appropriate magnitude, the median e-value is already approximately zero---wealth is irreversibly destroyed. Every patient updates the product, and thousands of slightly-wrong multiplications compound into oblivion.
 
@@ -983,21 +843,7 @@ The parametric design wager is therefore useful in continuous endpoints, but it 
 
 \subsection{The Design Principle}
 
-\begin{table}[htbp]
-\centering
-\caption{Summary: Betting Strategy by e-RT Variant}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-Property & e-RTs & e-RTe & e-RTb & e-RTc/e-RTwr \\
-\midrule
-Update frequency & Events only & Events only & Every patient & Dense or pairwise \\
-Over-bet cost & Low (slow bleed) & Moderate & Catastrophic & High \\
-Universal $\lambda$ possible? & Partial & Marginal & No & No \\
-Kelly fraction & Fixed/design & Full & Half default & Adaptive or design-fixed \\
-\bottomrule
-\end{tabular}
-\label{tab:wage_summary}
-\end{table}
+\input{wager_strategy_summary_table.tex}
 
 The hierarchy of over-betting risk is: \textbf{continuous and dense pairwise $>$ binary $\gg$ survival}. This maps directly to how frequently the wealth product is updated. More frequent updates mean more opportunities for over-betting to compound, requiring increasingly conservative or adaptive strategies.
 
@@ -1017,9 +863,9 @@ These results should be interpreted carefully. From a clinical trial perspective
 
 \subsection{Traditional statistics at crossing}
 
-When an e-RT crosses its threshold ($\geq 1/\alpha$), one may ask what a traditional frequentist analysis would report at that exact moment. In practice, the standard test will agree: the p-value will be small and the confidence interval will exclude the null. The e-RT is not detecting phantoms.
+When an e-RT crosses its threshold ($\geq 1/\alpha$), one may ask what a traditional frequentist analysis would report at that exact moment. In the simulated crossing trials, conventional analyses usually moved in the same direction and often produced small p-values or confidence intervals excluding the null. This is reassuring, but it should be treated as descriptive rather than inferential.
 
-However, there is a critical distinction. The traditional analysis at crossing is \emph{formally invalid} because the analyst observed the data at multiple time points and stopped at a favorable one. The frequentist p-value is anti-conservative (too small) and the standard confidence interval has less than 95\% coverage at this data-driven stopping time. The e-value, by contrast, is valid regardless of the stopping rule---this is the entire point of the anytime-valid guarantee. The e-value itself carries the inferential weight; the traditional statistics at crossing serve only as a sanity check confirming that the e-RT is detecting a real signal, not an artifact.
+However, there is a critical distinction. The traditional analysis at crossing is \emph{formally invalid} because the analyst observed the data at multiple time points and stopped at a favorable one. The frequentist p-value is anti-conservative (too small) and the standard confidence interval has less than 95\% coverage at this data-driven stopping time. The e-value, by contrast, is valid regardless of the stopping rule---this is the entire point of the anytime-valid guarantee. The e-value itself carries the inferential weight; traditional statistics at crossing are best used as clinical descriptors and diagnostic checks.
 
 \subsection{What is the null hypothesis being tested?}
 

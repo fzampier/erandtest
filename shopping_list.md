@@ -17,8 +17,8 @@ This is the working add/remove/change list for Version 8.
 
 ## Added In Code, Needs Manuscript Integration
 
-- Type M error at crossing for e-RTb and e-RTe simulations, with e-RTe ARR estimated from the full trial snapshot at crossing when denominators are available.
-- Type M error at crossing for e-RTc simulations on the Cohen's `d` scale.
+- Type M error at crossing for e-RTb and e-RTe simulations, with e-RTe ARR estimated from the full trial snapshot at crossing when denominators are available. **implemented and integrated**
+- Type M error at crossing for e-RTc simulations on the Cohen's `d` scale. **implemented and integrated**
 - e-RTs fixed-magnitude, adaptive half-Kelly, design-calibrated, misspecified
   design, and oracle simulation framework, with Type I error, power, Type M, and
   Type S diagnostics.
@@ -30,6 +30,9 @@ This is the working add/remove/change list for Version 8.
 - Package-backed `BuyseTest` validation for simple continuous all-pairs WR estimates, kept as a reference check rather than the main simulation engine.
 - Sokolova-style GROW comparison showing same-N fixed/GROW e-RTwr versus e-process-calibrated GROW `Nmax`.
 - Composite endpoint simulation using `BuyseTest::simBuyseTest()`, final all-pairs GPC, and disjoint-pair e-RTwr on exported pair scores.
+- Full active-manuscript reproducibility chain with `Makefile`, dependency
+  check, inventory check, generated table inputs, and cleanup of obsolete
+  pilot outputs. **implemented**
 
 ## Remove Or Deprecate
 
@@ -103,6 +106,9 @@ This is the working add/remove/change list for Version 8.
 
 ## Open Questions
 
+- Do we want a compressed journal-specific derivative after V8 stabilizes, or
+  should this full repository manuscript remain the primary working draft until
+  submission targeting is decided?
 - Should V8 use "e-RT" as family name and "e-RTb/e-RTe/e-RTwr/e-RTc/e-RTs" as the active variants?
 - Should the pairwise method be called `e-RTpw`, `e-RTwr`, or `e-RTgpc`?
 - Is the pairwise estimand a classical win ratio, a net benefit, or a matching-rule-specific sequential win tendency?
@@ -110,4 +116,3 @@ This is the working add/remove/change list for Version 8.
 - Should Type S be reported for all endpoints, or emphasized mainly for directional e-RTs and e-RTwr simulations?
 - Should e-RTwr use the disjoint-pair WR as the primary monitoring estimand, with `BuyseTest` all-pairs WR as the final-trial descriptive estimand?
 - Should design-calibrated e-RT be presented as optional efficiency mode or as a separate named variant?
-- Should the Clinical Trials journal version be a later compressed derivative rather than the main V8 manuscript?

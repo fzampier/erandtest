@@ -363,9 +363,60 @@ power_lines <- c(
 
 writeLines(c(type1_lines, "", power_lines), "manuscript/wager_policy_results_table.tex")
 
+type_m_table <- subset(
+  results,
+  scenario_type == "alternative" &
+    wager_misspecification %in% c("adaptive", "matched") &
+    endpoint %in% c("e-RTb", "e-RTe")
+)
+type_m_table$policy_display <- ifelse(
+  type_m_table$wager_misspecification == "adaptive",
+  "Adaptive",
+  "Fixed matched"
+)
+type_m_table$true_display <- format_pp(type_m_table$true_arr)
+type_m_table$policy_order <- match(type_m_table$policy_display, c("Adaptive", "Fixed matched"))
+type_m_table <- type_m_table[
+  order(type_m_table$true_arr, type_m_table$endpoint, type_m_table$policy_order),
+]
+
+type_m_rows <- vapply(seq_len(nrow(type_m_table)), function(i) {
+  x <- type_m_table[i, ]
+  sprintf(
+    "%s & %s & %s & %.2f & %.2f & %.2f & %.2f & %.2f \\\\",
+    x$true_display,
+    x$endpoint,
+    x$policy_display,
+    100 * x$median_crossing_effect,
+    100 * x$median_final_effect,
+    x$median_type_m_at_crossing,
+    x$type_m_q75,
+    x$type_m_q90
+  )
+}, character(1))
+
+type_m_lines <- c(
+  "\\begin{table}[htbp]",
+  "\\centering",
+  "\\small",
+  "\\caption{Type M error at first e-process crossing for e-RTb and e-RTe. Crossing and final effects are absolute risk reductions in percentage points. For e-RTe, the e-process itself remains event-only; the absolute risk reduction is a full-data diagnostic computed from all randomized patients observed by the crossing time. Type M is computed among trials that crossed.}",
+  "\\begin{tabular}{@{}lllrrrrr@{}}",
+  "\\toprule",
+  "True & Endpoint & Policy & Crossing & Final & Median M & Q75 & Q90 \\\\",
+  "\\midrule",
+  type_m_rows,
+  "\\bottomrule",
+  "\\end{tabular}",
+  "\\label{tab:type_m_crossing}",
+  "\\end{table}"
+)
+
+writeLines(type_m_lines, "manuscript/wager_policy_type_m_table.tex")
+
 cat("Wrote:\n")
 cat("  manuscript/traj_wager_ertb_5pp.pdf\n")
 cat("  manuscript/traj_wager_erte_5pp.pdf\n")
 cat("  manuscript/wager_policy_type1.pdf\n")
 cat("  manuscript/wager_policy_power.pdf\n")
 cat("  manuscript/wager_policy_results_table.tex\n")
+cat("  manuscript/wager_policy_type_m_table.tex\n")

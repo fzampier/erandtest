@@ -40,6 +40,12 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 ### Code And Simulations
 
 - Added reusable modules for e-RTb, e-RTe, e-RTc, and e-RTwr.
+- Added a top-level `Makefile` with dependency checking, result regeneration,
+  figure/table regeneration, manuscript build, and inventory validation targets.
+- Added `R/check_dependencies.R` and `R/check_inventory.R` for lightweight
+  standalone reproducibility checks.
+- Added generated baseline-table scripts for e-RTb and e-RTe so inherited
+  static manuscript tables are no longer hand-maintained.
 - Added fixed-seed simulation scripts for e-RTb/e-RTe wager-policy comparisons.
 - Added e-RTe diagnostics that compute ARR at crossing from the full randomized
   trial snapshot while keeping the e-process itself event-only.
@@ -55,12 +61,21 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
   manuscript e-RTb, e-RTe, e-RTc, and e-RTs didactic trajectory figures.
 - Added e-RTwr pilot, tuning, Sokolova-style GROW comparison, WRestimates
   sample-size checks, BuyseTest validation, and composite endpoint simulations.
-- Committed generated CSV result tables under `results/` because the repository
-  is private and the intermediate outputs help audit manuscript numbers.
+- Added generated e-RTwr manuscript tables for the Sokolova-style/GROW and
+  `BuyseTest` composite simulations.
+- Added a generated binary over-betting stress table for the wager-asymmetry
+  discussion.
+- Committed active generated CSV result tables under `results/` because the
+  repository is private and the intermediate outputs help audit manuscript
+  numbers.
+- Removed old e-RTms figure PDFs and low-replicate/pilot CSV outputs from the
+  active repo.
 
 ### Documentation
 
 - Added a robust README with project scope, repository layout, reproducibility
   commands, package notes, build instructions, and current caveats.
+- Added `notes/reproducibility_inventory.md` mapping active manuscript tables,
+  figures, CSVs, and support artifacts to their generators.
 - Added `AGENTS.md` and `shopping_list.md` to preserve working context for
   future research-agent sessions.
