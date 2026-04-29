@@ -79,8 +79,9 @@ does not become too diffuse.
 - `notes/`
   - Stable summaries of simulation runs and design decisions.
 - `results/`
-  - Generated CSV outputs. This directory is ignored by git; rerun scripts to
-    regenerate results.
+  - Generated CSV outputs from pilot and 1,000-replicate simulation runs. These
+    are committed because the repository is private and the intermediate result
+    tables make the manuscript numbers easier to audit.
 - `AGENTS.md`
   - Working instructions and context for future Codex/research-agent sessions.
 - `shopping_list.md`
@@ -105,7 +106,7 @@ Rscript R/simulations/ertwr_sokolova_comparison.R 1000
 Rscript R/simulations/ertwr_composite_buysetest.R 300 250
 ```
 
-The exact CSV files are not committed because `results/` is ignored. Stable
+The exact CSV files are committed under `results/` for clarity. Stable
 simulation summaries are committed under `notes/`, and manuscript-ready tables
 and figures are committed under `manuscript/`.
 
