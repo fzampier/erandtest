@@ -70,8 +70,12 @@ This is the working add/remove/change list for Version 8.
   - estimate the apparent effect at the first threshold crossing;
   - compare it with the true simulated effect;
   - report exaggeration ratios among crossing trials;
+  - report Type S sign error among crossing trials when the effect direction is meaningful;
   - include e-RTb and e-RTe adaptive and fixed wager policies;
   - for e-RTe, distinguish the native event-coin monitoring scale from the full-data ARR diagnostic at crossing.
+- e-RTs:
+  - compare current fixed-magnitude wager, adaptive log-rank-score wager, design/Sokolova-like wager from prespecified HR, misspecified design HRs, and oracle benchmark;
+  - report Type I error, power, median crossing event, HR at crossing, final HR, Type M on the `|log(HR)|` scale, and Type S sign error at crossing.
 - Pairwise win/loss:
   - disjoint or predictably matched treatment-control pairs only at first;
   - avoid all-pairs products until dependence is handled;
@@ -91,6 +95,7 @@ This is the working add/remove/change list for Version 8.
 - Should the pairwise method be called `e-RTpw`, `e-RTwr`, or `e-RTgpc`?
 - Is the pairwise estimand a classical win ratio, a net benefit, or a matching-rule-specific sequential win tendency?
 - Should Type M at crossing be reported as median exaggeration, mean exaggeration, or quantiles because the ratio may be unstable when the true effect is small?
+- Should Type S be reported for all endpoints, or emphasized mainly for directional e-RTs and e-RTwr simulations?
 - Should e-RTwr use the disjoint-pair WR as the primary monitoring estimand, with `BuyseTest` all-pairs WR as the final-trial descriptive estimand?
 - Should design-calibrated e-RT be presented as optional efficiency mode or as a separate named variant?
 - Should the Clinical Trials journal version be a later compressed derivative rather than the main V8 manuscript?

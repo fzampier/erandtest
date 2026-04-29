@@ -23,6 +23,8 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 - Added e-RTc design-wager material using a parametric normal-shift working
   model.
 - Added Type M error at crossing as a recurring diagnostic.
+- Added Gelman and Carlin's Type S/Type M design-analysis citation and queued
+  Type S diagnostics for e-RTs.
 - Updated the Version Control section to describe the V8 changes.
 - Removed the embedded R-code appendix from the manuscript and refer readers to
   the repository as the computational source of truth.

@@ -43,5 +43,6 @@ Current manuscript scope:
 - e-RTms and e-RTu have been removed from the active manuscript and are framed
   as future extensions.
 - Next logical technical target: revisit e-RTs with the same wager-policy,
-  design-effect, Type M, and crossing-diagnostic discipline used for e-RTb,
-  e-RTe, e-RTwr, and e-RTc.
+  design-effect, Type M, Type S, and crossing-diagnostic discipline used for
+  e-RTb, e-RTe, e-RTwr, and e-RTc. Type S/Type M terminology should cite
+  Gelman and Carlin's design-analysis framing.

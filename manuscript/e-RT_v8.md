@@ -510,7 +510,7 @@ The key result is that design-fixed full-Kelly wagers can substantially increase
 
 ## Effect estimates at crossing and Type M error
 
-Because e-RT methods may stop early, the apparent treatment effect at the first threshold crossing is expected to be inflated. This is a form of Type M error: the magnitude of the observed effect among trials that cross may exceed the true effect because crossings are enriched for favorable random fluctuations. This does not invalidate the e-value—the e-process itself remains anytime-valid—but it matters for clinical interpretation. A trial stopped at an e-value threshold should not interpret the naive effect estimate at crossing as an unbiased estimate of the final treatment effect.
+Because e-RT methods may stop early, the apparent treatment effect at the first threshold crossing is expected to be inflated. Following the design-analysis terminology of Gelman and Carlin (2014), this is a form of Type M error: the magnitude of the observed effect among trials that cross may exceed the true effect because crossings are enriched for favorable random fluctuations. The companion diagnostic is Type S error, the probability that a selected or crossing estimate points in the wrong direction. This does not invalidate the e-value—the e-process itself remains anytime-valid—but it matters for clinical interpretation. A trial stopped at an e-value threshold should not interpret the naive effect estimate at crossing as an unbiased estimate of the final treatment effect.
 
 We therefore summarized the apparent effect at first crossing among simulated trials that crossed. For both e-RTb and e-RTe, the displayed effect scale is the apparent absolute risk reduction using all randomized patients observed by the time of first crossing. For e-RTe, this is a diagnostic snapshot rather than information used by the event-only e-process: the e-RTe wealth process itself still sees only event arm labels, but when denominators are available at the crossing time, the clinical effect size can be estimated on the same scale as e-RTb. If denominators are not available operationally, only the native event-coin diagnostic can be reported.
 
@@ -1173,6 +1173,12 @@ Buyse, Marc. 2010. “Generalized Pairwise Comparisons of Prioritized Outcomes i
 <div id="ref-pmlr-v177-duan22a" class="csl-entry">
 
 Duan, Boyan, Aaditya Ramdas, and Larry Wasserman. 2022. “Interactive Rank Testing by Betting.” In *Proceedings of the First Conference on Causal Learning and Reasoning*, edited by Bernhard Schölkopf, Caroline Uhler, and Kun Zhang, vol. 177. Proceedings of Machine Learning Research. PMLR. <https://proceedings.mlr.press/v177/duan22a.html>.
+
+</div>
+
+<div id="ref-gelman2014beyond" class="csl-entry">
+
+Gelman, Andrew, and John Carlin. 2014. “Beyond Power Calculations: Assessing Type s (Sign) and Type m (Magnitude) Errors.” *Perspectives on Psychological Science* 9 (6): 641–51. <https://doi.org/10.1177/1745691614551642>.
 
 </div>
 
