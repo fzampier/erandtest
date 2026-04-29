@@ -18,7 +18,7 @@ The main scientific goal for V8 is to sharpen e-RT as a randomization-based cont
 - Regenerate the Markdown mirror after LaTeX edits with:
 
 ```sh
-pandoc manuscript/e-RT_v8.tex -f latex -t gfm --citeproc --bibliography=manuscript/references.bib --wrap=none -o manuscript/e-RT_v8.md
+cd manuscript && pandoc e-RT_v8.tex -f latex -t gfm --citeproc --bibliography=references.bib --wrap=none -o e-RT_v8.md
 ```
 
 Do not edit the Markdown mirror as the authoritative manuscript unless the user explicitly asks for a Markdown-only drafting pass.
@@ -45,7 +45,8 @@ V8 should also consider replacing e-RTu with a more grounded pairwise win/loss e
 
 Key diagnostic additions for V8:
 
-- Type M error at first e-process crossing for e-RTb and e-RTe.
+- Type M error at first e-process crossing for e-RTb and e-RTe; for e-RTe, report ARR from the full randomized-trial snapshot when denominators are available, while keeping the event-only tilt as the native monitoring scale.
+- Type M error at first e-process crossing for e-RTc, reported on the Cohen's `d` scale.
 - Crossing-time effect estimates versus final-study estimates.
 - For e-RTwr, WR at crossing, final-study WR, and exaggeration relative to both the true/design WR and the final-study WR.
 - For e-RTwr simple continuous endpoints, package-backed `BuyseTest` validation of the internal all-pairs WR estimator.
@@ -56,6 +57,7 @@ Initial active code files:
 
 - `R/ertb.R`: binary e-RTb baseline from V7.
 - `R/erte.R`: event-only e-RTe baseline from V7.
+- `R/ertc.R`: continuous e-RTc V8 module, preserving the standalone V7 adaptive sign-direction wager and adding parametric normal-shift design/oracle wagers.
 - `R/ertwr.R`: pairwise win/loss e-RTwr prototype.
 - `R/simulations/`: V8 simulation scripts.
 
@@ -63,8 +65,9 @@ Current code direction:
 
 - Refactor e-RTb to support `wager = c("adaptive", "design", "fixed", "oracle")`.
 - Refactor e-RTe similarly, noting that design mode operates on the event-coin scale.
+- Refactor e-RTc similarly, noting that design mode uses a normal-shift working model for `Pr(T = 1 | Y)` and is parametric by default.
 - Add misspecification grids comparing adaptive, design-calibrated, fixed, and oracle wagers.
-- Type M error at crossing has been added to e-RTb/e-RTe simulation outputs.
+- Type M error at crossing has been added to e-RTb/e-RTe simulation outputs. The e-RTe simulation now feeds only event arm labels to the e-process but computes crossing-time ARR from the full simulated trial snapshot.
 - e-RTwr simulations now use `WRestimates`/Yu-Ganju sample sizes.
 - e-RTwr WR diagnostics use both the sequential disjoint-pair WR and an internal all-pairs continuous WR; `BuyseTest` is available as a validation/reference check.
 

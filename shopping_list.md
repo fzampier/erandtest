@@ -11,12 +11,14 @@ This is the working add/remove/change list for Version 8.
 - Add simulations comparing adaptive, fixed, design-calibrated, and oracle wagers.
 - Add design-effect misspecification simulations.
 - Include Type I error simulations for every real wager policy.
+- Add parametric design-calibrated e-RTc wagers based on prespecified mean, SD, and effect.
 - Add a pairwise win/loss e-process concept connected to generalized pairwise comparisons and win-ratio methods.
 - Add citations for Buyse generalized pairwise comparisons and Pocock win ratio if the pairwise section survives.
 
 ## Added In Code, Needs Manuscript Integration
 
-- Type M error at crossing for e-RTb and e-RTe simulations.
+- Type M error at crossing for e-RTb and e-RTe simulations, with e-RTe ARR estimated from the full trial snapshot at crossing when denominators are available.
+- Type M error at crossing for e-RTc simulations on the Cohen's `d` scale.
 - Yu-Ganju/`WRestimates`-compatible win-ratio sample-size formula for e-RTwr design sizes.
 - Final-study WR and WR at crossing for e-RTwr using internal sequential and all-pairs continuous WR estimators.
 - Package-backed `BuyseTest` validation for simple continuous all-pairs WR estimates, kept as a reference check rather than the main simulation engine.
@@ -53,6 +55,11 @@ This is the working add/remove/change list for Version 8.
   - design-fixed full-Kelly event-coin wager;
   - design event-coin wager from `p_trt_design / (p_trt_design + p_ctrl_design)`;
   - oracle event-coin benchmark.
+- e-RTc:
+  - V7 adaptive sign-direction wager;
+  - parametric normal-shift design wager;
+  - underestimated, matched, and overestimated design effects;
+  - Type M error at crossing on the Cohen's `d` scale.
 - Misspecification grids:
   - design effect equals true effect;
   - design effect larger than true effect;
@@ -62,7 +69,8 @@ This is the working add/remove/change list for Version 8.
   - estimate the apparent effect at the first threshold crossing;
   - compare it with the true simulated effect;
   - report exaggeration ratios among crossing trials;
-  - include e-RTb and e-RTe adaptive and fixed wager policies.
+  - include e-RTb and e-RTe adaptive and fixed wager policies;
+  - for e-RTe, distinguish the native event-coin monitoring scale from the full-data ARR diagnostic at crossing.
 - Pairwise win/loss:
   - disjoint or predictably matched treatment-control pairs only at first;
   - avoid all-pairs products until dependence is handled;

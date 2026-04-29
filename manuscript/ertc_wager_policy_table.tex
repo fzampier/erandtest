@@ -1,0 +1,41 @@
+\begin{table}[htbp]
+\centering
+\caption{Type I error for e-RTc adaptive and parametric design wagers. Each row summarizes 1{,}000 simulated null trials. Sample sizes use the usual fixed-sample two-sample $t$-test with 80\% power and $\alpha = 0.05$.}
+\label{tab:ertc_design_type1}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Design $d$ & Policy & $N$ & Type I & Median final e-value \\
+\midrule
+0.20 & Adaptive & 788 & 3.8\% & 0.00 \\
+0.20 & Design & 788 & 3.0\% & 0.03 \\
+0.40 & Adaptive & 200 & 4.3\% & 0.00 \\
+0.40 & Design & 200 & 2.9\% & 0.05 \\
+0.60 & Adaptive & 90 & 4.0\% & 0.00 \\
+0.60 & Design & 90 & 1.2\% & 0.21 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Power and Type M error for e-RTc adaptive and parametric design wagers. The effect scale is Cohen's $d$; Type M is computed among trials that crossed.}
+\label{tab:ertc_design_power_type_m}
+\begin{tabular}{@{}lllrrrrr@{}}
+\toprule
+True $d$ & Policy & Wager $d$ & $N$ & Power & Median crossing & Crossing $d$ & Median M \\
+\midrule
+0.20 & Adaptive & -- & 788 & 9.8\% & 64 & 0.60 & 2.98 \\
+0.20 & Design under & 0.10 & 788 & 52.1\% & 587 & 0.27 & 1.33 \\
+0.20 & Design matched & 0.20 & 788 & 73.4\% & 401 & 0.26 & 1.28 \\
+0.20 & Design over & 0.40 & 788 & 59.2\% & 252 & 0.32 & 1.58 \\
+0.40 & Adaptive & -- & 200 & 31.6\% & 67 & 0.67 & 1.66 \\
+0.40 & Design under & 0.20 & 200 & 34.4\% & 168 & 0.56 & 1.39 \\
+0.40 & Design matched & 0.40 & 200 & 66.6\% & 130 & 0.51 & 1.29 \\
+0.40 & Design over & 0.80 & 200 & 61.1\% & 93 & 0.55 & 1.37 \\
+0.60 & Adaptive & -- & 90 & 53.8\% & 62 & 0.77 & 1.28 \\
+0.60 & Design under & 0.30 & 90 & 5.7\% & 85 & 0.96 & 1.60 \\
+0.60 & Design matched & 0.60 & 90 & 44.7\% & 77 & 0.78 & 1.29 \\
+0.60 & Design over & 1.20 & 90 & 55.5\% & 67 & 0.75 & 1.25 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -92,6 +92,14 @@ event_coin_tilt <- function(events, upto = length(events)) {
   0.5 - mean(events[seq_len(upto)])
 }
 
+event_stream_from_trial <- function(trial) {
+  event_idx <- which(trial$outcome == 1)
+  list(
+    arms = trial$treatment[event_idx],
+    patient_index = event_idx
+  )
+}
+
 run_ertb_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
                             policy, p_ctrl_wager = NULL, p_trt_wager = NULL,
                             burn_in = 50, ramp = 100) {
@@ -155,7 +163,16 @@ run_erte_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
   final_effects <- rep(NA_real_, n_sims)
 
   for (s in seq_len(n_sims)) {
-    events <- simulate_events(n_events, p_coin)
+    trial <- simulate_trial(n_patients, rate_trt = p_trt, rate_ctrl = p_ctrl)
+    event_stream <- event_stream_from_trial(trial)
+    events <- event_stream$arms
+    final_effects[[s]] <- arr_estimate(trial$treatment, trial$outcome)
+
+    if (length(events) == 0) {
+      crossings[[s]] <- NA_integer_
+      finals[[s]] <- 1
+      next
+    }
 
     res <- switch(
       policy,
@@ -181,9 +198,13 @@ run_erte_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
 
     crossings[[s]] <- res$crossed_at
     finals[[s]] <- tail(res$wealth, 1)
-    final_effects[[s]] <- event_coin_tilt(events)
     if (!is.na(crossings[[s]])) {
-      crossing_effects[[s]] <- event_coin_tilt(events, upto = crossings[[s]])
+      crossing_patient <- event_stream$patient_index[[crossings[[s]]]]
+      crossing_effects[[s]] <- arr_estimate(
+        trial$treatment,
+        trial$outcome,
+        upto = crossing_patient
+      )
     }
   }
 
@@ -193,7 +214,7 @@ run_erte_policy <- function(n_sims, p_ctrl, p_trt, n_patients, alpha,
     n_sims = n_sims,
     crossing_effects = crossing_effects,
     final_effects = final_effects,
-    true_effect = 0.5 - p_coin
+    true_effect = p_ctrl - p_trt
   )
   out$n_events <- n_events
   out$event_coin <- p_coin
@@ -323,8 +344,8 @@ run_scenario <- function(p_ctrl, sample_size_arr, true_arr,
       wager_misspecification = erte_policies$wager_misspecification[[j]],
       res,
       n_patients = n_erte,
-      effect_scale = "event_coin_tilt",
-      true_effect = 0.5 - event_coin(p_ctrl, p_trt_true),
+      effect_scale = "ARR_at_crossing_snapshot",
+      true_effect = true_arr,
       stringsAsFactors = FALSE
     )
   }

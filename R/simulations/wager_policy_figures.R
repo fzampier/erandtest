@@ -101,12 +101,12 @@ make_ertb_trace_df <- function(policy_key, panel_label) {
 }
 
 make_erte_trace_df <- function(policy_key, panel_label) {
-  p_coin <- event_coin(p_ctrl, p_trt_true)
-
   do.call(
     rbind,
     lapply(seq_len(n_traces), function(j) {
-      events <- simulate_events(n_events_erte, p_coin)
+      trial <- simulate_trial(n_erte, rate_trt = p_trt_true, rate_ctrl = p_ctrl)
+      event_idx <- which(trial$outcome == 1)
+      events <- trial$treatment[event_idx]
 
       res <- switch(
         policy_key,

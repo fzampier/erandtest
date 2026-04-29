@@ -463,15 +463,15 @@ We ran 1,000 simulations per scenario using a fixed seed. Sample sizes were anch
 | e-RTb    | Null 5.0pp design  | Adaptive   |         – | 2,942 |      – |   3.5% |
 | e-RTb    | Null 5.0pp design  | Fixed 5pp  |     5.0pp | 2,942 |      – |   3.1% |
 | e-RTb    | Null 5.0pp design  | Fixed 10pp |    10.0pp | 2,942 |      – |   5.1% |
-| e-RTb    | Null 10.0pp design | Adaptive   |         – |   712 |      – |   1.8% |
-| e-RTb    | Null 10.0pp design | Fixed 5pp  |     5.0pp |   712 |      – |   0.4% |
-| e-RTb    | Null 10.0pp design | Fixed 10pp |    10.0pp |   712 |      – |   2.8% |
-| e-RTe    | Null 5.0pp design  | Adaptive   |         – | 2,942 |  1,177 |   3.0% |
-| e-RTe    | Null 5.0pp design  | Fixed 5pp  |     5.0pp | 2,942 |  1,177 |   2.8% |
-| e-RTe    | Null 5.0pp design  | Fixed 10pp |    10.0pp | 2,942 |  1,177 |   4.5% |
-| e-RTe    | Null 10.0pp design | Adaptive   |         – |   712 |    285 |   2.1% |
+| e-RTb    | Null 10.0pp design | Adaptive   |         – |   712 |      – |   1.2% |
+| e-RTb    | Null 10.0pp design | Fixed 5pp  |     5.0pp |   712 |      – |   0.9% |
+| e-RTb    | Null 10.0pp design | Fixed 10pp |    10.0pp |   712 |      – |   3.5% |
+| e-RTe    | Null 5.0pp design  | Adaptive   |         – | 2,942 |  1,177 |   3.7% |
+| e-RTe    | Null 5.0pp design  | Fixed 5pp  |     5.0pp | 2,942 |  1,177 |   2.1% |
+| e-RTe    | Null 5.0pp design  | Fixed 10pp |    10.0pp | 2,942 |  1,177 |   5.1% |
+| e-RTe    | Null 10.0pp design | Adaptive   |         – |   712 |    285 |   1.2% |
 | e-RTe    | Null 10.0pp design | Fixed 5pp  |     5.0pp |   712 |    285 |   0.0% |
-| e-RTe    | Null 10.0pp design | Fixed 10pp |    10.0pp |   712 |    285 |   2.6% |
+| e-RTe    | Null 10.0pp design | Fixed 10pp |    10.0pp |   712 |    285 |   1.6% |
 
 Type I error for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes 1,000 simulated null trials with $`p_C = 0.40`$ and $`\alpha = 0.05`$. Sample sizes were obtained from the usual fixed-sample two-proportion calculation with 80% power; no event-only inflation was used for e-RTe in this comparison.
 
@@ -481,32 +481,59 @@ Type I error for adaptive and design-fixed wager policies at the same enrolled-p
 
 | Endpoint | Scenario    | Policy        | Wager ARR | $`N`$ | Events | Power | Median crossing |
 |:---------|:------------|:--------------|----------:|------:|-------:|------:|----------------:|
-| e-RTb    | True 5.0pp  | Adaptive      |         – | 2,942 |      – | 49.9% |           1,523 |
-| e-RTb    | True 5.0pp  | Fixed under   |     2.5pp | 2,942 |      – | 50.1% |           2,084 |
-| e-RTb    | True 5.0pp  | Fixed matched |     5.0pp | 2,942 |      – | 72.3% |           1,335 |
-| e-RTb    | True 5.0pp  | Fixed over    |    10.0pp | 2,942 |      – | 56.7% |             813 |
-| e-RTb    | True 5.0pp  | Oracle        |     5.0pp | 2,942 |      – | 74.6% |           1,428 |
-| e-RTb    | True 10.0pp | Adaptive      |         – |   712 |      – | 52.8% |             402 |
-| e-RTb    | True 10.0pp | Fixed under   |     5.0pp |   712 |      – | 41.8% |             569 |
-| e-RTb    | True 10.0pp | Fixed matched |    10.0pp |   712 |      – | 69.1% |             417 |
-| e-RTb    | True 10.0pp | Fixed over    |    15.0pp |   712 |      – | 67.4% |             325 |
-| e-RTb    | True 10.0pp | Oracle        |    10.0pp |   712 |      – | 71.7% |             404 |
-| e-RTe    | True 5.0pp  | Adaptive      |         – | 2,942 |  1,104 | 31.0% |             530 |
-| e-RTe    | True 5.0pp  | Fixed under   |     2.5pp | 2,942 |  1,104 | 14.5% |             948 |
-| e-RTe    | True 5.0pp  | Fixed matched |     5.0pp | 2,942 |  1,104 | 53.5% |             668 |
-| e-RTe    | True 5.0pp  | Fixed over    |    10.0pp | 2,942 |  1,104 | 46.8% |             387 |
-| e-RTe    | True 5.0pp  | Oracle        |     5.0pp | 2,942 |  1,104 | 50.6% |             663 |
-| e-RTe    | True 10.0pp | Adaptive      |         – |   712 |    250 | 32.7% |             165 |
-| e-RTe    | True 10.0pp | Fixed under   |     5.0pp |   712 |    250 |  5.7% |             232 |
-| e-RTe    | True 10.0pp | Fixed matched |    10.0pp |   712 |    250 | 43.7% |             189 |
-| e-RTe    | True 10.0pp | Fixed over    |    15.0pp |   712 |    250 | 49.6% |             148 |
-| e-RTe    | True 10.0pp | Oracle        |    10.0pp |   712 |    250 | 45.3% |             182 |
+| e-RTb    | True 5.0pp  | Adaptive      |         – | 2,942 |      – | 49.1% |           1,509 |
+| e-RTb    | True 5.0pp  | Fixed under   |     2.5pp | 2,942 |      – | 53.2% |           2,203 |
+| e-RTb    | True 5.0pp  | Fixed matched |     5.0pp | 2,942 |      – | 75.3% |           1,478 |
+| e-RTb    | True 5.0pp  | Fixed over    |    10.0pp | 2,942 |      – | 57.1% |             806 |
+| e-RTb    | True 5.0pp  | Oracle        |     5.0pp | 2,942 |      – | 73.8% |           1,394 |
+| e-RTb    | True 10.0pp | Adaptive      |         – |   712 |      – | 48.9% |             402 |
+| e-RTb    | True 10.0pp | Fixed under   |     5.0pp |   712 |      – | 40.9% |             563 |
+| e-RTb    | True 10.0pp | Fixed matched |    10.0pp |   712 |      – | 69.7% |             409 |
+| e-RTb    | True 10.0pp | Fixed over    |    15.0pp |   712 |      – | 67.8% |             335 |
+| e-RTb    | True 10.0pp | Oracle        |    10.0pp |   712 |      – | 71.2% |             415 |
+| e-RTe    | True 5.0pp  | Adaptive      |         – | 2,942 |  1,104 | 34.7% |             497 |
+| e-RTe    | True 5.0pp  | Fixed under   |     2.5pp | 2,942 |  1,104 | 15.2% |             942 |
+| e-RTe    | True 5.0pp  | Fixed matched |     5.0pp | 2,942 |  1,104 | 50.6% |             700 |
+| e-RTe    | True 5.0pp  | Fixed over    |    10.0pp | 2,942 |  1,104 | 44.7% |             431 |
+| e-RTe    | True 5.0pp  | Oracle        |     5.0pp | 2,942 |  1,104 | 47.5% |             697 |
+| e-RTe    | True 10.0pp | Adaptive      |         – |   712 |    250 | 32.7% |             152 |
+| e-RTe    | True 10.0pp | Fixed under   |     5.0pp |   712 |    250 |  4.2% |             220 |
+| e-RTe    | True 10.0pp | Fixed matched |    10.0pp |   712 |    250 | 43.5% |             185 |
+| e-RTe    | True 10.0pp | Fixed over    |    15.0pp |   712 |    250 | 49.9% |             150 |
+| e-RTe    | True 10.0pp | Oracle        |    10.0pp |   712 |    250 | 44.6% |             184 |
 
 Power for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes 1,000 simulated trials with $`p_C = 0.40`$ and $`\alpha = 0.05`$. Fixed policies use full-Kelly wagers calibrated to the listed wager ARR; adaptive e-RTb uses half-Kelly and adaptive e-RTe uses full-Kelly.
 
 </div>
 
 The key result is that design-fixed full-Kelly wagers can substantially increase power when the design effect is close to the truth, while retaining Type I error control in these simulations. However, misspecification matters. Underestimating the effect is usually conservative; overestimating the effect can produce earlier crossings among successful trials but lower overall power, especially for e-RTe at a true 5pp ARR. Because e-RTe observes only events, the same enrolled-patient $`N`$ produces fewer betting opportunities than e-RTb; this explains why the same-$`N`$ comparison is less favorable to e-RTe than the inflated event-only simulation above. Overall, design-fixed wagers appear useful as an optional mode rather than as a replacement for adaptive effect-size-agnostic monitoring.
+
+## Effect estimates at crossing and Type M error
+
+Because e-RT methods may stop early, the apparent treatment effect at the first threshold crossing is expected to be inflated. This is a form of Type M error: the magnitude of the observed effect among trials that cross may exceed the true effect because crossings are enriched for favorable random fluctuations. This does not invalidate the e-value—the e-process itself remains anytime-valid—but it matters for clinical interpretation. A trial stopped at an e-value threshold should not interpret the naive effect estimate at crossing as an unbiased estimate of the final treatment effect.
+
+We therefore summarized the apparent effect at first crossing among simulated trials that crossed. For both e-RTb and e-RTe, the displayed effect scale is the apparent absolute risk reduction using all randomized patients observed by the time of first crossing. For e-RTe, this is a diagnostic snapshot rather than information used by the event-only e-process: the e-RTe wealth process itself still sees only event arm labels, but when denominators are available at the crossing time, the clinical effect size can be estimated on the same scale as e-RTb. If denominators are not available operationally, only the native event-coin diagnostic can be reported.
+
+<div id="tab:type_m_crossing">
+
+| True | Endpoint | Policy        | Crossing | Final | Median M |  Q75 |  Q90 |
+|:-----|:---------|:--------------|---------:|------:|---------:|-----:|-----:|
+| 5pp  | e-RTb    | Adaptive      |     7.84 |  4.92 |     1.57 | 2.17 | 3.12 |
+| 5pp  | e-RTb    | Fixed matched |     6.49 |  4.97 |     1.30 | 1.67 | 2.09 |
+| 5pp  | e-RTe    | Adaptive      |     8.23 |  4.97 |     1.65 | 2.13 | 2.74 |
+| 5pp  | e-RTe    | Fixed matched |     6.77 |  4.88 |     1.35 | 1.68 | 2.03 |
+| 10pp | e-RTb    | Adaptive      |    14.44 | 10.07 |     1.44 | 1.82 | 2.25 |
+| 10pp | e-RTb    | Fixed matched |    12.83 |  9.92 |     1.28 | 1.58 | 1.90 |
+| 10pp | e-RTe    | Adaptive      |    14.74 |  9.94 |     1.47 | 1.76 | 2.11 |
+| 10pp | e-RTe    | Fixed matched |    13.10 |  9.94 |     1.31 | 1.55 | 1.82 |
+
+Type M error at first e-process crossing for e-RTb and e-RTe. Crossing and final effects are absolute risk reductions in percentage points. For e-RTe, the e-process itself remains event-only; the absolute risk reduction is a full-data diagnostic computed from all randomized patients observed by the crossing time. Type M is computed among trials that crossed.
+
+</div>
+
+<span id="tab:type_m_crossing" label="tab:type_m_crossing"></span>
+
+The inflation is clinically meaningful. In the 5pp ARR scenario, adaptive e-RTb crossings had a median apparent ARR of 7.84 percentage points, with a median Type M ratio of 1.57. Adaptive e-RTe crossings had a similar but slightly larger full-data snapshot ARR of 8.23 percentage points, with a median Type M ratio of 1.65. Fixed matched wagers reduced this inflation for both methods, with median ratios of 1.30 for e-RTb and 1.35 for e-RTe. These results reinforce that e-RT crossings should be interpreted as valid evidence for a treatment difference, not as unbiased estimates of its magnitude.
 
 <figure id="fig:wager_policy_type1" data-latex-placement="htbp">
 <embed src="wager_policy_type1.pdf" style="width:90.0%" />
@@ -567,7 +594,7 @@ This is the same algebraic scale used by the paired binary GROW construction of 
 
 We first evaluated e-RTwr using normally distributed continuous outcomes converted to pairwise wins and losses. The true mean difference was chosen to yield target win ratios of 1.10, 1.20, 1.30, or 1.50. Sample sizes used the Yu–Ganju win-ratio formula, implemented through the `WRestimates` package when available (O’Donnell 2023). These are final-analysis sample sizes: they are designed to give approximately 80% power for a conventional final win-ratio test, not necessarily 80% anytime crossing probability for an e-process.
 
-Table <a href="#tab:ertwr_sokolova" data-reference-type="ref" data-reference="tab:ertwr_sokolova">7</a> compares four quantities: a conventional final all-pairs win-ratio test, adaptive e-RTwr at the same sample size, fixed/GROW e-RTwr at the same sample size, and a Sokolova-style e-design analogue in which the same GROW wager is used but $`N_{\max}`$ is calibrated to achieve approximately 80% e-process crossing power.
+Table <a href="#tab:ertwr_sokolova" data-reference-type="ref" data-reference="tab:ertwr_sokolova">8</a> compares four quantities: a conventional final all-pairs win-ratio test, adaptive e-RTwr at the same sample size, fixed/GROW e-RTwr at the same sample size, and a Sokolova-style e-design analogue in which the same GROW wager is used but $`N_{\max}`$ is calibrated to achieve approximately 80% e-process crossing power.
 
 <div id="tab:ertwr_sokolova">
 
@@ -687,31 +714,51 @@ c_i = \min\left\{1, \max\left(0, \frac{i - \text{burn-in}}{\text{ramp}}\right)\r
 ```
 where `burn-in` is the number of initial patients during which we essentially do not bet, and `ramp` controls how quickly we move from very cautious betting to our maximum aggressiveness. Those concepts are exactly like the binary approach. Finally, we cap the maximum betting strength at $`c_{\max} \in (0,0.5]`$ to avoid pathological bets.
 
-Additionally, we need a direction estimate: which arm has better outcomes? Using all previous data, we compute the running Cohen’s $`d`$:
+Additionally, we need a direction estimate: which arm has better outcomes? In the V7 implementation, this is deliberately coarse. Using all previous data, we compute
 ``` math
 \begin{equation}
-\hat{d}_{i-1} = \frac{\bar{Y}_{\text{trt}} - \bar{Y}_{\text{ctrl}}}{s_{\text{pooled}}}
+q_{i-1} = \operatorname{sign}\left(\bar{Y}_{\text{trt},i-1} - \bar{Y}_{\text{ctrl},i-1}\right),
 \end{equation}
 ```
-clamped to $`[-1, 1]`$, where $`\bar{Y}_{\text{trt}}`$ and $`\bar{Y}_{\text{ctrl}}`$ are the arm-specific means and $`s_{\text{pooled}}`$ is the pooled standard deviation. This is the “doubly adaptive” structure: $`g_i`$ captures how informative the current observation is, while $`\hat{d}_{i-1}`$ captures the direction and magnitude of the treatment effect estimated from all past data.
+with $`q_{i-1}=0`$ if either arm has no prior observations. This makes adaptive e-RTc effect-size agnostic: the running data choose the direction of the bet, but not a prespecified effect magnitude. The magnitude of the wager still depends on the current observation-level score $`g_i`$ and the ramped betting strength.
 
 The betting fraction $`\lambda_i`$ is then
 ``` math
 \begin{equation}
-\lambda_i = 0.5 + c_i \cdot c_{\max} \cdot g_i \cdot \hat{d}_{i-1}.
+\lambda_i = 0.5 + c_i \cdot c_{\max} \cdot g_i \cdot q_{i-1}.
 \end{equation}
 ```
-By construction, $`\lambda_i \in (0,1)`$ and is predictable: it depends only on past outcomes and the new $`Y_i`$, not on $`T_i`$. In words: if the current observation $`Y_i`$ is extreme in the direction that past data associate with the treatment arm, $`\lambda_i`$ deviates substantially from 0.5, placing a confident bet on treatment. If $`Y_i`$ is typical, or if past data show no treatment effect ($`\hat{d} \approx 0`$), $`\lambda_i`$ stays near 0.5 and we barely bet.
+By construction, $`\lambda_i \in (0,1)`$ and is predictable: it depends only on past outcomes and the new $`Y_i`$, not on $`T_i`$. In words: if the current observation $`Y_i`$ is extreme in the direction that past data associate with the treatment arm, $`\lambda_i`$ deviates substantially from 0.5, placing a confident bet on treatment. If $`Y_i`$ is typical, or if past data have not yet identified a direction ($`q_{i-1}=0`$), $`\lambda_i`$ stays near 0.5 and we barely bet.
 
 Intuitively:
 
 - If $`Y_i`$ is close to the historical median, $`g_i \approx 0`$ and $`\lambda_i \approx 0.5`$: we essentially do not bet, regardless of how strong the estimated treatment effect is.
 
-- If $`Y_i`$ is extreme (large $`|g_i|`$) *and* past data show a substantial treatment effect (large $`|\hat{d}|`$), then $`\lambda_i`$ deviates substantially from 0.5: we place a confident bet on one arm. The product $`g_i \cdot \hat{d}_{i-1}`$ determines both direction and magnitude.
+- If $`Y_i`$ is extreme (large $`|g_i|`$) *and* past data suggest a treatment-favorable direction, then $`\lambda_i`$ deviates substantially from 0.5: we place a confident bet on one arm. The product $`g_i \cdot q_{i-1}`$ determines the direction, while $`|g_i|`$ and $`c_i c_{\max}`$ determine magnitude.
 
-- If $`Y_i`$ is extreme but $`\hat{d} \approx 0`$ (no estimated effect yet), $`\lambda_i`$ stays near 0.5—an unusual observation is not informative if we do not yet know which direction to bet.
+- If $`Y_i`$ is extreme but $`q_{i-1}=0`$ (no estimated direction yet), $`\lambda_i`$ stays near 0.5—an unusual observation is not informative if we do not yet know which direction to bet.
 
 - Early in the trial, $`c_i`$ is small, so even unusual observations lead to mild bets. As data accumulates, $`c_i`$ approaches 1 and the bets become more confident.
+
+## Parametric design wager for continuous outcomes
+
+The adaptive wager above is intentionally agnostic to the effect size. For trials with a credible design alternative, e-RTc can also use a parametric design wager. Suppose the protocol specifies a normal-shift working model,
+``` math
+Y \mid T=0 \sim N(\mu_C^\ast, {\sigma^\ast}^2),
+\qquad
+Y \mid T=1 \sim N(\mu_T^\ast, {\sigma^\ast}^2).
+```
+After observing the new outcome $`Y_i`$, but before revealing or using $`T_i`$ in the betting update, the design wager is
+``` math
+\lambda_i^\ast
+= \Pr_{\text{design}}(T_i=1 \mid Y_i)
+=
+\frac{p f_1^\ast(Y_i)}
+{p f_1^\ast(Y_i) + (1-p) f_0^\ast(Y_i)},
+```
+where $`f_1^\ast`$ and $`f_0^\ast`$ are the design densities for treatment and control. As before, we may ramp from the neutral wager $`p`$ toward $`\lambda_i^\ast`$ during early enrollment.
+
+This design wager is parametric by construction. The normal-shift model is not needed for validity; it only determines how aggressively the e-process bets. Under the null, treatment assignment remains randomized and independent of $`Y_i`$, so any predictable $`\lambda_i(Y_i)`$ gives an expected wealth multiplier of 1. Misspecifying $`\mu_C^\ast`$, $`\mu_T^\ast`$, or $`\sigma^\ast`$ can reduce power or increase Type M error at crossing, but it does not break the martingale guarantee.
 
 ## Wealth update
 
@@ -731,7 +778,7 @@ The only difference from the binary case is how we choose $`\lambda_i`$, as we s
 
 ## Worked intuition
 
-Imagine a trial where the outcome is ventilator-free days, and higher is better. Suppose that after 100 patients, the median and MAD of $`Y`$ are roughly stable, and the running Cohen’s $`d`$ estimate is approximately 1.0 (a large effect). Patient 101 has an unusually high number of ventilator-free days compared with this distribution. The standardized residual $`r_{101}`$ is positive and large, so $`g_{101} \approx 0.8`$ and, after burn-in, $`c_{101} \approx 1`$. With $`c_{\max} = 0.6`$ and $`\hat{d} \approx 1.0`$, we get $`\lambda_{101} \approx 0.5 + 0.6 \times 0.8 \times 1.0 \approx 0.98`$: we strongly bet that this patient was in the intervention arm. If they indeed were, wealth increases by roughly a factor of $`0.98/0.5 \approx 2`$ for this one patient. If not, wealth shrinks by $`(1-0.98)/0.5 \approx 0.04`$.
+Imagine a trial where the outcome is ventilator-free days, and higher is better. Suppose that after 100 patients, the median and MAD of $`Y`$ are roughly stable, and the treatment arm has had better outcomes so far, so $`q_{100}=1`$. Patient 101 has an unusually high number of ventilator-free days compared with this distribution. The standardized residual $`r_{101}`$ is positive and large, so $`g_{101} \approx 0.8`$ and, after burn-in, $`c_{101} \approx 1`$. With $`c_{\max} = 0.6`$, we get $`\lambda_{101} \approx 0.5 + 0.6 \times 0.8 \times 1 \approx 0.98`$: we strongly bet that this patient was in the intervention arm. If they indeed were, wealth increases by roughly a factor of $`0.98/0.5 \approx 2`$ for this one patient. If not, wealth shrinks by $`(1-0.98)/0.5 \approx 0.04`$.
 
 Under the null, high values like this are just as likely in control as in intervention: we win and lose in balance, and wealth does not grow on average. Under a true benefit, such favorable outliers cluster in the intervention arm, and the bets pay off more often than not.
 
@@ -781,26 +828,45 @@ so rejecting the null when $`W_\tau \geq 1/\alpha`$ controls Type I error at lev
 
 ## Simulation overview
 
-We evaluated e-RTC using the same design philosophy as for binary approach. For a given standardized effect size (Cohen’s $`d`$) and target power, we first computed the fixed-sample size required for a two-sample $`t`$-test at $`\alpha = 0.05`$. We then simulated trials with that sample size, assigning patients 1:1 to intervention or control, with outcomes drawn from normal distributions of equal variance and means differing by $`d`$ under the alternative.
+We evaluated e-RTc using the same design philosophy as the binary and event-only simulations. For a given standardized effect size (Cohen’s $`d`$), we first computed the fixed-sample size required for a two-sample $`t`$-test with 80% power at $`\alpha = 0.05`$. We then simulated 1,000 trials per scenario with 1:1 randomization and normally distributed outcomes with common standard deviation 1. The adaptive e-RTc used the V7 sign-direction wager with burn-in $`=20`$, ramp $`=50`$, and $`c_{\max}=0.6`$. The design e-RTc used the normal-shift design wager above, with matched, underestimated, and overestimated design effects.
 
-The test was run sequentially with a burn-in period and ramp (burn-in = 50 patients, ramp = 100 patients, $`c_{\max} = 0.6`$). Under the null (no mean difference between arms), Type I error was close to or below the nominal level. Under the alternative, the implementation for continuous endpoints rejected the null with moderate power and typically crossed the threshold at an intermediate sample size (Table <a href="#tab:simulations_continuous" data-reference-type="ref" data-reference="tab:simulations_continuous">9</a>). Again, we believe that this may not be a replacement for the fixed-sample $`t`$-test but a conservative, anytime-valid monitoring tool that can trigger early stopping when effects are larger or clearer than anticipated.
+<div id="tab:ertc_design_type1">
 
-<div id="tab:simulations_continuous">
+| Design $`d`$ | Policy   | $`N`$ | Type I | Median final e-value |
+|:-------------|:---------|------:|-------:|---------------------:|
+| 0.20         | Adaptive |   788 |   3.8% |                 0.00 |
+| 0.20         | Design   |   788 |   3.0% |                 0.03 |
+| 0.40         | Adaptive |   200 |   4.3% |                 0.00 |
+| 0.40         | Design   |   200 |   2.9% |                 0.05 |
+| 0.60         | Adaptive |    90 |   4.0% |                 0.00 |
+| 0.60         | Design   |    90 |   1.2% |                 0.21 |
 
-| Cohen’s $`d`$ | Target Power | $`n`$ | Type I Error | e-process Power | Median Crossing |
-|:-------------:|:------------:|:-----:|:------------:|:---------------:|:---------------:|
-|     0.20      |     80%      |  788  |    0.042     |      14.1%      |       66        |
-|     0.40      |     80%      |  200  |    0.038     |      33.6%      |       66        |
-|     0.60      |     80%      |  90   |    0.037     |      55.1%      |       63        |
-|     0.20      |     90%      | 1054  |    0.043     |      14.1%      |       67        |
-|     0.40      |     90%      |  266  |    0.043     |      34.8%      |       66        |
-|     0.60      |     90%      |  120  |    0.045     |      58.5%      |       65        |
-
-Operating Characteristics for Continuous Outcomes
+Type I error for e-RTc adaptive and parametric design wagers. Each row summarizes 1,000 simulated null trials. Sample sizes use the usual fixed-sample two-sample $`t`$-test with 80% power and $`\alpha = 0.05`$.
 
 </div>
 
-<span id="tab:simulations_continuous" label="tab:simulations_continuous"></span>
+<div id="tab:ertc_design_power_type_m">
+
+| True $`d`$ | Policy | Wager $`d`$ | $`N`$ | Power | Median crossing | Crossing $`d`$ | Median M |
+|:---|:---|:---|---:|---:|---:|---:|---:|
+| 0.20 | Adaptive | – | 788 | 9.8% | 64 | 0.60 | 2.98 |
+| 0.20 | Design under | 0.10 | 788 | 52.1% | 587 | 0.27 | 1.33 |
+| 0.20 | Design matched | 0.20 | 788 | 73.4% | 401 | 0.26 | 1.28 |
+| 0.20 | Design over | 0.40 | 788 | 59.2% | 252 | 0.32 | 1.58 |
+| 0.40 | Adaptive | – | 200 | 31.6% | 67 | 0.67 | 1.66 |
+| 0.40 | Design under | 0.20 | 200 | 34.4% | 168 | 0.56 | 1.39 |
+| 0.40 | Design matched | 0.40 | 200 | 66.6% | 130 | 0.51 | 1.29 |
+| 0.40 | Design over | 0.80 | 200 | 61.1% | 93 | 0.55 | 1.37 |
+| 0.60 | Adaptive | – | 90 | 53.8% | 62 | 0.77 | 1.28 |
+| 0.60 | Design under | 0.30 | 90 | 5.7% | 85 | 0.96 | 1.60 |
+| 0.60 | Design matched | 0.60 | 90 | 44.7% | 77 | 0.78 | 1.29 |
+| 0.60 | Design over | 1.20 | 90 | 55.5% | 67 | 0.75 | 1.25 |
+
+Power and Type M error for e-RTc adaptive and parametric design wagers. The effect scale is Cohen’s $`d`$; Type M is computed among trials that crossed.
+
+</div>
+
+Type I error remained controlled in these simulations. The adaptive sign-direction wager is conservative for small effects: at true $`d=0.20`$, it crossed in only 9.8% of trials and did so very early when it crossed, producing a high median Type M ratio of 2.98. The parametric design wager improved power substantially when the design effect was close to the truth: at $`d=0.20`$, matched design wagering increased power to 73.4% and reduced median Type M to 1.28. The tradeoff is visible under misspecification. Overestimating the design effect generally caused earlier crossings and more Type M inflation, while underestimating the effect delayed crossings and sometimes reduced power. These results support design-calibrated e-RTc as an optional efficiency mode, not as a replacement for the adaptive effect-size-agnostic monitor.
 
 A visual representation is shown in Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference="fig:eRTC_null_d04_80">7</a>.
 
@@ -870,7 +936,7 @@ We verified the validity of this simplification by simulating two scenarios with
 
 ## Simulation Results
 
-We simulated survival trials comparing exponential survival times with a Hazard Ratio (HR) of 0.80. Targeted power was 80% using a standard Log-Rank design, which requires approximately 631 events. A total of $`N=631`$ patients (assuming no censoring) were used for simulations. Results are shown in Table <a href="#tab:survival" data-reference-type="ref" data-reference="tab:survival">10</a>.
+We simulated survival trials comparing exponential survival times with a Hazard Ratio (HR) of 0.80. Targeted power was 80% using a standard Log-Rank design, which requires approximately 631 events. A total of $`N=631`$ patients (assuming no censoring) were used for simulations. Results are shown in Table <a href="#tab:survival" data-reference-type="ref" data-reference="tab:survival">12</a>.
 
 <div id="tab:survival">
 
@@ -1140,7 +1206,7 @@ The e-RTu engine can recover e-RTb and e-RTms exactly:
 
 - **e-RTms**: Each state transition generates one signal. Good $`=`$ recovery-oriented transition. Arm $`=`$ treatment assignment.
 
-It does *not* recover the specialized strategies of e-RTe (full Kelly), e-RTs (score-based with fixed $`\lambda_{\max}`$), or e-RTc (doubly adaptive with $`g`$-score). These variants exploit domain-specific structure—sparse events, risk sets, continuous residuals—to achieve better power than the generic half-Kelly approach. The wage asymmetry analysis (Section <a href="#sec:wage" data-reference-type="ref" data-reference="sec:wage">10</a>) explains why these specializations matter.
+It does *not* recover the specialized strategies of e-RTe (full Kelly), e-RTs (score-based with fixed $`\lambda_{\max}`$), or e-RTc (continuous residual scores with adaptive or design-calibrated assignment probabilities). These variants exploit domain-specific structure—sparse events, risk sets, continuous residuals—to achieve better power than the generic half-Kelly approach. The wage asymmetry analysis (Section <a href="#sec:wage" data-reference-type="ref" data-reference="sec:wage">10</a>) explains why these specializations matter.
 
 The value of e-RTu is conceptual clarity and software simplicity: one engine, many signal sources. It provides a default when no domain-specific variant is available, and a reference implementation against which specialized variants can be benchmarked.
 
@@ -1162,7 +1228,7 @@ The answer depends on how frequently the product updates:
 
 **Binary (e-RTb):** Wealth updates at *every* patient. A trial with $`N = 2{,}000`$ patients produces 2,000 multiplications. Over-betting by $`2`$–$`3\times`$ Kelly and multiplying by values like 0.97 thousands of times compounds to zero irreversibly. In simulation, over-betting at $`3\times`$ Kelly on a 5 percentage-point ARR gives a median final e-value of exactly 0. The wealth process is destroyed.
 
-**Continuous (e-RTc):** The problem is even worse. Beyond the dense updates (every patient), the $`g`$-score introduces a second source of variability in each wager. Fixed-wage betting is catastrophic at all tested levels for effects of $`d \leq 0.20`$.
+**Continuous (e-RTc):** Continuous outcomes also update at every patient, and the $`g`$-score introduces observation-level variability in each wager. Constant-magnitude fixed wagers are therefore risky. The V8 design wager is more structured: it is not a single constant but a patient-specific assignment probability under a prespecified normal-shift working model. This improves efficiency when calibrated, but it also makes Type M error and design misspecification important diagnostics.
 
 In plain language: imagine a gambler who bets too aggressively. If they play once a week (survival), a bad streak hurts but they can recover. If they play every hour (binary), the same over-bet compounds into ruin. If they play every hour *and* each bet has extra noise on top of the sizing error (continuous), the ruin is faster still.
 
@@ -1233,29 +1299,15 @@ The adaptive half-Kelly wager is therefore the default because it is agnostic to
 
 ## Continuous: The Strongest Case for Adaptive Betting
 
-The continuous e-RTc has a “doubly adaptive” structure:
+The continuous e-RTc has a dense and noisy betting structure:
 ``` math
 \begin{equation}
-\lambda_i = 0.5 + c_i \times c_{\max} \times g_i \times \hat{d}_{\text{past}}
+\lambda_i = 0.5 + c_i \times c_{\max} \times g_i \times q_{i-1}
 \end{equation}
 ```
-Both $`g_i`$ (observation-level informativeness) and $`\hat{d}_{\text{past}}`$ (running Cohen’s $`d`$) are adaptive. Removing the magnitude of $`\hat{d}`$ and using only its sign (making $`\lambda`$ “fixed” in the direction sense) is catastrophic:
+Here $`g_i`$ is observation-level informativeness and $`q_{i-1}`$ is the sign of the past mean difference. This sign-direction wager preserves effect-size agnosticism but is conservative for small effects, because early crossings are often driven by unusually favorable observations. Table <a href="#tab:ertc_design_power_type_m" data-reference-type="ref" data-reference="tab:ertc_design_power_type_m">11</a> shows this clearly: at true $`d=0.20`$, adaptive e-RTc crossed in 9.8% of trials and the median effect at crossing was almost three times the true effect.
 
-<div id="tab:wage_continuous">
-
-| Cohen’s $`d`$ | $`N`$ | Adaptive | Fixed $`c = 0.3`$ | Fixed $`c = 0.6`$ |
-|:-------------:|:-----:|:--------:|:-----------------:|:-----------------:|
-|     0.50      |  128  |  16.8%   |       15.5%       |       45.3%       |
-|     0.30      |  352  |  50.1%   |       50.1%       |       25.2%       |
-|     0.20      |  788  |  53.9%   |       29.3%       |       13.6%       |
-
-Continuous: Adaptive vs. Fixed Direction Magnitude
-
-</div>
-
-<span id="tab:wage_continuous" label="tab:wage_continuous"></span>
-
-At Cohen’s $`d = 0.20`$ (a typical clinical trial effect size), fixed $`c = 0.6`$ retains only 13.6% power (vs. 53.9% adaptive), and fixed $`c = 0.3`$ drops to 29.3%. The median final e-value is $`\approx 0`$ in both cases—wealth is irreversibly destroyed. The $`g`$-score adds a second noise source that, combined with dense updates, makes even moderate fixed betting lethal.
+The parametric design wager is therefore useful in continuous endpoints, but it is a different kind of fixed wager. It is not a constant betting magnitude; it is a patient-specific posterior assignment probability under a prespecified normal-shift working model. When calibrated well, it greatly improves power and reduces Type M inflation. When misspecified, it remains valid but can either lose power (underestimated design effect) or cross earlier with greater exaggeration (overestimated design effect). Continuous endpoints therefore make the main V8 principle especially visible: the validity engine is assumption-free, but the efficiency of the wager may depend strongly on design assumptions.
 
 ## The Design Principle
 
@@ -1356,7 +1408,7 @@ The author is thankful to Aaditya Ramdas for their thoughtful comments on the fi
 
 5.  Fifth Version (Dec 31, 2025): Added multi-state extension (e-RTms).
 
-6.  Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wage asymmetry across variants. Reconciled e-RTc parameters (burn-in 50, ramp 100) and direction formula (full Cohen’s $`d`$ clamped to $`[-1,1]`$). Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
+6.  Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wage asymmetry across variants. Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
 
 7.  Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
 
@@ -1660,8 +1712,8 @@ signal_concentration_table <- function(
 
 # --- e-RTC: Continuous Outcomes ---
 
-compute_eRTC <- function(treatment, outcome, p = 0.5, burn_in = 50,
-                         ramp = 100, c_max = 0.6) {
+compute_eRTC <- function(treatment, outcome, p = 0.5, burn_in = 20,
+                         ramp = 50, c_max = 0.6) {
   n <- length(treatment)
   if (is.factor(treatment)) treatment <- as.numeric(treatment) - 1
 
@@ -1689,22 +1741,17 @@ compute_eRTC <- function(treatment, outcome, p = 0.5, burn_in = 50,
     mean_trt <- mean(out_prev[trt_prev == 1])
     mean_ctrl <- mean(out_prev[trt_prev == 0])
 
-    # Cohen's d (clamped to [-1, 1]) -- not just sign
+    # Direction from previous arm means
     if (is.nan(mean_trt) || is.nan(mean_ctrl)) {
-      d_hat <- 0
+      direction <- 0
     } else {
-      sd_trt <- sd(out_prev[trt_prev == 1])
-      sd_ctrl <- sd(out_prev[trt_prev == 0])
-      if (is.na(sd_trt) || sd_trt == 0) sd_trt <- 1
-      if (is.na(sd_ctrl) || sd_ctrl == 0) sd_ctrl <- 1
-      s_pooled <- sqrt((sd_trt^2 + sd_ctrl^2) / 2)
-      d_hat <- max(-1, min(1, (mean_trt - mean_ctrl) / s_pooled))
+      direction <- sign(mean_trt - mean_ctrl)
     }
 
     ramp_frac <- max(0, min(1, (i - burn_in) / ramp))
     c_i <- ramp_frac * c_max
 
-    lambda <- 0.5 + c_i * g_i * d_hat
+    lambda <- 0.5 + c_i * g_i * direction
     lambda <- max(0.001, min(0.999, lambda))
 
     multiplier <- if (treatment[i] == 1) lambda / p else (1 - lambda) / (1 - p)
@@ -1723,7 +1770,7 @@ simulate_trial_continuous <- function(n, p_trt = 0.5, mu_ctrl = 0, mu_trt = 0, s
 
 simulate_eRTC <- function(n_sims = 5000, mu_ctrl = 0, mu_trt = NULL,
                           hypothesized_d, target_power = 0.80, alpha = 0.05,
-                          burn_in = 50, ramp = 100, c_max = 0.6) {
+                          burn_in = 20, ramp = 50, c_max = 0.6) {
   
   if (missing(hypothesized_d)) stop("Must specify hypothesized_d")
   
@@ -1785,7 +1832,7 @@ simulate_eRTC <- function(n_sims = 5000, mu_ctrl = 0, mu_trt = NULL,
 
 plot_trajectories_eRTC <- function(n_trials = 30, mu_ctrl = 0, mu_trt = NULL,
                                    hypothesized_d, target_power = 0.80,
-                                   alpha = 0.05, burn_in = 50, ramp = 100,
+                                   alpha = 0.05, burn_in = 20, ramp = 50,
                                    c_max = 0.6, title = NULL) {
   
   if (missing(hypothesized_d)) stop("Must specify hypothesized_d")
