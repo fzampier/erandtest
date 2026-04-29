@@ -81,6 +81,8 @@ wager-policy problem.
     simulations.
   - `erts_wager_policy.R`: e-RTs fixed, adaptive, and design-calibrated
     log-rank risk-set simulations.
+  - `erts_wager_policy_figures.R`: manuscript figures for e-RTs power and
+    Type M diagnostics.
   - `ertwr_pilot.R`, `ertwr_adaptive_tuning.R`, `ertwr_sokolova_comparison.R`,
     `ertwr_buysetest_check.R`, and `ertwr_composite_buysetest.R`: e-RTwr
     simulation and validation scripts.
@@ -113,6 +115,7 @@ Rscript R/simulations/wager_policy_comparison.R 1000
 Rscript R/simulations/wager_policy_figures.R
 Rscript R/simulations/ertc_wager_policy.R 1000
 Rscript R/simulations/erts_wager_policy.R 1000
+Rscript R/simulations/erts_wager_policy_figures.R
 Rscript R/simulations/ertwr_pilot.R 1000
 Rscript R/simulations/ertwr_sokolova_comparison.R 1000
 Rscript R/simulations/ertwr_composite_buysetest.R 300 250

@@ -8,6 +8,8 @@ Outputs:
 
 - `results/erts_wager_policy_1000.csv`
 - `manuscript/erts_wager_policy_table.tex`
+- `manuscript/erts_wager_policy_power.pdf`
+- `manuscript/erts_wager_policy_type_m.pdf`
 
 ## Design
 

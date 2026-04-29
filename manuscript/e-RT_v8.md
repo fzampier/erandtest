@@ -1009,7 +1009,21 @@ e-RTs power and crossing diagnostics. Sample sizes use the Schoenfeld log-rank e
 
 Type I error remained controlled in these simulations. The matched design wager was the most powerful policy at the fixed-sample event counts: 75.4% power for HR $`=0.90`$, 70.8% for HR $`=0.80`$, and 62.7% for HR $`=0.70`$. These are below the nominal 80% fixed-sample log-rank design because the e-process must cross the anytime-valid threshold before or by the maximum event count. The fixed $`\lambda_{\max}=0.25`$ policy remained competitive, especially at HR $`=0.80`$, but it was less efficient than a matched design wager. Adaptive half-Kelly was conservative, reflecting the difficulty of estimating the hazard-ratio scale early from sparse events.
 
-Misspecification behaved as expected. Underestimating the treatment effect delayed crossings and reduced power. Overestimating the effect crossed earlier and sometimes retained high power, but with greater Type M exaggeration. Type S error was essentially absent: only the two-sided fixed and adaptive policies at HR $`=0.90`$ showed small wrong-direction crossing rates below 1%. Examples for the fixed-magnitude policy at HR $`=0.80`$ are shown in Figure <a href="#fig:survival" data-reference-type="ref" data-reference="fig:survival">8</a>.
+Misspecification behaved as expected. Underestimating the treatment effect delayed crossings and reduced power. Overestimating the effect crossed earlier and sometimes retained high power, but with greater Type M exaggeration. Type S error was essentially absent: only the two-sided fixed and adaptive policies at HR $`=0.90`$ showed small wrong-direction crossing rates below 1%. Examples for the fixed-magnitude policy at HR $`=0.80`$ are shown in Figure <a href="#fig:survival" data-reference-type="ref" data-reference="fig:survival">10</a>.
+
+Figure <a href="#fig:erts_wager_policy_power" data-reference-type="ref" data-reference="fig:erts_wager_policy_power">8</a> visualizes the same power comparison. The fixed $`\lambda_{\max}=0.25`$ policy remains a useful baseline, while the matched design wager comes closest to the conventional 80% log-rank target across the tested hazard ratios.
+
+<figure id="fig:erts_wager_policy_power" data-latex-placement="H">
+<embed src="erts_wager_policy_power.pdf" style="width:95.0%" />
+<figcaption> Power of e-RTs wager policies across hazard-ratio scenarios. Points show crossing probability from 1<span>,</span>000 simulations per scenario, with approximate 95% Monte Carlo intervals. The dashed line marks the 80% power target used for the fixed-sample log-rank event calculation. </figcaption>
+</figure>
+
+Figure <a href="#fig:erts_wager_policy_type_m" data-reference-type="ref" data-reference="fig:erts_wager_policy_type_m">9</a> shows the corresponding Type M error at crossing. Even when Type I error is controlled, the apparent hazard ratio at crossing can be exaggerated, especially when the true effect is small or the wager is aggressive.
+
+<figure id="fig:erts_wager_policy_type_m" data-latex-placement="H">
+<embed src="erts_wager_policy_type_m.pdf" style="width:95.0%" />
+<figcaption> Type M error at first e-RTs threshold crossing. Points show the median exaggeration ratio on the <span class="math inline">|log (HR)|</span> scale among crossing trials; vertical bars extend from the median to the 90th percentile. The dotted line marks no exaggeration. </figcaption>
+</figure>
 
 <figure id="fig:survival" data-latex-placement="H">
 <p><embed src="traj_survivaleRT_null.pdf" style="width:48.0%" /> <embed src="traj_survivaleRT_08.pdf" style="width:48.0%" /></p>

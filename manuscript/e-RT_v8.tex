@@ -876,6 +876,28 @@ Type I error remained controlled in these simulations. The matched design wager 
 
 Misspecification behaved as expected. Underestimating the treatment effect delayed crossings and reduced power. Overestimating the effect crossed earlier and sometimes retained high power, but with greater Type M exaggeration. Type S error was essentially absent: only the two-sided fixed and adaptive policies at HR $=0.90$ showed small wrong-direction crossing rates below 1\%. Examples for the fixed-magnitude policy at HR $=0.80$ are shown in Figure~\ref{fig:survival}.
 
+Figure~\ref{fig:erts_wager_policy_power} visualizes the same power comparison. The fixed $\lambda_{\max}=0.25$ policy remains a useful baseline, while the matched design wager comes closest to the conventional 80\% log-rank target across the tested hazard ratios.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{erts_wager_policy_power.pdf}
+\caption{
+Power of e-RTs wager policies across hazard-ratio scenarios. Points show crossing probability from 1{,}000 simulations per scenario, with approximate 95\% Monte Carlo intervals. The dashed line marks the 80\% power target used for the fixed-sample log-rank event calculation.
+}
+\label{fig:erts_wager_policy_power}
+\end{figure}
+
+Figure~\ref{fig:erts_wager_policy_type_m} shows the corresponding Type M error at crossing. Even when Type I error is controlled, the apparent hazard ratio at crossing can be exaggerated, especially when the true effect is small or the wager is aggressive.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{erts_wager_policy_type_m.pdf}
+\caption{
+Type M error at first e-RTs threshold crossing. Points show the median exaggeration ratio on the $|\log(\mathrm{HR})|$ scale among crossing trials; vertical bars extend from the median to the 90th percentile. The dotted line marks no exaggeration.
+}
+\label{fig:erts_wager_policy_type_m}
+\end{figure}
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.48\textwidth]{traj_survivaleRT_null.pdf}

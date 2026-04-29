@@ -41,6 +41,8 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
   design, overestimated design, and oracle policies.
 - Added e-RTs simulations comparing fixed, adaptive, underestimated design,
   matched design, overestimated design, and oracle policies.
+- Added e-RTs manuscript figures for wager-policy power and Type M error at
+  crossing.
 - Added e-RTwr pilot, tuning, Sokolova-style GROW comparison, WRestimates
   sample-size checks, BuyseTest validation, and composite endpoint simulations.
 - Committed generated CSV result tables under `results/` because the repository
