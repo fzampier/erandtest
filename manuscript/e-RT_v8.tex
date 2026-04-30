@@ -12,15 +12,13 @@
 \hypersetup{hypertexnames=false}
 \usepackage{setspace}
 \usepackage{float}
-\usepackage[pagewise]{lineno}
 
 % Theorem environments
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
 
-% Compact review-friendly spacing
+% Compact spacing
 \setstretch{1.08}
-\setlength{\linenumbersep}{8pt}
 
 % Title
 \title{Sequential Randomization Tests Using e-values:\\ Applications for trial monitoring}
@@ -31,12 +29,11 @@
   \small $^1$Department of Critical Care Medicine, University of Alberta, Edmonton, Canada \\
 }
 
-\date{\today}
+\date{April 30, 2026}
 
 \begin{document}
 
 \maketitle
-\linenumbers
 
 % ============================================
 % ABSTRACT
@@ -902,7 +899,7 @@ The manuscript source, R implementation files, simulation scripts, generated CSV
     \item Fifth Version (Dec 31, 2025): Added multi-state extension (e-RTms).
     \item Sixth Version (Feb 15, 2026): Added deaths-only monitoring (e-RTd). Added betting strategy design section explaining wager asymmetry across variants. Added traditional statistics at crossing discussion. Updated abstract and introduction to cover all five variants. Reordered sections.
     \item Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
-    \item Eighth Version (in preparation): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; added parametric normal-shift design wagers for e-RTc; added fixed, adaptive, and design-calibrated wager-policy simulations for e-RTs with Type M and Type S diagnostics; committed simulation result tables for reproducibility; deferred e-RTms, e-RTu, and pairwise-comparison prototypes from the active manuscript scope; and removed the embedded code appendix in favor of the project repository.
+    \item Eighth Version (Apr 30, 2026): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; added parametric normal-shift design wagers for e-RTc; added fixed, adaptive, and design-calibrated wager-policy simulations for e-RTs with Type M and Type S diagnostics; committed simulation result tables for reproducibility; deferred e-RTms, e-RTu, and pairwise-comparison prototypes from the active manuscript scope; and removed the embedded code appendix in favor of the project repository.
 \end{enumerate}
 
 % ============================================

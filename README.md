@@ -101,15 +101,6 @@ It also verifies command-line tools:
 
 - `pandoc`
 - `latexmk`
-- `kpsewhich`
-
-The manuscript template uses line numbers for review, so the checker also
-verifies that LaTeX can find `lineno.sty`. TinyTeX/TeX Live users can usually
-install it with:
-
-```sh
-tlmgr install lineno
-```
 
 No `renv` lockfile is used at this stage.
 

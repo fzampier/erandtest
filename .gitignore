@@ -17,6 +17,7 @@
 *.RData
 *.rds
 *.Rds
+dist/
 
 # Exploratory smoke-test or large local outputs
 explorations/ertb_futility/**/*_20.*
