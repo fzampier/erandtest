@@ -7,8 +7,9 @@
 # denominator tracking. Based on the insight that under 1:1 randomization,
 # P(event from treatment | event occurred) = 0.5 under null.
 #
-# Key advantage: No non-event ascertainment needed — just log events.
-# Trade-off: ~2.5x sample size inflation vs frequentist power.
+# Key advantage: No non-event ascertainment needed; just log events.
+# Active manuscript comparisons use explicit sample sizes, including same-N
+# comparisons against e-RTb.
 
 library(tidyverse)
 
@@ -21,6 +22,8 @@ library(tidyverse)
 #' @param burn_in Number of events before betting begins (default 30).
 #' @param ramp Number of events over which betting ramps from 0 to full (default 50).
 #' @param threshold Rejection threshold, typically 1/alpha (default 20).
+#' @param kelly_fraction Fractional adaptive Kelly intensity; 1 preserves the
+#'   default full-intensity event-only wager.
 #' @return A list with:
 #'   - wealth: numeric vector of wealth after each event
 #'   - crossed: logical, did wealth ever reach threshold?
@@ -39,7 +42,8 @@ compute_eRTe <- function(arms, burn_in = 30, ramp = 50, threshold = 20,
                          p_trt_design = NULL, p_ctrl_design = NULL,
                          p_trt_oracle = NULL, p_ctrl_oracle = NULL,
                          fixed_lambda = NULL,
-                         ramp_fixed = TRUE) {
+                         ramp_fixed = TRUE,
+                         kelly_fraction = 1) {
   n <- length(arms)
   wager <- match.arg(wager)
 
@@ -85,7 +89,7 @@ compute_eRTe <- function(arms, burn_in = 30, ramp = 50, threshold = 20,
     c_i <- min(1, max(0, (i - burn_in) / ramp))
     if (wager == "adaptive") {
       if (i > burn_in && total > 0) {
-        lambda <- p_random + c_i * (p_obs - p_random)
+        lambda <- p_random + kelly_fraction * c_i * (p_obs - p_random)
         lambda <- max(0.001, min(0.999, lambda))
       } else {
         lambda <- p_random  # Neutral bet during burn-in
@@ -180,8 +184,9 @@ expected_events <- function(n_patients, p_ctrl, p_trt) {
 #' @param p_ctrl Control arm event rate.
 #' @param p_trt Treatment arm event rate (under alternative).
 #'   For null simulation, both arms use p_ctrl.
-#' @param n_patients Total number of patients. If NULL, uses frequentist
-#'   sample size with 2.5x inflation.
+#' @param n_patients Total number of patients. If NULL, uses a legacy
+#'   convenience default equal to the frequentist sample size with 2.5x
+#'   inflation. Active manuscript scripts pass explicit sample sizes.
 #' @param target_power Target power for sample size calculation (default 0.80).
 #' @param alpha Significance level (default 0.05).
 #' @param burn_in Burn-in period in events (default 30).
@@ -193,7 +198,8 @@ simulate_eRTe <- function(n_sims = 1000, p_ctrl, p_trt,
                            wager = c("adaptive", "design", "fixed", "oracle"),
                            p_trt_design = NULL, p_ctrl_design = NULL,
                            fixed_lambda = NULL,
-                           ramp_fixed = TRUE) {
+                           ramp_fixed = TRUE,
+                           kelly_fraction = 1) {
   wager <- match.arg(wager)
 
   threshold <- 1 / alpha
@@ -252,7 +258,8 @@ simulate_eRTe <- function(n_sims = 1000, p_ctrl, p_trt,
       p_trt_oracle = p_ctrl,
       p_ctrl_oracle = p_ctrl,
       fixed_lambda = fixed_lambda,
-      ramp_fixed = ramp_fixed
+      ramp_fixed = ramp_fixed,
+      kelly_fraction = kelly_fraction
     )
     null_final_evalues[sim] <- tail(res$wealth, 1)
 
@@ -288,7 +295,8 @@ simulate_eRTe <- function(n_sims = 1000, p_ctrl, p_trt,
       p_trt_oracle = p_trt,
       p_ctrl_oracle = p_ctrl,
       fixed_lambda = fixed_lambda,
-      ramp_fixed = ramp_fixed
+      ramp_fixed = ramp_fixed,
+      kelly_fraction = kelly_fraction
     )
     alt_final_evalues[sim] <- tail(res$wealth, 1)
 

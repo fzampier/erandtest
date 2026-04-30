@@ -28,7 +28,8 @@ compute_eRT <- function(treatment, outcome, p = 0.5, burn_in = 50, ramp = 100,
                         p_trt_oracle = NULL, p_ctrl_oracle = NULL,
                         fixed_event_lambda = NULL,
                         fixed_nonevent_lambda = NULL,
-                        ramp_fixed = TRUE) {
+                        ramp_fixed = TRUE,
+                        kelly_fraction = 0.5) {
   n <- length(treatment)
   wager <- match.arg(wager)
   
@@ -78,9 +79,9 @@ compute_eRT <- function(treatment, outcome, p = 0.5, burn_in = 50, ramp = 100,
       delta_hat <- rate_trt - rate_ctrl
 
       if (outcome[i] == 1) {
-        lambda <- 0.5 + 0.5 * c_i * delta_hat
+        lambda <- 0.5 + kelly_fraction * c_i * delta_hat
       } else {
-        lambda <- 0.5 - 0.5 * c_i * delta_hat
+        lambda <- 0.5 - kelly_fraction * c_i * delta_hat
       }
     } else {
       lambda_target <- if (outcome[i] == 1) {
@@ -147,7 +148,8 @@ simulate_eRT <- function(n_sims = 5000,
                          p_ctrl_design = NULL,
                          fixed_event_lambda = NULL,
                          fixed_nonevent_lambda = NULL,
-                         ramp_fixed = TRUE) {
+                         ramp_fixed = TRUE,
+                         kelly_fraction = 0.5) {
   wager <- match.arg(wager)
   
   # Determine hypothesized ARR for sample size calculation
@@ -204,7 +206,8 @@ simulate_eRT <- function(n_sims = 5000,
       p_ctrl_oracle = p_ctrl,
       fixed_event_lambda = fixed_event_lambda,
       fixed_nonevent_lambda = fixed_nonevent_lambda,
-      ramp_fixed = ramp_fixed
+      ramp_fixed = ramp_fixed,
+      kelly_fraction = kelly_fraction
     )
     
     final_evalues[sim] <- wealth[n_patients]

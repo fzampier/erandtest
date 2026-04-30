@@ -16,12 +16,12 @@
 # eprocess_binary() to continuous pairwise signs, D in {-1, +1}.
 #
 # Run:
-#   Rscript R/simulations/ertwr_sokolova_comparison.R 1000
+#   Rscript explorations/ertwr/R/simulations/ertwr_sokolova_comparison.R 1000
 #
 # Output:
-#   results/ertwr_sokolova_comparison_<n_sims>.csv
+#   explorations/ertwr/results/ertwr_sokolova_comparison_<n_sims>.csv
 
-suppressPackageStartupMessages(source("R/ertwr.R"))
+suppressPackageStartupMessages(source("explorations/ertwr/R/ertwr.R"))
 
 dir.create("results", showWarnings = FALSE)
 
@@ -282,7 +282,7 @@ results$null_rejection_rate <- ifelse(
   results$null_rejection_rate
 )
 
-output_file <- sprintf("results/ertwr_sokolova_comparison_%s.csv", n_sims)
+output_file <- sprintf("explorations/ertwr/results/ertwr_sokolova_comparison_%s.csv", n_sims)
 write.csv(results, output_file, row.names = FALSE)
 
 cat(sprintf("\nSaved %s\n\n", output_file))

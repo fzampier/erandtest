@@ -14,13 +14,13 @@
 # endpoint definition.
 #
 # Run:
-#   Rscript R/simulations/ertwr_composite_buysetest.R 300 250
+#   Rscript explorations/ertwr/R/simulations/ertwr_composite_buysetest.R 300 250
 #
 # Output:
-#   results/ertwr_composite_buysetest_<n_sims>_<n_per_arm>.csv
+#   explorations/ertwr/results/ertwr_composite_buysetest_<n_sims>_<n_per_arm>.csv
 
 suppressPackageStartupMessages({
-  source("R/ertwr.R")
+  source("explorations/ertwr/R/ertwr.R")
   library(BuyseTest)
 })
 
@@ -232,7 +232,7 @@ for (scenario_name in names(scenario_specs)) {
 
 results <- do.call(rbind, rows)
 output_file <- sprintf(
-  "results/ertwr_composite_buysetest_%s_%s.csv",
+  "explorations/ertwr/results/ertwr_composite_buysetest_%s_%s.csv",
   n_sims,
   n_per_arm
 )

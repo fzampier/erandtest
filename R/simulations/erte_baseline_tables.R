@@ -7,10 +7,8 @@
 #
 # Outputs:
 #   results/erte_signal_concentration.csv
-#   results/erte_operating_characteristics_<n_sims>.csv
 #   results/erte_head_to_head_<n_sims>.csv
 #   manuscript/erte_signal_concentration_table.tex
-#   manuscript/erte_operating_characteristics_table.tex
 #   manuscript/erte_head_to_head_table.tex
 
 suppressPackageStartupMessages({
@@ -91,112 +89,34 @@ writeLines(c(
   "\\end{table}"
 ), "manuscript/erte_signal_concentration_table.tex")
 
-run_erte_event_stream <- function(n_events, p_event) {
-  crossings <- rep(NA_integer_, n_sims)
-  finals <- numeric(n_sims)
+baseline_rates <- seq(0.10, 0.40, by = 0.05)
+arr_values <- c(0.05, 0.075, 0.10)
+minimum_treatment_rate <- 0.05
 
-  for (s in seq_len(n_sims)) {
-    events <- simulate_events(n_events, p_event)
-    res <- compute_eRTe(events, burn_in = 30, ramp = 50, threshold = 1 / alpha)
-    crossings[[s]] <- res$crossed_at
-    finals[[s]] <- tail(res$wealth, 1)
-  }
-
-  crossed <- !is.na(crossings)
-  list(
-    rejection_rate = mean(crossed),
-    se = sqrt(mean(crossed) * (1 - mean(crossed)) / n_sims),
-    median_crossing = median_crossing(crossings),
-    median_final_evalue = median(finals)
-  )
-}
-
-operating_grid <- expand.grid(
-  baseline = c(0.15, 0.25, 0.35),
-  arr = c(0.05, 0.10),
+head_to_head_grid <- expand.grid(
+  arr = arr_values,
+  baseline = baseline_rates,
   KEEP.OUT.ATTRS = FALSE
 )
-operating_grid <- operating_grid[order(operating_grid$baseline, operating_grid$arr), ]
+head_to_head_grid$p_trt <- head_to_head_grid$baseline - head_to_head_grid$arr
+head_to_head_grid <- head_to_head_grid[
+  head_to_head_grid$p_trt >= minimum_treatment_rate,
+]
+head_to_head_grid <- head_to_head_grid[
+  order(head_to_head_grid$arr, head_to_head_grid$baseline),
+]
 
-operating_rows <- lapply(seq_len(nrow(operating_grid)), function(i) {
-  p_ctrl <- operating_grid$baseline[[i]]
-  arr <- operating_grid$arr[[i]]
-  p_trt <- p_ctrl - arr
-  n_freq <- design_n_binary(p_ctrl, arr, target_power, alpha)
-  n_erte <- ceiling(n_freq * 2.5)
-  n_events_null <- expected_events(n_erte, p_ctrl, p_ctrl)
-  n_events_alt <- expected_events(n_erte, p_ctrl, p_trt)
-  p_coin_alt <- event_coin(p_ctrl, p_trt)
-
-  cat(sprintf(
-    "e-RTe baseline: p_ctrl=%.2f ARR=%.2f N=%d events=%d\n",
-    p_ctrl, arr, n_erte, n_events_alt
-  ))
-
-  null_res <- run_erte_event_stream(n_events_null, 0.5)
-  alt_res <- run_erte_event_stream(n_events_alt, p_coin_alt)
-
-  data.frame(
-    baseline = p_ctrl,
-    arr = arr,
-    event_coin = p_coin_alt,
-    n_freq = n_freq,
-    n_erte = n_erte,
-    n_events_null = n_events_null,
-    n_events_alt = n_events_alt,
-    type1_error = null_res$rejection_rate,
-    type1_se = null_res$se,
-    power = alt_res$rejection_rate,
-    power_se = alt_res$se,
-    median_crossing = alt_res$median_crossing,
-    median_crossing_frac = alt_res$median_crossing / n_events_alt,
-    n_sims = n_sims,
-    alpha = alpha,
-    stringsAsFactors = FALSE
-  )
-})
-
-operating <- do.call(rbind, operating_rows)
-operating_file <- sprintf("results/erte_operating_characteristics_%s.csv", n_sims)
-write.csv(operating, operating_file, row.names = FALSE)
-
-operating_tex_rows <- vapply(seq_len(nrow(operating)), function(i) {
-  x <- operating[i, ]
-  sprintf(
-    "%s & %s & %.3f & %s & %s & %s & %s & %s events (%s) \\\\",
-    format_pct(x$baseline, 0),
-    format_pp(x$arr, 0),
-    x$event_coin,
-    format_int(x$n_freq),
-    format_int(x$n_erte),
-    format_pct(x$type1_error, 2),
-    format_pct(x$power, 1),
-    format_int(x$median_crossing),
-    format_pct(x$median_crossing_frac, 0)
-  )
-}, character(1))
-
-writeLines(c(
-  "\\begin{table}[htbp]",
-  "\\centering",
-  sprintf("\\caption{Operating characteristics for e-RTe (event-only). Each row summarizes %s fixed-seed simulated null trials and %s matched-alternative trials.}", format_int(n_sims), format_int(n_sims)),
-  "\\begin{tabular}{@{}cccccccc@{}}",
-  "\\toprule",
-  "Baseline & ARR & Event Coin & N (freq) & N (e-RTe) & Type I & Power & Median Crossing \\\\",
-  "\\midrule",
-  operating_tex_rows,
-  "\\bottomrule",
-  "\\end{tabular}",
-  "\\label{tab:erte_simulations}",
-  "\\end{table}"
-), "manuscript/erte_operating_characteristics_table.tex")
-
-baseline_rates <- seq(0.10, 0.40, by = 0.05)
-head_to_head_rows <- lapply(baseline_rates, function(p_ctrl) {
-  arr <- 0.05
+head_to_head_rows <- lapply(seq_len(nrow(head_to_head_grid)), function(i) {
+  p_ctrl <- head_to_head_grid$baseline[[i]]
+  arr <- head_to_head_grid$arr[[i]]
   p_trt <- p_ctrl - arr
   n_patients <- design_n_binary(p_ctrl, arr, target_power, alpha)
   n_events <- expected_events(n_patients, p_ctrl, p_trt)
+
+  cat(sprintf(
+    "e-RTe vs e-RTb same-N: p_ctrl=%.2f ARR=%.3f p_trt=%.3f N=%d events=%d\n",
+    p_ctrl, arr, p_trt, n_patients, n_events
+  ))
 
   ertb_crossed <- logical(n_sims)
   erte_crossed <- logical(n_sims)
@@ -239,7 +159,9 @@ head_to_head_rows <- lapply(baseline_rates, function(p_ctrl) {
   }
 
   data.frame(
+    arr = arr,
     baseline = p_ctrl,
+    trt_rate = p_trt,
     event_coin = event_coin(p_ctrl, p_trt),
     n_patients = n_patients,
     n_events = n_events,
@@ -248,6 +170,8 @@ head_to_head_rows <- lapply(baseline_rates, function(p_ctrl) {
     delta = delta,
     winner = winner,
     n_sims = n_sims,
+    target_power = target_power,
+    alpha = alpha,
     stringsAsFactors = FALSE
   )
 })
@@ -259,7 +183,8 @@ write.csv(head_to_head, head_to_head_file, row.names = FALSE)
 head_to_head_tex_rows <- vapply(seq_len(nrow(head_to_head)), function(i) {
   x <- head_to_head[i, ]
   sprintf(
-    "%s & %.3f & %s & %s & %s & %s & $%+.1f$pp & %s \\\\",
+    "%s & %s & %.3f & %s & %s & %s & %s & $%+.1f$pp & %s \\\\",
+    format_pp(x$arr, 1),
     format_pct(x$baseline, 0),
     x$event_coin,
     format_int(x$n_patients),
@@ -274,10 +199,11 @@ head_to_head_tex_rows <- vapply(seq_len(nrow(head_to_head)), function(i) {
 writeLines(c(
   "\\begin{table}[htbp]",
   "\\centering",
-  "\\caption{Head-to-head comparison: e-RTe versus e-RTb (5pp ARR, same trial data).}",
-  "\\begin{tabular}{@{}cccccccl@{}}",
+  "\\small",
+  "\\caption{Head-to-head comparison: e-RTe versus e-RTb across absolute risk reductions, using the same trial data and same enrolled-patient sample size. Scenarios requiring treatment event rates below 5\\% are omitted.}",
+  "\\begin{tabular}{@{}ccccccccl@{}}",
   "\\toprule",
-  "Baseline & Event Coin & $N$ & Events & e-RTb Power & e-RTe Power & $\\Delta$ & Winner \\\\",
+  "ARR & Baseline & Event Coin & $N$ & Events & e-RTb Power & e-RTe Power & $\\Delta$ & Winner \\\\",
   "\\midrule",
   head_to_head_tex_rows,
   "\\bottomrule",
@@ -286,6 +212,5 @@ writeLines(c(
   "\\end{table}"
 ), "manuscript/erte_head_to_head_table.tex")
 
-cat(sprintf("\nSaved %s\n", operating_file))
 cat(sprintf("Saved %s\n", head_to_head_file))
 cat("Saved e-RTe manuscript tables\n")

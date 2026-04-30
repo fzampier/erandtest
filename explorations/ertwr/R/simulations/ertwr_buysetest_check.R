@@ -8,12 +8,12 @@
 # manuscript-grade e-RTwr replicate because that would be much slower.
 #
 # Run:
-#   Rscript R/simulations/ertwr_buysetest_check.R 100 80
+#   Rscript explorations/ertwr/R/simulations/ertwr_buysetest_check.R 100 80
 #
 # Output:
-#   results/ertwr_buysetest_check_<n_sims>.csv
+#   explorations/ertwr/results/ertwr_buysetest_check_<n_sims>.csv
 
-suppressPackageStartupMessages(source("R/ertwr.R"))
+suppressPackageStartupMessages(source("explorations/ertwr/R/ertwr.R"))
 
 dir.create("results", showWarnings = FALSE)
 
@@ -58,7 +58,7 @@ for (true_wr in wr_grid) {
 }
 
 results <- do.call(rbind, rows)
-output_file <- sprintf("results/ertwr_buysetest_check_%s.csv", n_sims)
+output_file <- sprintf("explorations/ertwr/results/ertwr_buysetest_check_%s.csv", n_sims)
 write.csv(results, output_file, row.names = FALSE)
 
 summary <- aggregate(

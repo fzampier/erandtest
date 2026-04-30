@@ -23,27 +23,34 @@ V8 separates two ideas that were partly blended in prior drafts:
   fixed, design-calibrated, misspecified for stress testing, or oracle-only for
   simulation benchmarking.
 
+The default scientific position for V8 is that e-RT is effect-size agnostic:
+continuous monitoring can begin without specifying a hypothesized treatment
+effect. Design-calibrated wagers, including GROW-style wagers, are optional
+efficiency tools when a credible clinical design alternative exists.
+
 The active manuscript variants are:
 
 - `e-RTb`: binary event/no-event outcomes.
 - `e-RTe`: event-only monitoring, using only event arm labels.
-- `e-RTwr`: pairwise win-ratio or generalized pairwise-comparison endpoints.
 - `e-RTc`: continuous outcomes.
 - `e-RTs`: time-to-event outcomes.
 
-The multi-state and universal abstractions from V7 (`e-RTms` and `e-RTu`) are
-deferred from the main V8 manuscript so the paper can stay focused on the
-wager-policy problem.
+The multi-state and universal abstractions from V7 (`e-RTms` and `e-RTu`) and
+the pairwise win-ratio/GPC prototype are deferred from the main V8 manuscript
+so the paper can stay focused on randomization-based assignment-prediction
+tests.
 
 ## Repository Layout
 
 - `manuscript/`: canonical LaTeX source, Markdown mirror, compiled PDF,
   references, manuscript-ready figure PDFs, and generated LaTeX tables.
-- `R/`: reusable endpoint modules for e-RTb, e-RTe, e-RTc, e-RTs, and e-RTwr.
+- `R/`: reusable endpoint modules for e-RTb, e-RTe, e-RTc, and e-RTs.
 - `R/simulations/`: fixed-seed simulation and manuscript-artifact generators.
 - `results/`: active generated CSV outputs supporting manuscript tables,
   figures, and numerical claims.
 - `notes/`: stable summaries and the reproducibility inventory.
+- `explorations/`: parked prototypes that are not part of the active
+  manuscript reproducibility chain, including the former pairwise e-RTwr work.
 - `AGENTS.md`, `shopping_list.md`, `CHANGELOG.md`: working context and project
   history.
 
@@ -70,7 +77,7 @@ make all
 
 The inventory in `notes/reproducibility_inventory.md` maps every active
 manuscript table, figure, CSV result file, and support artifact to its generator.
-Exploratory source scripts are kept in `R/simulations/`, but pilot CSV outputs
+Exploratory source scripts and parked outputs live under `explorations/` and
 are not part of the active manuscript reproducibility chain.
 
 ## Dependencies
@@ -86,13 +93,20 @@ The lightweight checker verifies these R packages:
 - `tidyverse`
 - `ggplot2`
 - `scales`
-- `BuyseTest`
-- `WRestimates`
 
 It also verifies command-line tools:
 
 - `pandoc`
 - `latexmk`
+- `kpsewhich`
+
+The manuscript template uses line numbers for review, so the checker also
+verifies that LaTeX can find `lineno.sty`. TinyTeX/TeX Live users can usually
+install it with:
+
+```sh
+tlmgr install lineno
+```
 
 No `renv` lockfile is used at this stage.
 
@@ -115,14 +129,16 @@ layout warnings, not build failures.
 - The methods are under active development and should be read as a V8 research
   draft, not a locked software API.
 - Design-calibrated wagers improve efficiency when the design alternative is
-  credible, but misspecification can reduce power or inflate the apparent
-  effect at crossing.
-- Type M error at crossing is tracked for e-RTb, e-RTe, e-RTc, e-RTs, and
-  e-RTwr because early stopping enriches for favorable random fluctuation.
-  e-RTs also reports Type S sign error among crossing trials.
-- e-RTwr currently uses predictable/disjoint pair updates for monitoring.
-  All-pairs GPC/win-ratio summaries are final-trial descriptive comparators
-  unless a dependence-safe all-pairs e-process is developed.
+  credible, but they are optional modes rather than the default identity of
+  e-RT. Misspecification can reduce power or inflate the apparent effect at
+  crossing.
+- Type M error at crossing is tracked for e-RTb, e-RTe, e-RTc, and e-RTs
+  because early stopping enriches for favorable random fluctuation. e-RTs also
+  reports Type S sign error among crossing trials.
+- Pairwise win-ratio/GPC ideas are parked in `explorations/ertwr/`. The current
+  prototype is not an active e-RT variant because it bets on pairwise outcome
+  direction after treatment assignment is known, rather than betting on
+  randomized assignment.
 
 ## GitHub
 

@@ -3,20 +3,20 @@
 # =============================================================================
 #
 # Run:
-#   Rscript R/simulations/ertwr_tables.R
+#   Rscript explorations/ertwr/R/simulations/ertwr_tables.R
 #
 # Inputs:
-#   results/ertwr_sokolova_comparison_1000.csv
-#   results/ertwr_composite_buysetest_300_250.csv
+#   explorations/ertwr/results/ertwr_sokolova_comparison_1000.csv
+#   explorations/ertwr/results/ertwr_composite_buysetest_300_250.csv
 #
 # Outputs:
-#   manuscript/ertwr_sokolova_table.tex
-#   manuscript/ertwr_composite_table.tex
+#   explorations/ertwr/manuscript/ertwr_sokolova_table.tex
+#   explorations/ertwr/manuscript/ertwr_composite_table.tex
 
 dir.create("manuscript", showWarnings = FALSE)
 
-sokolova_file <- "results/ertwr_sokolova_comparison_1000.csv"
-composite_file <- "results/ertwr_composite_buysetest_300_250.csv"
+sokolova_file <- "explorations/ertwr/results/ertwr_sokolova_comparison_1000.csv"
+composite_file <- "explorations/ertwr/results/ertwr_composite_buysetest_300_250.csv"
 
 if (!file.exists(sokolova_file)) {
   stop(sprintf("Missing %s. Run ertwr_sokolova_comparison.R 1000 first.", sokolova_file))
@@ -65,7 +65,7 @@ writeLines(c(
   "\\end{tabular}",
   "\\label{tab:ertwr_sokolova}",
   "\\end{table}"
-), "manuscript/ertwr_sokolova_table.tex")
+), "explorations/ertwr/manuscript/ertwr_sokolova_table.tex")
 
 composite <- read.csv(composite_file, stringsAsFactors = FALSE)
 summary_rows <- do.call(
@@ -120,7 +120,7 @@ writeLines(c(
   "\\end{tabular}",
   "\\label{tab:ertwr_composite}",
   "\\end{table}"
-), "manuscript/ertwr_composite_table.tex")
+), "explorations/ertwr/manuscript/ertwr_composite_table.tex")
 
-cat("Saved manuscript/ertwr_sokolova_table.tex\n")
-cat("Saved manuscript/ertwr_composite_table.tex\n")
+cat("Saved explorations/ertwr/manuscript/ertwr_sokolova_table.tex\n")
+cat("Saved explorations/ertwr/manuscript/ertwr_composite_table.tex\n")

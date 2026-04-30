@@ -3,13 +3,13 @@
 Command:
 
 ```sh
-Rscript R/simulations/ertwr_composite_buysetest.R 300 250
+Rscript explorations/ertwr/R/simulations/ertwr_composite_buysetest.R 300 250
 ```
 
 Output:
 
 ```text
-results/ertwr_composite_buysetest_300_250.csv
+explorations/ertwr/results/ertwr_composite_buysetest_300_250.csv
 ```
 
 Seed:

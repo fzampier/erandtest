@@ -5,14 +5,14 @@
 # Compares adaptive e-RTwr policies across Kelly fractions, burn-ins, and ramps.
 #
 # Run:
-#   Rscript R/simulations/ertwr_adaptive_tuning.R 1000
-#   Rscript R/simulations/ertwr_adaptive_tuning.R 1000 fine
+#   Rscript explorations/ertwr/R/simulations/ertwr_adaptive_tuning.R 1000
+#   Rscript explorations/ertwr/R/simulations/ertwr_adaptive_tuning.R 1000 fine
 #
 # Output:
-#   results/ertwr_adaptive_tuning_<n_sims>.csv
-#   results/ertwr_adaptive_tuning_fine_<n_sims>.csv
+#   explorations/ertwr/results/ertwr_adaptive_tuning_<n_sims>.csv
+#   explorations/ertwr/results/ertwr_adaptive_tuning_fine_<n_sims>.csv
 
-suppressPackageStartupMessages(source("R/ertwr.R"))
+suppressPackageStartupMessages(source("explorations/ertwr/R/ertwr.R"))
 
 dir.create("results", showWarnings = FALSE)
 
@@ -138,9 +138,9 @@ for (wr in wr_grid) {
 
 results <- do.call(rbind, rows)
 output_file <- if (mode == "coarse") {
-  sprintf("results/ertwr_adaptive_tuning_%s.csv", n_sims)
+  sprintf("explorations/ertwr/results/ertwr_adaptive_tuning_%s.csv", n_sims)
 } else {
-  sprintf("results/ertwr_adaptive_tuning_%s_%s.csv", mode, n_sims)
+  sprintf("explorations/ertwr/results/ertwr_adaptive_tuning_%s_%s.csv", mode, n_sims)
 }
 write.csv(results, output_file, row.names = FALSE)
 

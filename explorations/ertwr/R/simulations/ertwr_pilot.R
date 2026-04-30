@@ -7,12 +7,12 @@
 # control outcome loses, exact ties are possible only if tie_margin > 0.
 #
 # Run:
-#   Rscript R/simulations/ertwr_pilot.R 1000
+#   Rscript explorations/ertwr/R/simulations/ertwr_pilot.R 1000
 #
 # Output:
-#   results/ertwr_pilot_<n_sims>.csv
+#   explorations/ertwr/results/ertwr_pilot_<n_sims>.csv
 
-suppressPackageStartupMessages(source("R/ertwr.R"))
+suppressPackageStartupMessages(source("explorations/ertwr/R/ertwr.R"))
 
 dir.create("results", showWarnings = FALSE)
 
@@ -262,7 +262,7 @@ results <- results[, c(
   "target_power", "alpha", "n_sims"
 )]
 
-output_file <- sprintf("results/ertwr_pilot_%s.csv", n_sims)
+output_file <- sprintf("explorations/ertwr/results/ertwr_pilot_%s.csv", n_sims)
 write.csv(results, output_file, row.names = FALSE)
 
 cat(sprintf("\nSaved %s\n\n", output_file))

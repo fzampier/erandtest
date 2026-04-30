@@ -10,19 +10,17 @@ deps-check:
 results:
 	$(RSCRIPT) R/simulations/ertb_baseline.R 5000
 	$(RSCRIPT) R/simulations/erte_baseline_tables.R 2000
+	$(RSCRIPT) R/simulations/erte_tuning_sensitivity.R 1000
 	$(RSCRIPT) R/simulations/wager_policy_comparison.R 1000
 	$(RSCRIPT) R/simulations/ertc_wager_policy.R 1000
 	$(RSCRIPT) R/simulations/erts_wager_policy.R 1000
 	$(RSCRIPT) R/simulations/erts_staggered_entry_check.R 1000
-	$(RSCRIPT) R/simulations/ertwr_sokolova_comparison.R 1000
-	$(RSCRIPT) R/simulations/ertwr_composite_buysetest.R 300 250
 	$(RSCRIPT) R/simulations/wager_asymmetry_binary.R 1000
 
 figures:
 	$(RSCRIPT) R/simulations/manuscript_trajectory_examples.R
 	$(RSCRIPT) R/simulations/wager_policy_figures.R
 	$(RSCRIPT) R/simulations/erts_wager_policy_figures.R
-	$(RSCRIPT) R/simulations/ertwr_tables.R
 
 manuscript:
 	cd manuscript && $(PANDOC) e-RT_v8.tex -f latex -t gfm --citeproc --bibliography=references.bib --wrap=none -o e-RT_v8.md

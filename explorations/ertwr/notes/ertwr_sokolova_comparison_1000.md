@@ -3,13 +3,13 @@
 Command:
 
 ```sh
-Rscript R/simulations/ertwr_sokolova_comparison.R 1000
+Rscript explorations/ertwr/R/simulations/ertwr_sokolova_comparison.R 1000
 ```
 
 Output:
 
 ```text
-results/ertwr_sokolova_comparison_1000.csv
+explorations/ertwr/results/ertwr_sokolova_comparison_1000.csv
 ```
 
 Seed:
