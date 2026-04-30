@@ -97,10 +97,10 @@ table_rows <- vapply(seq_len(nrow(results)), function(i) {
 writeLines(c(
   "\\begin{table}[htbp]",
   "\\centering",
-  sprintf("\\caption{Binary: cost of naive over-betting (true ARR = 5\\%%, $N = 2{,}942$). Rows summarize %s fixed-seed simulated trials.}", formatC(n_sims, format = "d", big.mark = "{,}")),
+  sprintf("\\caption{Binary: cost of naive over-betting (true ARR = 5\\%%, $N = 2{,}942$). Fixed wager magnitudes are deviations from 0.5 in the assignment-prediction wager, not ARR design effects. Rows summarize %s fixed-seed simulated trials.}", formatC(n_sims, format = "d", big.mark = "{,}")),
   "\\begin{tabular}{@{}cccc@{}}",
   "\\toprule",
-  "Fixed wager magnitude & Relative scale & Power & Median Final E-value \\\\",
+  "Fixed wager magnitude & Scale vs 0.05 wager & Power & Median Final E-value \\\\",
   "\\midrule",
   table_rows,
   "\\bottomrule",

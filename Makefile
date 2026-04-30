@@ -11,7 +11,7 @@ results:
 	$(RSCRIPT) R/simulations/ertb_baseline.R 5000
 	$(RSCRIPT) R/simulations/erte_baseline_tables.R 2000
 	$(RSCRIPT) R/simulations/erte_tuning_sensitivity.R 1000
-	$(RSCRIPT) R/simulations/wager_policy_comparison.R 1000
+	$(RSCRIPT) R/simulations/wager_policy_comparison.R 5000
 	$(RSCRIPT) R/simulations/ertc_wager_policy.R 1000
 	$(RSCRIPT) R/simulations/erts_wager_policy.R 1000
 	$(RSCRIPT) R/simulations/erts_staggered_entry_check.R 1000

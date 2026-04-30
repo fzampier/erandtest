@@ -1,15 +1,15 @@
-# Wager Policy 1,000-Rep Run, Same Enrolled N
+# Wager Policy 5,000-Rep Run, Same Enrolled N
 
 Command:
 
 ```sh
-Rscript R/simulations/wager_policy_comparison.R 1000
+Rscript R/simulations/wager_policy_comparison.R 5000
 ```
 
 Output:
 
 ```text
-results/wager_policy_1000_same_n.csv
+results/wager_policy_5000_same_n.csv
 ```
 
 This supersedes the inflated e-RTe comparison for the V8 wager-policy table. Both e-RTb and e-RTe now use the same enrolled-patient sample size from `power.prop.test` with 80% power and alpha 0.05. No event-only inflation is applied.
@@ -28,7 +28,7 @@ set.seed(20260429)
 
 ## Type I Error
 
-All policies remain near or below nominal alpha 0.05 in this 1,000-rep run. The largest observed Type I error is 5.1% for a 10pp fixed wager in the null scenario designed around a 5pp ARR, which is within Monte Carlo uncertainty for 1,000 simulations.
+All policies remain below nominal alpha 0.05 in this 5,000-rep run. The largest observed Type I error is 4.8% for e-RTe with a 10pp fixed wager in the null scenario designed around a 5pp ARR. The adaptive e-RTb null estimate at the 10pp design sample size is now 2.0%, consistent with the separate 5,000-rep adaptive e-RTb baseline estimate of 2.1% at the same N.
 
 ## Power, Same N
 
@@ -36,15 +36,15 @@ At true ARR 5pp and N = 2,942:
 
 | Endpoint | Adaptive | Fixed under | Fixed matched | Fixed over |
 |---|---:|---:|---:|---:|
-| e-RTb | 49.1% | 53.2% | 75.3% | 57.1% |
-| e-RTe | 34.7% | 15.2% | 50.6% | 44.7% |
+| e-RTb | 49.3% | 53.7% | 75.0% | 55.7% |
+| e-RTe | 31.5% | 14.2% | 51.2% | 46.9% |
 
 At true ARR 10pp and N = 712:
 
 | Endpoint | Adaptive | Fixed under | Fixed matched | Fixed over |
 |---|---:|---:|---:|---:|
-| e-RTb | 48.9% | 40.9% | 69.7% | 67.8% |
-| e-RTe | 32.7% | 4.2% | 43.5% | 49.9% |
+| e-RTb | 50.5% | 41.9% | 71.3% | 67.1% |
+| e-RTe | 33.8% | 5.7% | 43.2% | 50.6% |
 
 ## Type M Error At Crossing
 
@@ -54,19 +54,19 @@ At true ARR 5pp:
 
 | Endpoint | Policy | Crossing effect | Final effect | Median Type M | Q75 | Q90 |
 |---|---|---:|---:|---:|---:|---:|
-| e-RTb | Adaptive | 7.84pp | 4.92pp | 1.57 | 2.17 | 3.12 |
-| e-RTb | Fixed matched | 6.49pp | 4.97pp | 1.30 | 1.67 | 2.09 |
-| e-RTe | Adaptive | 8.23pp | 4.97pp | 1.65 | 2.13 | 2.74 |
-| e-RTe | Fixed matched | 6.77pp | 4.88pp | 1.35 | 1.68 | 2.03 |
+| e-RTb | Adaptive | 7.92pp | 5.00pp | 1.58 | 2.12 | 2.95 |
+| e-RTb | Fixed matched | 6.52pp | 5.01pp | 1.30 | 1.69 | 2.15 |
+| e-RTe | Adaptive | 8.03pp | 4.99pp | 1.61 | 2.03 | 2.66 |
+| e-RTe | Fixed matched | 6.73pp | 4.99pp | 1.35 | 1.64 | 2.00 |
 
 At true ARR 10pp:
 
 | Endpoint | Policy | Crossing effect | Final effect | Median Type M | Q75 | Q90 |
 |---|---|---:|---:|---:|---:|---:|
-| e-RTb | Adaptive | 14.44pp | 10.07pp | 1.44 | 1.82 | 2.25 |
-| e-RTb | Fixed matched | 12.83pp | 9.92pp | 1.28 | 1.58 | 1.90 |
-| e-RTe | Adaptive | 14.74pp | 9.94pp | 1.47 | 1.76 | 2.11 |
-| e-RTe | Fixed matched | 13.10pp | 9.94pp | 1.31 | 1.55 | 1.82 |
+| e-RTb | Adaptive | 14.68pp | 10.06pp | 1.47 | 1.79 | 2.20 |
+| e-RTb | Fixed matched | 12.74pp | 10.03pp | 1.27 | 1.57 | 1.89 |
+| e-RTe | Adaptive | 14.63pp | 10.09pp | 1.46 | 1.76 | 2.11 |
+| e-RTe | Fixed matched | 13.15pp | 10.02pp | 1.32 | 1.58 | 1.83 |
 
 Crossings are enriched for favorable random fluctuation. This is expected for any early stopping rule, but it is important to report because the apparent effect at crossing can materially exceed both the true effect and the final-study estimate.
 

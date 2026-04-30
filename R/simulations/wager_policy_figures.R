@@ -198,12 +198,16 @@ ggsave(
   height = 4.2
 )
 
-results_file <- "results/wager_policy_1000_same_n.csv"
+results_file <- "results/wager_policy_5000_same_n.csv"
 if (!file.exists(results_file)) {
   stop(sprintf("Missing %s. Run wager_policy_comparison.R first.", results_file))
 }
 
 results <- read.csv(results_file, stringsAsFactors = FALSE)
+n_sims_values <- unique(results$n_sims)
+if (length(n_sims_values) != 1) stop("Expected one n_sims value in wager-policy results")
+n_sims_label <- formatC(n_sims_values[[1]], format = "d", big.mark = ",")
+n_sims_latex <- formatC(n_sims_values[[1]], format = "d", big.mark = "{,}")
 results$policy_display <- mapply(policy_short, results$policy, results$wager_misspecification)
 results$wager_display <- format_pp(results$wager_arr)
 results$n_display <- format_number(results$n_patients)
@@ -237,7 +241,7 @@ type1_plot <- ggplot(
   scale_y_continuous(labels = percent_format(accuracy = 1), limits = c(0, 0.07)) +
   labs(
     title = "Type I error by wager policy",
-    subtitle = "1,000 simulated null trials per scenario; bars show approximate 95% Monte Carlo intervals",
+    subtitle = sprintf("%s simulated null trials per scenario; bars show approximate 95%% Monte Carlo intervals", n_sims_label),
     x = NULL,
     y = "Type I error"
   ) +
@@ -273,7 +277,7 @@ power_plot <- ggplot(
   scale_fill_manual(values = c("e-RTb" = "#3A6EA5", "e-RTe" = "#5B8E7D")) +
   labs(
     title = "Power by wager policy",
-    subtitle = "1,000 simulated trials per scenario; fixed wagers use full-Kelly design calibration",
+    subtitle = sprintf("%s simulated trials per scenario; fixed wagers use full-Kelly design calibration", n_sims_label),
     x = NULL,
     y = "Power",
     fill = NULL
@@ -322,7 +326,7 @@ row_summary <- function(x) {
 type1_lines <- c(
   "\\begin{table}[htbp]",
   "\\centering",
-  "\\caption{Type I error for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes 1{,}000 simulated null trials with $p_C = 0.40$ and $\\alpha = 0.05$. Sample sizes were obtained from the usual fixed-sample two-proportion calculation with 80\\% power; no event-only inflation was used for e-RTe in this comparison.}",
+  sprintf("\\caption{Type I error for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes %s simulated null trials with $p_C = 0.40$ and $\\alpha = 0.05$. Sample sizes were obtained from the usual fixed-sample two-proportion calculation with 80\\%% power; no event-only inflation was used for e-RTe in this comparison.}", n_sims_latex),
   "\\label{tab:wager_policy_type1}",
   "\\begin{tabular}{@{}lllrrrr@{}}",
   "\\toprule",
@@ -349,7 +353,7 @@ type1_lines <- c(
 power_lines <- c(
   "\\begin{table}[htbp]",
   "\\centering",
-  "\\caption{Power for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes 1{,}000 simulated trials with $p_C = 0.40$ and $\\alpha = 0.05$. Fixed policies use full-Kelly wagers calibrated to the listed wager ARR; adaptive e-RTb uses half-Kelly and adaptive e-RTe uses full-Kelly.}",
+  sprintf("\\caption{Power for adaptive and design-fixed wager policies at the same enrolled-patient sample sizes. Each row summarizes %s simulated trials with $p_C = 0.40$ and $\\alpha = 0.05$. Fixed policies use full-Kelly wagers calibrated to the listed wager ARR; adaptive e-RTb uses half-Kelly and adaptive e-RTe uses full-Kelly.}", n_sims_latex),
   "\\label{tab:wager_policy_v8}",
   "\\begin{tabular}{@{}lllrrrrr@{}}",
   "\\toprule",

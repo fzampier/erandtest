@@ -48,8 +48,8 @@ make all
 | `erte_signal_concentration_table.tex` | `R/simulations/erte_baseline_tables.R` | `erte_signal_concentration.csv` |
 | `erte_head_to_head_table.tex` | `R/simulations/erte_baseline_tables.R` | `erte_head_to_head_2000.csv` |
 | `erte_tuning_sensitivity_table.tex` | `R/simulations/erte_tuning_sensitivity.R` | `erte_tuning_sensitivity_1000.csv` |
-| `wager_policy_results_table.tex` | `R/simulations/wager_policy_figures.R` | `wager_policy_1000_same_n.csv` |
-| `wager_policy_type_m_table.tex` | `R/simulations/wager_policy_figures.R` | `wager_policy_1000_same_n.csv` |
+| `wager_policy_results_table.tex` | `R/simulations/wager_policy_figures.R` | `wager_policy_5000_same_n.csv` |
+| `wager_policy_type_m_table.tex` | `R/simulations/wager_policy_figures.R` | `wager_policy_5000_same_n.csv` |
 | `ertc_wager_policy_table.tex` | `R/simulations/ertc_wager_policy.R` | `ertc_wager_policy_1000.csv` |
 | `erts_wager_policy_table.tex` | `R/simulations/erts_wager_policy.R` | `erts_wager_policy_1000.csv` |
 | `wager_asymmetry_binary_table.tex` | `R/simulations/wager_asymmetry_binary.R` | `wager_asymmetry_binary_1000.csv` |
@@ -63,7 +63,7 @@ make all
 | `erte_signal_concentration.csv` | `R/simulations/erte_baseline_tables.R 2000` | deterministic event-coin signal table |
 | `erte_head_to_head_2000.csv` | `R/simulations/erte_baseline_tables.R 2000` | same-N e-RTe versus e-RTb crossover table across 5pp, 7.5pp, and 10pp ARR scenarios |
 | `erte_tuning_sensitivity_1000.csv` | `R/simulations/erte_tuning_sensitivity.R 1000` | e-RTe/e-RTb burn-in, ramp, and Kelly-intensity sensitivity table |
-| `wager_policy_1000_same_n.csv` | `R/simulations/wager_policy_comparison.R 1000` | e-RTb/e-RTe adaptive versus design-fixed tables and figures |
+| `wager_policy_5000_same_n.csv` | `R/simulations/wager_policy_comparison.R 5000` | e-RTb/e-RTe adaptive versus design-fixed tables and figures |
 | `ertc_wager_policy_1000.csv` | `R/simulations/ertc_wager_policy.R 1000` | e-RTc design-wager tables |
 | `erts_wager_policy_1000.csv` | `R/simulations/erts_wager_policy.R 1000` | e-RTs tables and figures |
 | `erts_staggered_entry_check_1000.csv` | `R/simulations/erts_staggered_entry_check.R 1000` | detailed staggered-entry check |
@@ -83,7 +83,7 @@ the CSVs above:
 - e-RTe/e-RTb adaptive tuning sensitivity:
   `erte_tuning_sensitivity_1000.csv`.
 - e-RTb/e-RTe design-wager power and Type M summaries:
-  `wager_policy_1000_same_n.csv`.
+  `wager_policy_5000_same_n.csv`.
 - e-RTc design-wager summaries: `ertc_wager_policy_1000.csv`.
 - e-RTs design-wager, Type M, and Type S summaries:
   `erts_wager_policy_1000.csv`.

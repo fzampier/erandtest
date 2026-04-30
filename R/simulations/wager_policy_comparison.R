@@ -7,7 +7,7 @@
 # simulation benchmark.
 #
 # Run:
-#   Rscript R/simulations/wager_policy_comparison.R 500
+#   Rscript R/simulations/wager_policy_comparison.R 5000
 #
 # Output:
 #   results/wager_policy_<n_sims>_same_n.csv
@@ -18,7 +18,7 @@ suppressPackageStartupMessages(source("R/erte.R"))
 dir.create("results", showWarnings = FALSE)
 
 args <- commandArgs(trailingOnly = TRUE)
-n_sims <- if (length(args) >= 1) as.integer(args[[1]]) else 500L
+n_sims <- if (length(args) >= 1) as.integer(args[[1]]) else 5000L
 if (is.na(n_sims) || n_sims < 1) stop("n_sims must be a positive integer")
 
 set.seed(20260428)
