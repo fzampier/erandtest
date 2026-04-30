@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite the manuscript and the reproducibility code."
+title: "erandtest: Reproducibility code for e-value Randomized Trial monitoring"
+authors:
+  - family-names: "Zampieri"
+    given-names: "Fernando G."
+repository-code: "https://github.com/fzampier/erandtest"
+url: "https://github.com/fzampier/erandtest"
+date-released: "2026-04-30"
+license: "MIT"
+keywords:
+  - "e-values"
+  - "e-processes"
+  - "randomization tests"
+  - "sequential analysis"
+  - "clinical trials"
+abstract: "Reproducibility repository for the V8 e-RT manuscript and simulation code."
+preferred-citation:
+  type: unpublished
+  title: "Sequential Randomization Tests Using e-values: Applications for trial monitoring"
+  authors:
+    - family-names: "Zampieri"
+      given-names: "Fernando G."
+  year: 2026
