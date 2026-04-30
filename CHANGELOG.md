@@ -43,6 +43,17 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 - Updated the Version Control section to describe the V8 changes.
 - Removed the embedded R-code appendix from the manuscript and refer readers to
   the repository as the computational source of truth.
+- Harmonized the binary/event-only wager-policy discussion after review so the
+  manuscript tables, figures, and prose use the 5,000-replicate same-N
+  comparison outputs.
+- Added a three-step recipe lead-in to the unified validity section and an
+  endpoint-oriented variant-selection table for trialists.
+- Added a DSMB-facing crossing-report subsection, a protocol
+  prespecification checklist, and a "when not to use e-RT" scope subsection.
+- Pruned repeated plain-language explanations and tightened the e-RTe, e-RTc,
+  time-to-event, and discussion prose for the arXiv V8 manuscript.
+- Harmonized Sokolova/Sokolov citation ordering so the e-values manuscript is
+  cited as the central 2026a comparator and the `evalinger` package as 2026b.
 
 ### Code And Simulations
 
@@ -73,18 +84,22 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 - Parked the former e-RTwr pilot, tuning, Sokolova-style GROW comparison,
   WRestimates sample-size checks, BuyseTest validation, composite endpoint
   simulations, and generated tables under `explorations/ertwr/`.
+- Added an exploratory e-RTb reciprocal-futility module under
+  `explorations/ertb_futility/`. This module compares design-calibrated and
+  nuisance-robust reciprocal e-processes for the futility null `ARR >= MCID`
+  and is not part of the active V8 manuscript reproducibility chain.
 - Added a generated binary over-betting stress table for the wager-asymmetry
   discussion.
-- Committed active generated CSV result tables under `results/` because the
-  repository is private and the intermediate outputs help audit manuscript
-  numbers.
+- Committed active generated CSV result tables under `results/` so manuscript
+  numbers can be audited directly from the repository.
 - Removed old e-RTms figure PDFs and low-replicate/pilot CSV outputs from the
   active repo.
 
 ### Documentation
 
-- Added a robust README with project scope, repository layout, reproducibility
-  commands, package notes, build instructions, and current caveats.
+- Added a public-facing README with project scope, repository layout,
+  reproducibility commands, package notes, build instructions, and current
+  caveats.
 - Added `notes/reproducibility_inventory.md` mapping active manuscript tables,
   figures, CSVs, and support artifacts to their generators.
 - Added `AGENTS.md` and `shopping_list.md` to preserve working context for

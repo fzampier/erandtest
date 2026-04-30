@@ -97,3 +97,17 @@ the CSVs above:
 Exploratory scripts and parked outputs are kept for future work under
 `explorations/`, but they do not generate active manuscript artifacts. The
 former pairwise e-RTwr prototype now lives in `explorations/ertwr/`.
+
+The e-RTb reciprocal-futility exploration lives in
+`explorations/ertb_futility/`. Its substantive exploratory artifacts are:
+
+| Artifact | Generator | Status |
+| --- | --- | --- |
+| `results/ertb_reciprocal_futility_5000.csv` | `explorations/ertb_futility/R/ertb_reciprocal_futility.R 5000` | exploratory summary |
+| `notes/ertb_reciprocal_futility_5000.md` | `explorations/ertb_futility/R/ertb_reciprocal_futility.R 5000` | exploratory summary note |
+| `figures/ertb_reciprocal_futility_decisions_5000.pdf` | `explorations/ertb_futility/R/ertb_reciprocal_futility.R 5000` | exploratory figure |
+| `figures/ertb_reciprocal_futility_stopping_5000.pdf` | `explorations/ertb_futility/R/ertb_reciprocal_futility.R 5000` | exploratory figure |
+| `figures/ertb_reciprocal_futility_trajectories_5000.pdf` | `explorations/ertb_futility/R/ertb_reciprocal_futility.R 5000` | exploratory figure |
+
+Trial-level CSVs and `_20` smoke-test outputs can be regenerated locally but
+are not tracked or cited as substantive results.

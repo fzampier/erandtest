@@ -12,11 +12,17 @@ Initial priorities:
 
 Current simulation priorities:
 
-1. Integrate Type M error at crossing for e-RTb and e-RTe into the manuscript. The code now estimates the apparent effect at first threshold crossing, compares it with the true simulated effect, and summarizes the ratio among crossing trials. For e-RTe, the e-process still uses only event arm labels, but the ARR Type M diagnostic uses the full trial snapshot at crossing when denominators are available.
-2. Use the new e-RTe/e-RTb tuning sensitivity grid to discuss burn-in, ramp, and Kelly intensity as design-stage choices. The current script compares default settings with fixed event-count schedules, proportional-to-planned-events schedules, and 25% to 100% Kelly intensity settings.
-3. Integrate e-RTc parametric design wagers into the manuscript. The code preserves the standalone V7 adaptive sign-direction wager and adds a normal-shift design wager with Type M error at crossing on the Cohen's `d` scale.
-4. Integrate e-RTs fixed, adaptive, and design-calibrated log-rank risk-set wagers into the manuscript. The code now reports Type I error, power, Type M on the `|log(HR)|` scale, and Type S at crossing.
-5. Keep pairwise/GPC endpoint ideas as future work unless they are reformulated as true randomization tests.
+1. Keep the post-review same-N wager-policy results synchronized between the
+   manuscript, generated tables, figures, and `notes/reproducibility_inventory.md`.
+   The active binary/event-only wager-policy comparison is now the 5,000-rep
+   `wager_policy_5000_same_n.csv` run.
+2. Integrate Type M error at crossing for e-RTb and e-RTe into the manuscript. The code now estimates the apparent effect at first threshold crossing, compares it with the true simulated effect, and summarizes the ratio among crossing trials. For e-RTe, the e-process still uses only event arm labels, but the ARR Type M diagnostic uses the full trial snapshot at crossing when denominators are available.
+3. Use the new e-RTe/e-RTb tuning sensitivity grid to discuss burn-in, ramp, and Kelly intensity as design-stage choices. The current script compares default settings with fixed event-count schedules, proportional-to-planned-events schedules, and 25% to 100% Kelly intensity settings.
+4. Integrate e-RTc parametric design wagers into the manuscript. The code preserves the standalone V7 adaptive sign-direction wager and adds a normal-shift design wager with Type M error at crossing on the Cohen's `d` scale.
+5. Integrate e-RTs fixed, adaptive, and design-calibrated log-rank risk-set wagers into the manuscript. The code now reports Type I error, power, Type M on the `|log(HR)|` scale, and Type S at crossing.
+6. Keep pairwise/GPC endpoint ideas as future work unless they are reformulated as true randomization tests.
+7. Keep reciprocal-futility work exploratory until the proof and clinical
+   estimand are settled.
 
 Current pairwise status:
 
@@ -48,11 +54,34 @@ Current e-RTs status:
   GROW-style wager. HR below 1 implies a negative wager on the `U_j = X_j - p_j`
   increment scale.
 
+Current e-RTb futility status:
+
+- Exploratory code, notes, figures, and outputs live in
+  `explorations/ertb_futility/`.
+- The current futility null is `ARR >= 0.05` for a binary trial designed around
+  30% control risk, 25% treatment risk, and `N = 2502`.
+- The design-calibrated reciprocal process is efficient at the design baseline
+  but showed sensitivity when the true baseline risk differs from 30%.
+- The nuisance-robust reciprocal process uses least-favorable conditional
+  assignment probabilities implied only by `ARR >= MCID`; it was conservative
+  in the 5,000-rep run but too low-powered to be clinically satisfying.
+- This is not an active V8 manuscript claim yet.
+
 Current manuscript scope:
 
 - Active V8 variants: e-RTb, e-RTe, e-RTc, and e-RTs.
 - e-RTms, e-RTu, and pairwise/GPC monitoring have been removed from the active
   manuscript and are framed as future extensions.
-- Next logical technical target: polish the combined V8 manuscript narrative,
-  then decide whether the Clinical Trials target should use the full methods
-  catalog or a compressed binary/event/survival-focused subset.
+- The current arXiv-facing draft now includes the unified recipe lead-in,
+  endpoint-selection table, crossing-reporting guidance, protocol
+  prespecification checklist, and negative-scope subsection.
+- Next logical technical target: decide whether the journal derivative should
+  use the full methods catalog or a compressed subset.
+
+Likely cuts for a shorter journal derivative:
+
+- move e-RTe tuning sensitivity to supplement;
+- move most didactic trajectory figures to supplement;
+- compress design-wager misspecification prose after the main tables;
+- shorten pairwise/GPC future work;
+- defer software/API examples until a stable package interface exists.

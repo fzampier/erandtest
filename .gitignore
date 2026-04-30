@@ -17,3 +17,7 @@
 *.RData
 *.rds
 *.Rds
+
+# Exploratory smoke-test or large local outputs
+explorations/ertb_futility/**/*_20.*
+explorations/ertb_futility/results/*_trials_*.csv

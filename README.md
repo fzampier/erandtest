@@ -1,6 +1,8 @@
 # erandtest
 
-Version 8 working repository for the e-RT manuscript and simulation code.
+Research repository for the Version 8 e-RT manuscript and simulation code.
+The repository is intended to serve as the reproducibility companion for the
+V8 arXiv manuscript.
 
 e-RT, short for e-value Randomized Trial, is a family of randomization-based
 sequential monitoring methods for randomized trials. The central idea is to
@@ -9,9 +11,9 @@ formed treatment-control contrasts. Under the null hypothesis, randomization
 makes the betting game fair, so the resulting wealth process controls Type I
 error at arbitrary stopping times.
 
-This repository starts from the active arXiv Version 7 materials copied from
-the local archive at `/Users/fgz5335/Desktop/e-RT`. That archive is intentionally
-left untouched. This repository is the clean V8-forward workspace.
+This repository carries the V8-forward manuscript and code lineage. Earlier
+draft material is retained only where needed for continuity; the active source
+of truth is the V8 manuscript and the reproducibility chain described below.
 
 ## Current Scope
 
@@ -50,9 +52,10 @@ tests.
   figures, and numerical claims.
 - `notes/`: stable summaries and the reproducibility inventory.
 - `explorations/`: parked prototypes that are not part of the active
-  manuscript reproducibility chain, including the former pairwise e-RTwr work.
-- `AGENTS.md`, `shopping_list.md`, `CHANGELOG.md`: working context and project
-  history.
+  manuscript reproducibility chain, including the former pairwise e-RTwr work
+  and an e-RTb reciprocal-futility exploration.
+- `AGENTS.md`, `shopping_list.md`, `CHANGELOG.md`: agent-facing context,
+  remaining research tasks, and project history.
 
 Manuscript-ready PDFs intentionally live in `manuscript/` so LaTeX can include
 them directly. The top-level `figures/` directory is not used.
@@ -121,13 +124,14 @@ make manuscript
 This regenerates `manuscript/e-RT_v8.md` with `pandoc` and compiles
 `manuscript/e-RT_v8.pdf` with `latexmk`.
 
-Current builds may show overfull-box warnings in wide result tables. These are
-layout warnings, not build failures.
+The current manuscript build is expected to complete without LaTeX warnings.
+If future table edits introduce layout warnings, inspect the generated PDF
+before relying on the artifact.
 
 ## Current Caveats
 
-- The methods are under active development and should be read as a V8 research
-  draft, not a locked software API.
+- The methods are under active development and should be read as a research
+  manuscript plus reproducibility code, not a locked clinical software API.
 - Design-calibrated wagers improve efficiency when the design alternative is
   credible, but they are optional modes rather than the default identity of
   e-RT. Misspecification can reduce power or inflate the apparent effect at
@@ -139,6 +143,12 @@ layout warnings, not build failures.
   prototype is not an active e-RT variant because it bets on pairwise outcome
   direction after treatment assignment is known, rather than betting on
   randomized assignment.
+- Continuous futility monitoring for e-RTb is parked in
+  `explorations/ertb_futility/` using reciprocal candidate processes for the
+  null `ARR >= MCID`. These files are exploratory and not used in the active
+  manuscript. The current design-calibrated candidate is baseline-specific;
+  the nuisance-robust candidate is conservative but weak in the current
+  simulations.
 
 ## GitHub
 

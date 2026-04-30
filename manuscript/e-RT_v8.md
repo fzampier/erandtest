@@ -2,21 +2,21 @@
 
 Sequential monitoring of randomized controlled trials requires methods that control Type I errors regardless of when or why the monitoring stops. Traditional group-sequential designs rely on parametric assumptions and predetermined stopping boundaries. When these assumptions fail, or when trials adapt in ways not fully prespecified, validity guarantees may erode.
 
-Monitoring clinical trials, especially in the context of acutely ill patients, is of paramount importance. Traditional methods include $`\alpha-spending`$ functions. When interim analyses are spaced, evidence grows unnoticed between the interim analyses. This may both delay the implementation of potentially useful strategies or prolong trials when safety signals arise early.
+In acute-care trials, outcome information can accumulate quickly between scheduled interim analyses. Traditional monitoring often uses $`\alpha`$-spending functions with prespecified looks; evidence that emerges between those looks may not affect trial decisions until the next analysis.
 
 E-values and e-processes offer an alternative framework (Shafer 2021; Vovk and Wang 2021; Ramdas and Wang 2025). An e-value is a measure of evidence against a null hypothesis with a specific property: its expected value under the null is at most 1. This simple constraint yields anytime-valid inference: the Type I error guarantee holds at any stopping time, regardless of the stopping rule.
 
 Duan et al. (2022) introduced interactive rank testing by betting (i-bet), which tests treatment effects by wagering on treatment assignments given observed outcomes. The intuition is discussed by (Ramdas 2021). Under the null hypothesis, randomization ensures that assignments are independent of outcomes, so no betting strategy can systematically accumulate wealth.
 
-Sokolova and Sokolov (2026b) recently developed a practitioner-oriented framework for e-value monitoring in adaptive clinical trials, including design-calibrated binary e-processes, safe logrank monitoring, futility tools, platform-trial extensions, and an open-source implementation in the `evalinger` package. Their work emphasizes a design-calibrated view of e-process construction: the betting strategy is chosen to optimize expected evidence growth under a prespecified clinically meaningful alternative. This connects to growth-rate-optimal (GROW) wagering in the broader e-value literature (Ramdas and Wang 2025), and provides the central external contrast for the present work: e-RT is effect-size agnostic by default, while design-calibrated wagers are treated here as optional efficiency tools rather than as prerequisites for monitoring.
+Sokolova and Sokolov (2026a) recently developed a practitioner-oriented framework for e-value monitoring in adaptive clinical trials, including design-calibrated binary e-processes, safe logrank monitoring, futility tools, platform-trial extensions, and an open-source implementation in the `evalinger` package. Their work emphasizes a design-calibrated view of e-process construction: the betting strategy is chosen to optimize expected evidence growth under a prespecified clinically meaningful alternative. This connects to growth-rate-optimal (GROW) wagering in the broader e-value literature (Ramdas and Wang 2025), and provides the central external contrast for the present work: e-RT is effect-size agnostic by default, while design-calibrated wagers are treated here as optional efficiency tools rather than as prerequisites for monitoring.
 
-We propose e-RT—recursively, e-RT is a Randomization Test—as a complementary family of methods for prospective sequential monitoring of randomized trials. Like i-bet (Duan et al. 2022), e-RT uses betting martingales for inference, but differs in key respects: e-RT monitors sequentially as patients enroll rather than analyzing completed trial data; it requires no covariates or working models for validity; and its default wager policies can be learned from accumulating data rather than fixed by a hypothesized effect size. This yields methods with minimal assumptions suitable for real-time trial monitoring. Design-calibrated wagers are then added as optional efficiency modes, not as the defining feature of the method.
+We propose e-RT, an e-value randomization-test framework for prospective monitoring of randomized trials. Like i-bet (Duan et al. 2022), e-RT uses betting martingales for inference, but monitors as patients enroll, requires no covariates or working models for validity, and can learn default wager policies from accumulating data rather than fixing them by a hypothesized effect size. Design-calibrated wagers are added as optional efficiency modes, not as the defining feature of the method.
 
 We describe four active variants: e-RTb for binary event/no-event outcomes; e-RTe for event-only monitoring (requiring no non-event tracking); e-RTc for continuous endpoints; and e-RTs for time-to-event data. All active variants share the same validity proof—the expected wealth multiplier is exactly 1 under the null—but differ in how they translate outcome data into wagers. We also distinguish the randomization-based validity engine from the wager policy. The default adaptive policies preserve effect-size agnosticism. Prespecified design alternatives can be used to choose more aggressive wagers when those assumptions are credible, but this is an efficiency choice rather than a validity requirement. This distinction is especially relevant in sparse-update settings, where fixed or design-calibrated wagers may improve power without the same over-betting sensitivity seen with dense every-patient updates.
 
 # Unified validity argument
 
-All e-RT variants in this manuscript use the same mathematical device. At each monitoring step, the analyst observes some information that is allowed to inform the wager, then a randomized label or exchangeable sign is revealed, and wealth is multiplied by a fair-payoff factor. The endpoint-specific sections differ only in what the observed signal is and how the wager is chosen.
+Every e-RT variant follows the same three-step recipe: first observe only pre-reveal information; then choose a predictable wager; then reveal the randomized label or exchangeable sign and multiply wealth by a fair-payoff factor. The endpoint-specific sections differ in the signal and wager policy, not in the validity argument.
 
 Let $`\mathcal{F}_{k-1}`$ denote all information revealed after the first $`k-1`$ betting updates. Before update $`k`$, the analyst may observe a signal $`S_k`$ that does not reveal the random label being bet on. Examples include the current binary outcome before revealing treatment assignment, the fact that a new event has occurred before revealing the event arm, a continuous outcome before revealing assignment, or a risk set before the next event identity. Let
 ``` math
@@ -101,7 +101,22 @@ Taking conditional expectation again with respect to $`\mathcal{F}_{k-1}`$ gives
 
 </div>
 
-This theorem is deliberately agnostic about how the wager is selected. An adaptive wager is valid if it is computed from past data and current pre-reveal information. A fixed or design-calibrated wager is valid if it is prespecified from protocol quantities or a design alternative before the trial begins, and then applied without looking at the current hidden label. Misspecifying the design alternative can reduce power, delay crossing, or inflate the apparent effect among crossing trials, but it does not change the conditional expectation calculation above. Validity is a property of randomization, exchangeability, predictability, and nonnegative fair multipliers; power is a property of how well the wager matches the alternative.
+This theorem is deliberately agnostic about how the wager is selected. An adaptive wager is valid if it is computed from past data and current pre-reveal information. A fixed or design-calibrated wager is valid if it is prespecified from protocol quantities or a design alternative before the trial begins, and then applied without looking at the current hidden label. Misspecifying the design alternative can reduce power, delay crossing, or inflate the apparent effect among crossing trials, but it does not change the conditional expectation calculation above. Validity is a property of randomization, exchangeability, predictability, and nonnegative fair multipliers; power is a property of how well the wager matches the alternative. The stopping-time guarantee covers stopping rules based on the revealed monitoring history and other predictable trial information. Response-adaptive randomization can also be accommodated if the conditional randomization probabilities used in the multiplier are known at each update.
+
+Table <a href="#tab:variant_selection" data-reference-type="ref" data-reference="tab:variant_selection">1</a> summarizes the practical endpoint choice before the variants are developed in detail.
+
+<div id="tab:variant_selection">
+
+| Trial setting | Suggested variant | Main planning notes |
+|:---|:---|:---|
+| Binary endpoint with follow-up for events and non-events | e-RTb | Default binary monitor. Adaptive half-Kelly is effect-size agnostic; fixed or design-calibrated wagers are optional when a credible risk difference is available. |
+| Reliable event stream but incomplete non-event ascertainment | e-RTe | Useful when events are captured well and non-events are costly to verify. Requires enough expected events for burn-in and ramp; most attractive at low-to-moderate baseline risk with modest ARR. |
+| Continuous endpoint | e-RTc | Adaptive sign-direction wagering is assumption-light but conservative for small effects. A normal-shift design wager can improve power when the design effect and scale are credible. |
+| Time-to-event endpoint | e-RTs | Uses risk-set randomization and log-rank score increments. Fixed and design HR wagers are natural; accrual, censoring, and competing risks require endpoint-specific simulation. |
+
+Endpoint-oriented choice among active e-RT variants.
+
+</div>
 
 # e-RT binary (e-RTb)
 
@@ -143,7 +158,7 @@ starting from $`W_0 = 1`$. When we bet toward the correct arm, wealth grows; whe
 
 ## Betting Strategy
 
-The validity guarantee follows from the unified argument above. The wager must be chosen before the treatment assignment for patient $`i`$ is used in the wealth update. It may depend on the current outcome $`Y_i`$, because the betting game is framed as predicting assignment from outcome, and it may depend on prior patients’ outcomes and assignments. It may not depend on $`T_i`$ itself. Power depends on choosing bets that grow wealth under the alternative. We use a strategy that learns the treatment effect from accumulating data.
+The wager is chosen before the treatment assignment for patient $`i`$ is used in the wealth update. It may depend on the current outcome $`Y_i`$ and on prior patients’ outcomes and assignments, but not on $`T_i`$ itself. The default strategy learns the treatment effect from accumulating data.
 
 Let:
 ``` math
@@ -209,7 +224,7 @@ We evaluated operating characteristics of e-RTb by simulation. For each scenario
 
 ### Results
 
-Table <a href="#tab:simulations" data-reference-type="ref" data-reference="tab:simulations">1</a> presents Type I error and power for trials designed to detect 5% or 10% absolute risk reductions (ARR) with 80% or 90% power.
+Table <a href="#tab:simulations" data-reference-type="ref" data-reference="tab:simulations">2</a> presents Type I error and power for trials designed to detect 5% or 10% absolute risk reductions (ARR) with 80% or 90% power.
 
 <div id="tab:simulations">
 
@@ -230,14 +245,14 @@ Type I error was controlled below the nominal $`\alpha = 0.05`$ level across the
 
 ### Trajectory examples
 
-Figure <a href="#fig:null" data-reference-type="ref" data-reference="fig:null">1</a> shows representative wealth trajectories from 30 simulated trials under the null hypothesis (both arms 40% event rate). Sample sizes correspond to trials designed for 80% power (n = 712, left) and 90% power (n = 954, right) to detect a 10% ARR. Under the null, wealth fluctuates randomly around 1 and, in these panels, gradually drifts downward as repeated bets are placed on noise.
+Figure <a href="#fig:null" data-reference-type="ref" data-reference="fig:null">1</a> shows representative null trajectories. Wealth fluctuates near 1 and no path crosses the threshold in these panels.
 
 <figure id="fig:null" data-latex-placement="htbp">
 <p><embed src="traj_null_10pct_80pow.pdf" style="width:48.0%" /> <embed src="traj_null_10pct_90pow.pdf" style="width:48.0%" /></p>
 <figcaption>Wealth trajectories under the null hypothesis. Left: n = 712 (80% power design). Right: n = 954 (90% power design). Dashed red line: rejection threshold (<span class="math inline">1/<em>α</em> = 20</span>). Dotted gray line: neutral (wealth = 1). Under the null, no trajectory crosses the threshold.</figcaption>
 </figure>
 
-Figure <a href="#fig:alt" data-reference-type="ref" data-reference="fig:alt">2</a> shows representative trajectories under the alternative hypothesis (40% vs 30% event rates, true ARR = 10%). With a real treatment effect, many wealth paths grow, cross the rejection threshold before enrollment completes, and reach values far exceeding 20—providing strong evidence against the null.
+Figure <a href="#fig:alt" data-reference-type="ref" data-reference="fig:alt">2</a> shows representative trajectories under a 10pp ARR. In these panels, 15 of 30 paths cross in the 80% power design and 20 of 30 cross in the 90% power design, usually before enrollment completes.
 
 <figure id="fig:alt" data-latex-placement="htbp">
 <p><embed src="traj_alt_10pct_80pow.pdf" style="width:48.0%" /> <embed src="traj_alt_10pct_90pow.pdf" style="width:48.0%" /></p>
@@ -250,7 +265,7 @@ Figure <a href="#fig:alt" data-reference-type="ref" data-reference="fig:alt">2<
 
 The e-RTb requires knowing both the treatment arm and the outcome for every enrolled patient. In practice, this means a coordinator must ascertain whether each patient experienced the event or not—requiring follow-up, data entry, and outcome adjudication for all patients, including the majority who do not experience the event.
 
-In some settings, events of interest are reliably captured but non-events may not be systematically followed. For example, in studies of mortality in acutely ill patients embedded in electronic medical records (EMR), a death is an unmissable event; a survivor at day 28 requires active confirmation. Similarly, in oncology trials monitoring disease progression, or in cardiovascular trials tracking myocardial infarction, the event is often captured with high fidelity while confirming event-free status requires active follow-up. This motivates a simpler variant: **e-RTe monitors only the stream of events, ignoring non-events entirely.**
+In some settings, events of interest are reliably captured but non-events require active follow-up. Examples include mortality in electronic medical records, oncology progression, or cardiovascular events. This motivates a simpler variant: **e-RTe monitors only the stream of events, ignoring non-events entirely.**
 
 ## Null Hypothesis
 
@@ -261,9 +276,7 @@ H_0: P(\text{event from treatment} \mid \text{an event occurred}) = 0.5
 \end{equation}
 ```
 
-In plain language: if the treatment does not affect the event rate, then looking at the arm label on an event is like flipping a fair coin. Treatment events and control events should arrive in roughly equal numbers.
-
-This reduces trial monitoring to a sequential test of a Bernoulli coin: is the fraction of treatment events equal to $`0.5`$? We call this the “event coin.”
+Thus e-RTe reduces monitoring to a sequential Bernoulli test of the “event coin”: among observed events, is the treatment-arm fraction equal to $`0.5`$?
 
 ## Algorithm
 
@@ -275,7 +288,7 @@ The algorithm maintains two counters: $`d_{\text{trt}}`$ and $`d_{\text{ctrl}}`$
 \hat{p}_{i-1} = \frac{d_{\text{trt}}}{d_{\text{trt}} + d_{\text{ctrl}}}
 \end{equation}
 ```
-If no events have been observed yet, set $`\hat{p} = 0.5`$. In words: $`\hat{p}`$ is the running fraction of events that came from the treatment arm. Under the null, this should hover around $`0.5`$. Under the alternative (if treatment helps), this should drift below $`0.5`$.
+If no events have been observed yet, set $`\hat{p} = 0.5`$. Under the null, this running treatment-event fraction should hover around $`0.5`$; if treatment is protective, it should drift below $`0.5`$.
 
 **Step 2: Compute the wager.** The betting fraction is:
 ``` math
@@ -289,11 +302,7 @@ clamped to $`[0.001, 0.999]`$, where $`c_i`$ is the same ramp function as before
 c_i = \min\left(1, \max\left(0, \frac{i - n_0}{n_r}\right)\right)
 \end{equation}
 ```
-with burn-in $`n_0 = 30`$ events and ramp $`n_r = 50`$ events. During the burn-in, $`c_i = 0`$ and $`\lambda_i = 0.5`$ (a neutral bet—no information yet). After the ramp completes, $`c_i = 1`$ and $`\lambda_i = \hat{p}_{i-1}`$: the wager fully reflects the observed event proportion.
-
-In plain language: we bet proportionally to what we have learned so far. If 40% of past events were from treatment ($`\hat{p} = 0.40`$), we set $`\lambda = 0.40`$. This means we place more of our wager on the “control event” side, because past data suggest control events are more common.
-
-At full ramp ($`c_i = 1`$), this is the *full Kelly bet*—the wager that maximizes the expected logarithmic growth rate of wealth. This contrasts with the half-Kelly strategy used in e-RTb. Full Kelly is viable here because events are sparse: a trial with 2,000 patients and 15% event rate produces approximately 300 events. Over-betting compounds across only a few hundred multiplications, causing gradual wealth erosion rather than the steeper erosion seen with dense every-patient updates.
+with burn-in $`n_0 = 30`$ events and ramp $`n_r = 50`$ events. During burn-in the wager is neutral; after the ramp completes, $`\lambda_i = \hat{p}_{i-1}`$. For example, if 40% of past events came from treatment, the next wager places 40% on “treatment event” and 60% on “control event.” At full ramp this is the full Kelly event-coin wager. It is more aggressive than the half-Kelly default in e-RTb because e-RTe compounds only at events rather than at every randomized patient.
 
 **Step 3: Update wealth.**
 ``` math
@@ -307,7 +316,7 @@ W_i = W_{i-1} \times
 ```
 starting from $`W_0 = 1`$.
 
-In plain language: we place $`\lambda_i`$ on “treatment event” and $`1 - \lambda_i`$ on “control event.” The null hypothesis pays $`2:1`$ on the correct side (a fair payout for a $`0.5`$-probability event). If we guessed correctly, wealth grows; if we guessed wrong, wealth shrinks.
+This is the fair $`2:1`$ payout for a $`0.5`$-probability event. Wealth grows when the wager leans toward the observed arm and shrinks otherwise.
 
 **Step 4: Update counters after betting.** Increment $`d_{\text{trt}}`$ or $`d_{\text{ctrl}}`$ depending on which arm the event came from. This ordering—bet first, then update—ensures that the estimate $`\hat{p}_{i-1}`$ uses only past information, maintaining the martingale property.
 
@@ -408,11 +417,11 @@ Signal concentration: event-coin tilt versus ARR for a 5pp risk reduction.
 
 <span id="tab:signal_concentration" label="tab:signal_concentration"></span>
 
-The crossover with e-RTb occurs at approximately 25% baseline event rate (Table <a href="#tab:compare_erte_binary" data-reference-type="ref" data-reference="tab:compare_erte_binary">3</a>). The analytical tilt calculation places the boundary near 25%, while the finite-sample head-to-head simulation remains slightly e-RTe-favorable at 25% and switches to e-RTb by 30%. Below that region, the concentrated event-coin signal more than compensates for the smaller number of observations; above it, e-RTb’s access to all patients provides the advantage.
+The analytical tilt calculation places the crossover with e-RTb near 25% baseline event rate. The finite-sample head-to-head simulation below remains slightly e-RTe-favorable at 25% and switches to e-RTb by 30%. Below that region, the concentrated event-coin signal more than compensates for the smaller number of observations; above it, e-RTb’s access to all patients provides the advantage.
 
 ## Trajectory Examples
 
-Figure <a href="#fig:erte" data-reference-type="ref" data-reference="fig:erte">3</a> shows representative wealth trajectories for e-RTe. Under the null (left), the event coin is fair and wealth fluctuates near or below 1. Under the alternative (right), treatment events arrive less frequently than control events; in this 500-event illustration, 12 of 30 paths cross the threshold as the adaptive wager learns the event-coin imbalance.
+Figure <a href="#fig:erte" data-reference-type="ref" data-reference="fig:erte">3</a> shows representative e-RTe trajectories. In this 500-event alternative illustration, 12 of 30 paths cross the threshold as the adaptive wager learns the event-coin imbalance.
 
 <figure id="fig:erte" data-latex-placement="htbp">
 <p><embed src="traj_eRTe_null.pdf" style="width:48.0%" /> <embed src="traj_eRTe_alt.pdf" style="width:48.0%" /></p>
@@ -453,15 +462,15 @@ Head-to-head comparison: e-RTe versus e-RTb across absolute risk reductions, usi
 
 <span id="tab:compare_erte_binary" label="tab:compare_erte_binary"></span>
 
-For a 5pp ARR, the crossover occurs near 25% baseline event rate, consistent with the analytical prediction from Table <a href="#tab:signal_concentration" data-reference-type="ref" data-reference="tab:signal_concentration">2</a>. At 15–20% baseline, e-RTe outperforms e-RTb despite seeing fewer observations, because the event-coin tilt more than compensates for the smaller event stream. Above 30%, e-RTb’s access to all patients provides an increasingly large advantage. For larger ARRs, the frequentist sample size shrinks and the event stream may become too short for e-RTe to complete its burn-in and ramp. In those scenarios, e-RTb usually dominates because the larger per-patient effect can be exploited immediately across all randomized patients.
+For a 5pp ARR, the crossover occurs near 25% baseline event rate, consistent with the analytical prediction from Table <a href="#tab:signal_concentration" data-reference-type="ref" data-reference="tab:signal_concentration">3</a>. At 15–20% baseline, e-RTe outperforms e-RTb despite seeing fewer observations, because the event-coin tilt more than compensates for the smaller event stream. Above 30%, e-RTb’s access to all patients provides an increasingly large advantage. For larger ARRs, the frequentist sample size shrinks and the event stream may become too short for e-RTe to complete its burn-in and ramp. In those scenarios, e-RTb usually dominates because the larger per-patient effect can be exploited immediately across all randomized patients.
 
 #### Low-event constraints.
 
-At 10% baseline with a 5pp ARR, the frequentist sample size produces only about 66 expected events—fewer than the burn-in (30) plus ramp (50) = 80 events required for e-RTe to reach full betting strength. The e-RTe process does not complete its learning phase, so it cannot fully leverage the strong event-coin tilt. This highlights a practical constraint: e-RTe requires sufficient events to be effective.
+At 10% baseline with a 5pp ARR, the frequentist sample size produces only about 66 expected events—fewer than the burn-in (30) plus ramp (50) = 80 events required for e-RTe to reach full betting strength. The process cannot fully leverage the strong event-coin tilt unless the planned event stream is long enough.
 
 #### Larger effects.
 
-With larger effects (7.5pp or 10pp ARR), the same pattern becomes more pronounced. The event-coin tilt is stronger, but the planned sample size becomes smaller, and e-RTe may have too few events for adaptive full-Kelly wagering to learn reliably before the trial ends.
+With larger effects (7.5pp or 10pp ARR), the event-coin tilt is stronger but the planned sample size is smaller, so e-RTe may have too few events to learn before the trial ends.
 
 #### Practical guidance.
 
@@ -469,9 +478,9 @@ Use e-RTe when (i) the baseline event rate is low-to-moderate, (ii) the expected
 
 ## Burn-in, ramp, and Kelly-intensity sensitivity
 
-The previous comparison used the default adaptive settings: e-RTb used a 50-patient burn-in, 100-patient ramp, and half-intensity adaptive wager; e-RTe used a 30-event burn-in, 50-event ramp, and full-intensity adaptive wager. These defaults are reasonable but not sacred. Because e-RTe updates only at events, a fixed 30/50 event schedule may be too slow when the planned trial yields few events. Conversely, overly aggressive e-RTb betting can degrade wealth through many patient-level updates.
+The previous comparison used the default adaptive settings: e-RTb used a 50-patient burn-in, 100-patient ramp, and half-intensity adaptive wager; e-RTe used a 30-event burn-in, 50-event ramp, and full-intensity adaptive wager. These defaults are starting points. Because e-RTe updates only at events, a fixed 30/50 event schedule may be too slow when the planned trial yields few events. Conversely, overly aggressive e-RTb betting can degrade wealth through many patient-level updates.
 
-We therefore repeated the same-N comparison over a tuning grid. For each endpoint, we crossed fixed 10/20, fixed 30/50, default, proportional 5/10%, and proportional 10/20% burn-in/ramp schedules with 25%, 50%, 75%, and 100% adaptive Kelly intensity. Proportional schedules were defined on the natural update scale: planned patients for e-RTb and expected events for e-RTe. This is a sensitivity analysis rather than an optimized rule; choosing the best row after seeing trial data would not be a prespecified monitoring procedure. The resulting operating characteristics are summarized in Table <a href="#tab:erte_tuning_sensitivity" data-reference-type="ref" data-reference="tab:erte_tuning_sensitivity">4</a>.
+We therefore repeated the same-N comparison over a tuning grid. For each endpoint, we crossed fixed 10/20, fixed 30/50, default, proportional 5/10%, and proportional 10/20% burn-in/ramp schedules with 25%, 50%, 75%, and 100% adaptive Kelly intensity. Proportional schedules were defined on the natural update scale: planned patients for e-RTb and expected events for e-RTe. This is a sensitivity analysis rather than an optimized rule; choosing the best row after seeing trial data would not be a prespecified monitoring procedure. The resulting operating characteristics are summarized in Table <a href="#tab:erte_tuning_sensitivity" data-reference-type="ref" data-reference="tab:erte_tuning_sensitivity">5</a>.
 
 <div id="tab:erte_tuning_sensitivity">
 
@@ -497,17 +506,17 @@ We therefore repeated the same-N comparison over a tuning grid. For each endpoin
 | 10.0 pp | 35% | 198 | 45.9% | 48.2% (10/20%, 75%K) | 34.6% | 36.7% (10/20 events, 100%K) | e-RTb |
 | 10.0 pp | 40% | 250 | 51.3% | 52.2% (10/20%, 75%K) | 33.6% | 34.0% (10/20%, 100%K) | e-RTb |
 
-Sensitivity of adaptive e-RTb and e-RTe to burn-in/ramp schedule and Kelly intensity. Each row uses the same trial-data scenarios as Table <a href="#tab:compare_erte_binary" data-reference-type="ref" data-reference="tab:compare_erte_binary">3</a>; values summarize 1,000 fixed-seed simulations. Tuned columns show the best power over fixed 10/20-event, fixed 30/50-event, default, proportional 5/10%, and proportional 10/20% burn-in/ramp schedules crossed with 25%, 50%, 75%, and 100% Kelly intensity.
+Sensitivity of adaptive e-RTb and e-RTe to burn-in/ramp schedule and Kelly intensity. Each row uses the same trial-data scenarios as Table <a href="#tab:compare_erte_binary" data-reference-type="ref" data-reference="tab:compare_erte_binary">4</a>; values summarize 1,000 fixed-seed simulations. Tuned columns show the best power over fixed 10/20-event, fixed 30/50-event, default, proportional 5/10%, and proportional 10/20% burn-in/ramp schedules crossed with 25%, 50%, 75%, and 100% Kelly intensity.
 
 </div>
 
 <span id="tab:erte_tuning_sensitivity" label="tab:erte_tuning_sensitivity"></span>
 
-The sensitivity analysis confirms that e-RTe performance is partly a tuning issue. Shorter or proportional ramps can recover substantial power when the default 30/50 event schedule consumes too much of the available event stream. The gain is most visible in short trials with strong event-coin tilt, where aggressive prespecified settings allow e-RTe to start betting before the trial is nearly over. This should be interpreted as design sensitivity, not as a data-adaptive tuning rule. As event streams become longer and baseline risk becomes higher, e-RTb often regains the advantage because it updates for every randomized patient and uses non-event information. e-RTb also benefits less from aggressive tuning because repeated patient-level over-betting can erode wealth.
+The sensitivity analysis confirms that e-RTe performance is partly a tuning issue. Shorter or proportional ramps can recover power when the default 30/50 event schedule consumes too much of the event stream. This is design sensitivity, not a data-adaptive tuning rule. As event streams become longer and baseline risk becomes higher, e-RTb often regains the advantage because it updates for every randomized patient and uses non-event information.
 
 # Design-Calibrated Wagers for Binary and Event-Only Endpoints
 
-The preceding simulations used the default wager policies: adaptive half-Kelly for e-RTb and adaptive full-Kelly for e-RTe. We explicitly separate the validity engine from the wager policy. The martingale argument requires only that the wager be predictable: it may be learned from prior trial data, or it may be fixed in advance from the design alternative. This distinction parallels Sokolova and Sokolov (2026b), where the e-process is calibrated to a clinically meaningful design effect.
+The preceding simulations used the default wager policies: adaptive half-Kelly for e-RTb and adaptive full-Kelly for e-RTe. We explicitly separate the validity engine from the wager policy. The martingale argument requires only that the wager be predictable: it may be learned from prior trial data, or it may be fixed in advance from the design alternative. This distinction parallels Sokolova and Sokolov (2026a), where the e-process is calibrated to a clinically meaningful design effect.
 
 A growth-rate-optimal (GROW) wager (Ramdas and Wang 2025) is the value $`\lambda^\star`$ that maximizes the expected log-growth of the e-process under a specified design alternative:
 ``` math
@@ -515,7 +524,7 @@ A growth-rate-optimal (GROW) wager (Ramdas and Wang 2025) is the value $`\lambda
 \lambda^\star = \arg\max_\lambda \; \mathbb{E}_{\text{design}}\{\log M(\lambda)\},
 \end{equation}
 ```
-where $`M(\lambda)`$ is the one-step e-process multiplier. In the binary paired-comparison construction of Sokolova and Sokolov (2026b), this wager is computed from the design alternative before monitoring and then held fixed during the e-value run. This is analogous to a frequentist design effect used for sample-size planning: it improves efficiency when the design alternative is close to the truth, but can lose power when the effect is misspecified. The design-fixed e-RT policies below adopt the same planning philosophy, while retaining the e-RT assignment-prediction construction rather than the paired-comparison construction.
+where $`M(\lambda)`$ is the one-step e-process multiplier. In the binary paired-comparison construction of Sokolova and Sokolov (2026a), this wager is computed from the design alternative before monitoring and then held fixed during the e-value run. This is analogous to a frequentist design effect used for sample-size planning: it improves efficiency when the design alternative is close to the truth, but can lose power when the effect is misspecified. The design-fixed e-RT policies below adopt the same planning philosophy, while retaining the e-RT assignment-prediction construction rather than the paired-comparison construction.
 
 For e-RTb, the design-fixed wager uses the posterior assignment probabilities implied by prespecified event rates. With 1:1 randomization and design rates $`p_T`$ and $`p_C`$,
 ``` math
@@ -531,7 +540,7 @@ For e-RTb, the design-fixed wager uses the posterior assignment probabilities im
 ```
 For e-RTe, the design-fixed wager is the corresponding event-coin probability, $`\Pr(T = 1 \mid \text{event}) = p_T/(p_T + p_C)`$. Thus e-RTb fixes both an event and non-event wager, whereas e-RTe fixes only the event wager.
 
-We ran 5,000 simulations per scenario using a fixed seed. Sample sizes were anchored to the usual fixed-sample two-proportion calculation in R (`power.prop.test`, 80% power, $`\alpha = 0.05`$). Both e-RTb and e-RTe were evaluated at the same enrolled-patient $`N`$; no event-only inflation was used in this comparison. Under the null, we reused the design $`N`$ for 5pp and 10pp ARR alternatives. Under the alternative, we compared adaptive wagering against fixed wagers that underestimated, matched, or overestimated the true ARR. An oracle full-Kelly row is included only as a simulation benchmark. Type I error and power are reported in Tables <a href="#tab:wager_policy_type1" data-reference-type="ref" data-reference="tab:wager_policy_type1">5</a> and <a href="#tab:wager_policy_v8" data-reference-type="ref" data-reference="tab:wager_policy_v8">6</a>.
+We ran 5,000 simulations per scenario using a fixed seed. Sample sizes were anchored to the usual fixed-sample two-proportion calculation in R (`power.prop.test`, 80% power, $`\alpha = 0.05`$). Both e-RTb and e-RTe were evaluated at the same enrolled-patient $`N`$; no event-only inflation was used in this comparison. Under the null, we reused the design $`N`$ for 5pp and 10pp ARR alternatives. Under the alternative, we compared adaptive wagering against fixed wagers that underestimated, matched, or overestimated the true ARR. An oracle full-Kelly row is included only as a simulation benchmark. Type I error and power are reported in Tables <a href="#tab:wager_policy_type1" data-reference-type="ref" data-reference="tab:wager_policy_type1">6</a> and <a href="#tab:wager_policy_v8" data-reference-type="ref" data-reference="tab:wager_policy_v8">7</a>.
 
 <div id="tab:wager_policy_type1">
 
@@ -583,9 +592,9 @@ Power for adaptive and design-fixed wager policies at the same enrolled-patient 
 
 </div>
 
-The adaptive null rows in Table <a href="#tab:wager_policy_type1" data-reference-type="ref" data-reference="tab:wager_policy_type1">5</a> are now directly comparable in precision to the 5,000-replicate adaptive e-RTb baseline in Table <a href="#tab:simulations" data-reference-type="ref" data-reference="tab:simulations">1</a>. At the 10pp design sample size, the adaptive e-RTb null estimate is 2.0% here and 2.1% in the baseline run, supporting the interpretation that the lower Type I error in the shorter 10pp-design trial reflects the operating scenario rather than a separate setup difference.
+The adaptive null rows in Table <a href="#tab:wager_policy_type1" data-reference-type="ref" data-reference="tab:wager_policy_type1">6</a> are now directly comparable in precision to the 5,000-replicate adaptive e-RTb baseline in Table <a href="#tab:simulations" data-reference-type="ref" data-reference="tab:simulations">2</a>. At the 10pp design sample size, the adaptive e-RTb null estimate is 2.0% here and 2.1% in the baseline run, supporting the interpretation that the lower Type I error in the shorter 10pp-design trial reflects the operating scenario rather than a separate setup difference.
 
-The key result is that design-fixed full-Kelly wagers can substantially increase power when the design effect is close to the truth, while retaining Type I error control in these simulations. However, misspecification matters. Underestimating the effect is usually conservative; overestimating the effect can produce earlier crossings among successful trials but lower overall power, especially for e-RTe at a true 5pp ARR. Because e-RTe observes only events, the same enrolled-patient $`N`$ produces fewer betting opportunities than e-RTb. Overall, design-fixed wagers appear useful as an optional mode rather than as a replacement for adaptive effect-size-agnostic monitoring. Figures <a href="#fig:wager_policy_type1" data-reference-type="ref" data-reference="fig:wager_policy_type1">4</a> and <a href="#fig:wager_policy_power" data-reference-type="ref" data-reference="fig:wager_policy_power">5</a> show the corresponding operating-characteristic plots, and Figure <a href="#fig:wager_policy_traces" data-reference-type="ref" data-reference="fig:wager_policy_traces">6</a> shows representative wealth paths under the 5pp ARR scenario.
+Design-fixed full-Kelly wagers increased power when the design effect was close to the truth while retaining Type I error control in these simulations. Misspecification mattered: underestimating the effect was usually conservative, while overestimating it produced earlier crossings among successful trials but sometimes lower overall power, especially for e-RTe at a true 5pp ARR. Thus design-fixed wagers are useful as optional efficiency tools rather than replacements for adaptive effect-size-agnostic monitoring. Figures <a href="#fig:wager_policy_type1" data-reference-type="ref" data-reference="fig:wager_policy_type1">4</a>–<a href="#fig:wager_policy_traces" data-reference-type="ref" data-reference="fig:wager_policy_traces">6</a> show the corresponding operating characteristics and representative wealth paths.
 
 <figure id="fig:wager_policy_type1" data-latex-placement="htbp">
 <embed src="wager_policy_type1.pdf" style="width:90.0%" />
@@ -606,7 +615,7 @@ The key result is that design-fixed full-Kelly wagers can substantially increase
 
 Because e-RT methods may stop early, the apparent treatment effect at the first threshold crossing is expected to be inflated. Following the design-analysis terminology of Gelman and Carlin (2014), this is a form of Type M error: the magnitude of the observed effect among trials that cross may exceed the true effect because crossings are enriched for favorable random fluctuations. The companion diagnostic is Type S error, the probability that a selected or crossing estimate points in the wrong direction. This does not invalidate the e-value—the e-process itself remains anytime-valid—but it matters for clinical interpretation. A trial stopped at an e-value threshold should not interpret the naive effect estimate at crossing as an unbiased estimate of the final treatment effect.
 
-We therefore summarized the apparent effect at first crossing among simulated trials that crossed. For both e-RTb and e-RTe, the displayed effect scale is the apparent absolute risk reduction using all randomized patients observed by the time of first crossing. For e-RTe, this is a diagnostic snapshot rather than information used by the event-only e-process: the e-RTe wealth process itself still sees only event arm labels, but when denominators are available at the crossing time, the clinical effect size can be estimated on the same scale as e-RTb. If denominators are not available operationally, only the native event-coin diagnostic can be reported. Table <a href="#tab:type_m_crossing" data-reference-type="ref" data-reference="tab:type_m_crossing">7</a> reports the binary and event-only crossing diagnostics; analogous scale-specific Type M diagnostics are reported below for e-RTc and e-RTs.
+We therefore summarized the apparent effect at first crossing among simulated trials that crossed. For both e-RTb and e-RTe, the displayed effect scale is the apparent absolute risk reduction using all randomized patients observed by the time of first crossing. For e-RTe, this is a diagnostic snapshot rather than information used by the event-only e-process: the e-RTe wealth process itself still sees only event arm labels, but when denominators are available at the crossing time, the clinical effect size can be estimated on the same scale as e-RTb. If denominators are not available operationally, only the native event-coin diagnostic can be reported. Table <a href="#tab:type_m_crossing" data-reference-type="ref" data-reference="tab:type_m_crossing">8</a> reports the binary and event-only crossing diagnostics; analogous scale-specific Type M diagnostics are reported below for e-RTc and e-RTs.
 
 <div id="tab:type_m_crossing">
 
@@ -629,33 +638,27 @@ Type M error at first e-process crossing for e-RTb and e-RTe. Crossing and final
 
 The inflation is clinically meaningful. In the 5pp ARR scenario, adaptive e-RTb crossings had a median apparent ARR of 7.92 percentage points, with a median Type M ratio of 1.58. Adaptive e-RTe crossings had a similar full-data snapshot ARR of 8.03 percentage points, with a median Type M ratio of 1.61. Fixed matched wagers reduced this inflation for both methods, with median ratios of 1.30 for e-RTb and 1.35 for e-RTe. These results reinforce that e-RT crossings should be interpreted as valid evidence for a treatment difference, not as unbiased estimates of its magnitude.
 
+## Reporting after a crossing
+
+At a Data and Safety Monitoring Board (DSMB) review, the e-value should carry the inferential claim and conventional summaries should be labeled as descriptive. A compact crossing report should state the prespecified threshold, the observed e-value, the variant and wager policy, the update at which crossing occurred, the apparent clinical effect at crossing, and the planned final analysis. For example: “The adaptive e-RTb process crossed the prespecified threshold of 20 at patient 1,450, with $`W=25.4`$. At that time the apparent ARR was 7.8 percentage points. Because this estimate is selected at the first crossing, it is descriptive and may overstate the final treatment effect; the final effect estimate and confidence interval will follow the prespecified primary analysis.” The protocol should specify whether crossing triggers stopping, DSMB review, or continued monitoring.
+
 # Continuous Outcomes
 
-The e-RTb treats each patient as a single Bernoulli trial: the outcome (event vs. no event) is observed, and we bet on which arm that patient came from. For continuous endpoints, the logic is the same but the signal is richer. Each patient now contributes a continuous measurement (for example, ventilator-free days, change in biomarker, or a physiologic score), and the betting strategy uses how extreme that value is relative to past data. Therefore, the wager definition is slightly more granular.
-
-We call the continuous endpoint extension e-RTc. The validity still comes only from randomization: under the null hypothesis, the distribution of the continuous outcome is the same in both arms, so the outcome does not help to predict treatment assignment.
+Continuous endpoints use the same assignment-prediction game as e-RTb. The outcome $`Y_i`$ is observed before using the assignment $`T_i`$ in the wealth update; under the null, $`Y_i`$ does not help predict $`T_i`$. We call this extension e-RTc.
 
 ## Setup
 
-At each enrollment $`i = 1, 2, \ldots`$, the trial generates two pieces of information. First, the randomization mechanism assigns the patient to one of the two arms, denoted by $`T_i \in \{0,1\}`$ (with $`0`$ for control and $`1`$ for intervention), using a known allocation probability $`p`$ (typically $`p = 0.5`$ for 1:1 randomization, although equal allocation is not required). Second, once follow-up is complete, we observe a continuous outcome $`Y_i \in \mathbb{R}`$ such as ventilator–free days, a biomarker concentration, or a physiologic measurement. So far, same as before but using a continuous endpoint.
-
-Under the null hypothesis of no treatment effect, the distribution of $`Y_i`$ is identical in both arms, and hence the outcome carries no information about the treatment assignment; formally, $`Y_i \perp T_i`$ under $`H_0`$. This single independence relationship is the foundation of the continuous randomization e-process. The idea mirrors the binary approach: each patient creates a small betting game in which we observe $`Y_i`$, form a data-driven guess about which arm the patient is more likely to belong to, and then update our wealth once the actual assignment $`T_i`$ is revealed. If the null is true, these guesses cannot systematically win because outcomes are uninformative about treatment. If the alternative is true, outcomes begin to separate between arms, the bets gain predictive power, and wealth grows accordingly.
-
-Viewed this way, extending the randomization e-process from binary to continuous outcomes does not require additional assumptions for validity; it replaces the event/no-event signal with a continuous measure of extremeness relative to past observations, while preserving the anytime-valid martingale structure. The difference lies in how the wager is defined.
+At enrollment $`i`$, treatment assignment is $`T_i \in \{0,1\}`$ with known allocation probability $`p=P(T_i=1)`$, and the outcome is $`Y_i \in \mathbb{R}`$. Under the null hypothesis of no treatment effect,
+``` math
+\begin{equation}
+Y_i \perp T_i.
+\end{equation}
+```
+No distributional assumption on $`Y_i`$ is needed for validity. Continuous outcomes change only the wager: instead of betting from an event/no-event indicator, e-RTc bets from how unusual the observed value is relative to previous outcomes.
 
 ## Betting strategy for continuous outcomes
 
-We can use a data-driven rule with three ingredients:
-
-1.  A *center* and *scale* for the outcomes observed so far. Outcomes can be all over the place. We need to standardize.
-
-2.  A standardized residual for the new outcome. As the reader will see we bet proportionally to how far the result is away from the center reference we chose. This also needs to be standardized.
-
-3.  A smooth map from that residual into a betting fraction $`\lambda_i \in (0,1)`$. If the measurement is an outlier, a huge wager would be placed because difference between measurement and the center of the scale would be huge, we need to muffle it to something between $`(0,1)`$.
-
-In simpler terms: Each new outcome is first compared to the past outcomes to understand how “unusual” it is. To do this, we anchor the outcome to a robust center and a robust scale: the median gives the center and the MAD (median absolute deviation) gives the spread. We then compute a standardized value: how far above or below the median this new observation is, measured in MAD units. That standardized number is what guides how aggressively we bet. A large positive value means “this looks unusually high compared with past outcomes,” a large negative value means the opposite, and values near zero mean “this one looks typical.” The point of the MAD is simple: it behaves well even when early data are messy or skewed. It stops a single extreme value from blowing up the bet and keeps the e-process stable while the trial is still young. This likely comes at the cost of reduced power.
-
-At step $`i`$, using all previous outcomes $`Y_1, \dots, Y_{i-1}`$, we compute:
+The default adaptive e-RTc wager uses robust standardization and a coarse running direction estimate. Using previous outcomes $`Y_1, \dots, Y_{i-1}`$, compute:
 ``` math
 \begin{align}
 m_{i-1} &= \text{median}(Y_1, \dots, Y_{i-1}), \\
@@ -671,30 +674,25 @@ where MAD is the median absolute deviation,
 ```
 The median and MAD are robust to outliers and skewness. If $`s_{i-1}`$ is zero or not finite, we set $`s_{i-1} = 1`$ to avoid degeneracy.
 
-For the new patient, we form a standardized residual:
+For the new patient, form the standardized residual
 ``` math
 \begin{equation}
 r_i = \frac{Y_i - m_{i-1}}{s_{i-1}}.
 \end{equation}
 ```
-
-This means that the patient residual $`r_i`$ is the observed value $`Y_i`$ minus the median observed so far, divided by the MAD $`s_{i-1}`$. Note how this uses only outcomes observed before patient $`i`$ for centering and scaling, keeping the wager predictable.
-
-We then squash this standardized value into the interval $`(-1,1)`$ using
+Then shrink it into $`(-1,1)`$:
 ``` math
 g_i = \frac{r_i}{1 + |r_i|}.
 ```
-This is a simple monotone transformation: for moderate values $`g_i \approx r_i`$, while very large positive or negative residuals are shrunk toward $`+1`$ or $`-1`$. The only purpose of this step is to prevent a single extreme observation from forcing an almost all-in bet.
+For moderate values $`g_i \approx r_i`$, while very large residuals are shrunk toward $`+1`$ or $`-1`$. This prevents a single extreme observation from forcing an almost all-in bet.
 
-Next, we ramp up the betting strength over time. Let
+Betting strength is ramped over time:
 ``` math
 \begin{equation}
 c_i = \min\left\{1, \max\left(0, \frac{i - \text{burn-in}}{\text{ramp}}\right)\right\},
 \end{equation}
 ```
-where `burn-in` is the number of initial patients during which we essentially do not bet, and `ramp` controls how quickly we move from very cautious betting to our maximum aggressiveness. Those concepts are exactly like the binary approach. Finally, we cap the maximum betting strength at $`c_{\max} \in (0,0.5]`$ to avoid pathological bets.
-
-Additionally, we need a direction estimate: which arm has better outcomes? The default adaptive rule keeps this deliberately coarse. Using all previous data, we compute
+where `burn-in` is the number of initial patients with little or no betting and `ramp` controls the transition to full strength. The default adaptive rule also estimates direction from previous arm means:
 ``` math
 \begin{equation}
 q_{i-1} = \operatorname{sign}\left(\bar{Y}_{\text{trt},i-1} - \bar{Y}_{\text{ctrl},i-1}\right),
@@ -702,23 +700,13 @@ q_{i-1} = \operatorname{sign}\left(\bar{Y}_{\text{trt},i-1} - \bar{Y}_{\text{ctr
 ```
 with $`q_{i-1}=0`$ if either arm has no prior observations. This makes adaptive e-RTc effect-size agnostic: the running data choose the direction of the bet, but not a prespecified effect magnitude. The magnitude of the wager still depends on the current observation-level score $`g_i`$ and the ramped betting strength.
 
-The betting fraction $`\lambda_i`$ is then
+The raw betting fraction is
 ``` math
 \begin{equation}
-\lambda_i = 0.5 + c_i \cdot c_{\max} \cdot g_i \cdot q_{i-1}.
+\lambda_i^{\mathrm{raw}} = p + c_i \cdot c_{\max} \cdot g_i \cdot q_{i-1},
 \end{equation}
 ```
-By construction, $`\lambda_i \in (0,1)`$ and is predictable: it depends only on past outcomes and the new $`Y_i`$, not on $`T_i`$. In words: if the current observation $`Y_i`$ is extreme in the direction that past data associate with the treatment arm, $`\lambda_i`$ deviates substantially from 0.5, placing a confident bet on treatment. If $`Y_i`$ is typical, or if past data have not yet identified a direction ($`q_{i-1}=0`$), $`\lambda_i`$ stays near 0.5 and we barely bet.
-
-Intuitively:
-
-- If $`Y_i`$ is close to the historical median, $`g_i \approx 0`$ and $`\lambda_i \approx 0.5`$: we essentially do not bet, regardless of how strong the estimated treatment effect is.
-
-- If $`Y_i`$ is extreme (large $`|g_i|`$) *and* past data suggest a treatment-favorable direction, then $`\lambda_i`$ deviates substantially from 0.5: we place a confident bet on one arm. The product $`g_i \cdot q_{i-1}`$ determines the direction, while $`|g_i|`$ and $`c_i c_{\max}`$ determine magnitude.
-
-- If $`Y_i`$ is extreme but $`q_{i-1}=0`$ (no estimated direction yet), $`\lambda_i`$ stays near 0.5—an unusual observation is not informative if we do not yet know which direction to bet.
-
-- Early in the trial, $`c_i`$ is small, so even unusual observations lead to mild bets. As data accumulates, $`c_i`$ approaches 1 and the bets become more confident.
+then clamped to $`(0,1)`$ to ensure nonnegative multipliers. It is predictable because it depends only on past outcomes and the new $`Y_i`$, not on $`T_i`$. If $`Y_i`$ is extreme in the direction that past data associate with treatment, $`\lambda_i`$ moves away from $`p`$ toward a confident treatment bet. If $`Y_i`$ is typical, or if the direction has not yet been learned, $`\lambda_i`$ remains near neutral.
 
 ## Parametric design wager for continuous outcomes
 
@@ -754,11 +742,11 @@ W_i = W_{i-1} \times
 ```
 with $`W_0 = 1`$.
 
-The only difference from the binary case is how we choose $`\lambda_i`$, as we saw. For binary outcomes, $`\lambda_i`$ depends on the event indicator and past event rates by arm. For continuous outcomes, $`\lambda_i`$ depends on how extreme $`Y_i`$ is relative to past outcomes.
+The binary and continuous variants share this update; they differ only in how $`\lambda_i`$ is chosen.
 
 ## Worked intuition
 
-Imagine a trial where the outcome is ventilator-free days, and higher is better. Suppose that after 100 patients, the median and MAD of $`Y`$ are roughly stable, and the treatment arm has had better outcomes so far, so $`q_{100}=1`$. Patient 101 has an unusually high number of ventilator-free days compared with this distribution. The standardized residual $`r_{101}`$ is positive and large, so $`g_{101} \approx 0.8`$ and, after burn-in, $`c_{101} \approx 1`$. With $`c_{\max} = 0.6`$, we get $`\lambda_{101} \approx 0.5 + 0.6 \times 0.8 \times 1 \approx 0.98`$: we strongly bet that this patient was in the intervention arm. If they indeed were, wealth increases by roughly a factor of $`0.98/0.5 \approx 2`$ for this one patient. If not, wealth shrinks by $`(1-0.98)/0.5 \approx 0.04`$.
+Imagine a 1:1 randomized trial ($`p=0.5`$) where the outcome is ventilator-free days, and higher is better. Suppose that after 100 patients, the median and MAD of $`Y`$ are roughly stable, and the treatment arm has had better outcomes so far, so $`q_{100}=1`$. Patient 101 has an unusually high number of ventilator-free days compared with this distribution. The standardized residual $`r_{101}`$ is positive and large, so $`g_{101} \approx 0.8`$ and, after burn-in, $`c_{101} \approx 1`$. With $`c_{\max} = 0.6`$, the raw wager is $`\lambda_{101}^{\mathrm{raw}} \approx p + 0.6 \times 0.8 \times 1 = 0.98`$: we strongly bet that this patient was in the intervention arm. If they indeed were, wealth increases by roughly a factor of $`0.98/0.5 \approx 2`$ for this one patient. If not, wealth shrinks by $`(1-0.98)/0.5 \approx 0.04`$.
 
 Under the null, high values like this are just as likely in control as in intervention: we win and lose in balance, and wealth does not grow on average. Under a true benefit, such favorable outliers cluster in the intervention arm, and the bets pay off more often than not.
 
@@ -774,7 +762,7 @@ The key point is that validity does not depend on the choice of median, MAD, or 
 
 **Theorem 3**. *Under the null hypothesis of no treatment effect, the e-process wealth process $`(W_i)`$ is a test martingale: for all $`i`$,
 ``` math
-\mathbb{E}[W_i \mid \mathcal{F}_{i-1}] \leq W_{i-1},
+\mathbb{E}[W_i \mid \mathcal{F}_{i-1}] = W_{i-1},
 ```
 where $`\mathcal{F}_{i-1}`$ is the sigma-field generated by all observations up to step $`i-1`$.*
 
@@ -808,7 +796,7 @@ so rejecting the null when $`W_\tau \geq 1/\alpha`$ controls Type I error at lev
 
 ## Simulation overview
 
-We evaluated e-RTc using the same design philosophy as the binary and event-only simulations. For a given standardized effect size (Cohen’s $`d`$), we first computed the fixed-sample size required for a two-sample $`t`$-test with 80% power at $`\alpha = 0.05`$. We then simulated 1,000 trials per scenario with 1:1 randomization and normally distributed outcomes with common standard deviation 1. The adaptive e-RTc used the V7 sign-direction wager with burn-in $`=20`$, ramp $`=50`$, and $`c_{\max}=0.6`$. The design e-RTc used the normal-shift design wager above, with matched, underestimated, and overestimated design effects. Table <a href="#tab:ertc_design_type1" data-reference-type="ref" data-reference="tab:ertc_design_type1">8</a> reports the null simulations, and Table <a href="#tab:ertc_design_power_type_m" data-reference-type="ref" data-reference="tab:ertc_design_power_type_m">9</a> reports power and Type M behavior under alternatives.
+We evaluated e-RTc using the same design philosophy as the binary and event-only simulations. For a given standardized effect size (Cohen’s $`d`$), we first computed the fixed-sample size required for a two-sample $`t`$-test with 80% power at $`\alpha = 0.05`$. We then simulated 1,000 trials per scenario with 1:1 randomization and normally distributed outcomes with common standard deviation 1. The adaptive e-RTc used the V7 sign-direction wager with burn-in $`=20`$, ramp $`=50`$, and $`c_{\max}=0.6`$. The design e-RTc used the normal-shift design wager above, with matched, underestimated, and overestimated design effects. Table <a href="#tab:ertc_design_type1" data-reference-type="ref" data-reference="tab:ertc_design_type1">9</a> reports the null simulations, and Table <a href="#tab:ertc_design_power_type_m" data-reference-type="ref" data-reference="tab:ertc_design_power_type_m">10</a> reports power and Type M behavior under alternatives.
 
 <div id="tab:ertc_design_type1">
 
@@ -848,24 +836,20 @@ Power and Type M error for e-RTc adaptive and parametric design wagers. The effe
 
 Type I error remained controlled in these simulations. The adaptive sign-direction wager is conservative for small effects: at true $`d=0.20`$, it crossed in only 9.8% of trials and did so very early when it crossed, producing a high median Type M ratio of 2.98. The parametric design wager improved power substantially when the design effect was close to the truth: at $`d=0.20`$, matched design wagering increased power to 73.4% and reduced median Type M to 1.28. The tradeoff is visible under misspecification. Overestimating the design effect generally caused earlier crossings and more Type M inflation, while underestimating the effect delayed crossings and sometimes reduced power. These results support design-calibrated e-RTc as an optional efficiency mode, not as a replacement for the adaptive effect-size-agnostic monitor.
 
-A visual representation of the matched normal-shift design wager is shown in Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference="fig:eRTC_null_d04_80">7</a>.
-
 <figure id="fig:eRTC_null_d04_80" data-latex-placement="htbp">
 <p><embed src="traj_eRTC_null_d0.4_80pow.pdf" style="width:48.0%" /> <embed src="traj_eRTC_alt_d0.4_80pow.pdf" style="width:48.0%" /></p>
 <figcaption> Trajectories of the continuous randomization e-process using the matched normal-shift design wager for a trial designed to detect a standardized mean difference of <span class="math inline"><em>d</em> = 0.40</span> with 80% power. Left: trajectories under the null hypothesis (<span class="math inline"><em>d</em> = 0</span>), where wealth usually drifts below 1 and does not cross in the representative panel. Right: trajectories under the alternative hypothesis (<span class="math inline"><em>d</em> = 0.40</span>), where wealth grows systematically and many paths cross the rejection threshold before the planned sample size is reached. </figcaption>
 </figure>
 
-Figure <a href="#fig:eRTC_null_d04_80" data-reference-type="ref" data-reference="fig:eRTC_null_d04_80">7</a> illustrates 30 simulated trajectories of the process for continuous endpoints under a design targeting a standardized effect size of $`d = 0.40`$ with 80% power. Under the null hypothesis (left panel), the prespecified design wager tends to spend wealth against noise, and no trajectory crosses the rejection threshold of $`1/\alpha = 20`$ in this representative panel. Under the corresponding alternative (right panel), outcomes separate between arms, the design wager is systematically favorable, and many trajectories cross before the planned sample size, demonstrating the potential for early stopping.
-
 # Time-to-Event Outcomes
 
-Clinical trials often use time-to-event endpoints (e.g., overall survival), usually analyzed via the Log-Rank test or Cox proportional hazards models. These traditional methods require assumptions about proportional hazards or require waiting for a specific number of events. One can extend the randomization e-process to survival data, constructing a sequential Log-Rank test that updates wealth at every observed event.
+Clinical trials often use time-to-event endpoints, usually analyzed with the log-rank test or Cox proportional hazards models. The e-RTs variant constructs a sequential log-rank-style e-process that updates wealth at observed events.
 
-Grünwald et al. (2021) developed a safe logrank test using e-values under a proportional hazards model with a prior on the hazard ratio. We attempted to construct a nonparametric approach where validity derives solely from randomization, not from a correctly specified hazard model. We call this time-to-event variant e-RTs.
+Grünwald et al. (2021) developed a safe logrank test using e-values under a proportional hazards model with a prior on the hazard ratio. In contrast, e-RTs derives validity from randomization within each risk set rather than from a correctly specified hazard model.
 
 ## Setup and Martingale Construction
 
-Let $`N`$ patients be randomized to treatment ($`T=1`$) or control ($`T=0`$). We observe outcomes over time. The "time" scale here is the distinct ordering of events. Let $`t_1 < t_2 < \dots < t_k`$ denote the times at which events occur.
+Let $`N`$ patients be randomized to treatment ($`T=1`$) or control ($`T=0`$). The monitoring scale is the distinct ordering of events. Let $`t_1 < t_2 < \dots < t_k`$ denote the event times.
 
 At any event time $`t_j`$, we define the risk set $`\mathcal{R}_j`$ as the set of patients who have not yet had an event and have not been censored. Let $`Y_1(t_j)`$ and $`Y_0(t_j)`$ be the number of patients at risk in the treatment and control arms, respectively.
 
@@ -943,7 +927,7 @@ A dedicated check is provided in `R/simulations/erts_staggered_entry_check.R`. I
 
 ## Simulation Results
 
-We simulated exponential survival trials with no censoring and 1:1 randomization. Event counts were chosen using the Schoenfeld log-rank event formula for 80% fixed-sample power at two-sided $`\alpha=0.05`$. We compared the fixed-magnitude policy ($`\lambda_{\max}=0.25`$), adaptive half-Kelly, and design/GROW-style wagers using underestimated, matched, and overestimated design hazard ratios. Results from 1,000 simulations per scenario are shown in Tables <a href="#tab:erts_wager_policy_type1" data-reference-type="ref" data-reference="tab:erts_wager_policy_type1">10</a> and <a href="#tab:erts_wager_policy_power" data-reference-type="ref" data-reference="tab:erts_wager_policy_power">11</a>.
+We simulated exponential survival trials with no censoring and 1:1 randomization. Event counts were chosen using the Schoenfeld log-rank event formula for 80% fixed-sample power at two-sided $`\alpha=0.05`$. We compared the fixed-magnitude policy ($`\lambda_{\max}=0.25`$), adaptive half-Kelly, and design/GROW-style wagers using underestimated, matched, and overestimated design hazard ratios. Results from 1,000 simulations per scenario are shown in Tables <a href="#tab:erts_wager_policy_type1" data-reference-type="ref" data-reference="tab:erts_wager_policy_type1">11</a> and <a href="#tab:erts_wager_policy_power" data-reference-type="ref" data-reference="tab:erts_wager_policy_power">12</a>.
 
 <div id="tab:erts_wager_policy_type1">
 
@@ -1020,19 +1004,19 @@ The wealth process is a product of multipliers. When a wager is too aggressive f
 
 ## Sparse-Update Endpoints: e-RTs and e-RTe
 
-For e-RTs, wealth updates at observed failures. This makes fixed or design-calibrated wagers comparatively tolerable, because the number of multiplications is the number of events rather than the number of randomized patients. The e-RTs simulations in Table <a href="#tab:erts_wager_policy_power" data-reference-type="ref" data-reference="tab:erts_wager_policy_power">11</a> support this interpretation. The fixed $`\lambda_{\max}=0.25`$ policy is not uniformly best, but it remains a useful baseline: at HR $`=0.80`$, it crossed in 61.2% of simulations. The matched design wager was more efficient when the design HR was credible, crossing in 70.8% of simulations at HR $`=0.80`$ and 75.4% at HR $`=0.90`$. Adaptive half-Kelly was conservative in these simulations, reflecting the difficulty of estimating a hazard-ratio scale early from risk-set data.
+For e-RTs, wealth updates at observed failures. This makes fixed or design-calibrated wagers comparatively tolerable, because the number of multiplications is the number of events rather than the number of randomized patients. The e-RTs simulations in Table <a href="#tab:erts_wager_policy_power" data-reference-type="ref" data-reference="tab:erts_wager_policy_power">12</a> support this interpretation. The fixed $`\lambda_{\max}=0.25`$ policy is not uniformly best, but it remains a useful baseline: at HR $`=0.80`$, it crossed in 61.2% of simulations. The matched design wager was more efficient when the design HR was credible, crossing in 70.8% of simulations at HR $`=0.80`$ and 75.4% at HR $`=0.90`$. Adaptive half-Kelly was conservative in these simulations, reflecting the difficulty of estimating a hazard-ratio scale early from risk-set data.
 
-The event-only e-RTe also updates sparsely, but on a different scale: the update stream is the sequence of events rather than risk-set failures. This permits a more aggressive default than e-RTb, and the event-coin parameter is naturally bounded between 0 and 1. The tuning simulations in Table <a href="#tab:erte_tuning_sensitivity" data-reference-type="ref" data-reference="tab:erte_tuning_sensitivity">4</a> show, however, that sparse updating creates its own design problem. If the burn-in and ramp consume much of the planned event stream, e-RTe may not begin meaningful betting soon enough. Thus e-RTe can use full-Kelly intensity, but its burn-in and ramp should be chosen with the expected number of events in mind.
+The event-only e-RTe also updates sparsely, but on a different scale: the update stream is the sequence of events rather than risk-set failures. This permits a more aggressive default than e-RTb, and the event-coin parameter is naturally bounded between 0 and 1. The tuning simulations in Table <a href="#tab:erte_tuning_sensitivity" data-reference-type="ref" data-reference="tab:erte_tuning_sensitivity">5</a> show, however, that sparse updating creates its own design problem. If the burn-in and ramp consume much of the planned event stream, e-RTe may not begin meaningful betting soon enough. Thus e-RTe can use full-Kelly intensity, but its burn-in and ramp should be chosen with the expected number of events in mind.
 
 ## Dense-Update Endpoints: e-RTb and e-RTc
 
-For e-RTb, wealth updates for every randomized patient. This makes naive over-betting costly. Table <a href="#tab:wage_binary" data-reference-type="ref" data-reference="tab:wage_binary">12</a> isolates this issue using fixed deviations of the assignment-prediction wager from 0.5 under a true 5pp ARR: for events the wager is $`0.5-m`$ and for non-events it is $`0.5+m`$. Here $`m`$ is a betting magnitude, not an ARR. A 0.05 deviation crossed in 57.3% of simulations, whereas twofold and threefold larger deviations crossed in only 24.3% and 13.2% of simulations, with median final e-values effectively zero. This stress test is intentionally narrow: it does not say that all fixed wagers are poor. Rather, it shows why the adaptive binary default uses half-Kelly shrinkage and why design-fixed binary wagers should be calibrated to clinically plausible effects.
+For e-RTb, wealth updates for every randomized patient. This makes naive over-betting costly. Table <a href="#tab:wage_binary" data-reference-type="ref" data-reference="tab:wage_binary">13</a> isolates this issue using fixed deviations of the assignment-prediction wager from 0.5 under a true 5pp ARR: for events the wager is $`0.5-m`$ and for non-events it is $`0.5+m`$. Here $`m`$ is a betting magnitude, not an ARR. A 0.05 deviation crossed in 57.3% of simulations, whereas twofold and threefold larger deviations crossed in only 24.3% and 13.2% of simulations, with median final e-values effectively zero. This stress test is intentionally narrow: it does not say that all fixed wagers are poor. Rather, it shows why the adaptive binary default uses half-Kelly shrinkage and why design-fixed binary wagers should be calibrated to clinically plausible effects.
 
-For e-RTc, the update density is also every patient, and the wager additionally varies with an observation-level score. The adaptive sign-direction rule therefore remains conservative, especially for small effects. Table <a href="#tab:ertc_design_power_type_m" data-reference-type="ref" data-reference="tab:ertc_design_power_type_m">9</a> shows that at true $`d=0.20`$, adaptive e-RTc crossed in only 9.8% of simulations and had substantial Type M inflation among crossings. A matched normal-shift design wager improved power to 73.4% and reduced median Type M to 1.28, but this efficiency depends on the design model being credible. Continuous endpoints therefore emphasize the same separation seen elsewhere: validity is supplied by randomization and predictability; efficiency depends on the wager.
+For e-RTc, the update density is also every patient, and the wager additionally varies with an observation-level score. The adaptive sign-direction rule therefore remains conservative, especially for small effects. Table <a href="#tab:ertc_design_power_type_m" data-reference-type="ref" data-reference="tab:ertc_design_power_type_m">10</a> shows that at true $`d=0.20`$, adaptive e-RTc crossed in only 9.8% of simulations and had substantial Type M inflation among crossings. A matched normal-shift design wager improved power to 73.4% and reduced median Type M to 1.28, but this efficiency depends on the design model being credible. Continuous endpoints therefore emphasize the same separation seen elsewhere: validity is supplied by randomization and predictability; efficiency depends on the wager.
 
 ## Design Principle
 
-Table <a href="#tab:wage_summary" data-reference-type="ref" data-reference="tab:wage_summary">13</a> summarizes the practical hierarchy across active variants. Sparse-update methods tolerate more aggressive wagers because there are fewer opportunities for over-betting to compound. Dense-update methods require more shrinkage or stronger design justification. This is a statement about power and stability, not validity: any predictable wager remains valid under the null, but poorly calibrated wagers may spend their wealth in the wrong places.
+Table <a href="#tab:wage_summary" data-reference-type="ref" data-reference="tab:wage_summary">14</a> summarizes the practical hierarchy across active variants. Sparse-update methods tolerate more aggressive wagers because there are fewer opportunities for over-betting to compound. Dense-update methods require more shrinkage or stronger design justification. This is a statement about power and stability, not validity: any predictable wager remains valid under the null, but poorly calibrated wagers may spend their wealth in the wrong places.
 
 The stress table below gives the binary example underlying this principle.
 
@@ -1069,6 +1053,28 @@ Summary: wager-policy design considerations by e-RT variant.
 
 <span id="tab:wage_summary" label="tab:wage_summary"></span>
 
+## Protocol prespecification checklist
+
+For protocol use, the monitoring plan should make the wager policy as explicit as the stopping boundary. Table <a href="#tab:prespec_checklist" data-reference-type="ref" data-reference="tab:prespec_checklist">15</a> gives a compact checklist.
+
+<div id="tab:prespec_checklist">
+
+| Item | Prespecification target |
+|:---|:---|
+| Endpoint and variant | State whether monitoring uses e-RTb, e-RTe, e-RTc, or e-RTs, and define the update unit. |
+| Validity threshold | Choose $`\alpha`$ and the e-value threshold $`1/\alpha`$; for $`\alpha=0.05`$, the threshold is 20. |
+| Wager policy | Specify adaptive, fixed, design-calibrated, or other predictable policy; record all tuning constants. |
+| Burn-in and ramp | Define burn-in and ramp on the natural update scale: patients, events, or risk-set failures. |
+| Design alternative | If using a design wager, state the ARR, event-coin tilt, Cohen’s $`d`$, hazard ratio, and any working model parameters. |
+| Stopping action | State whether crossing triggers automatic stopping, DSMB review, unblinded review, or continued monitoring. |
+| Crossing report | Predefine the descriptive effect scale reported at crossing and note that selected estimates may be inflated. |
+| Non-crossing trial | State that the trial proceeds to the planned primary analysis if the e-process does not cross. |
+| Multiplicity | Specify how multiple endpoints, arms, or looks across variants will be combined or adjusted. |
+
+Items to prespecify before using an e-RT monitor.
+
+</div>
+
 # Discussion
 
 The e-RT family comprises nonparametric sequential tests for randomized trials based on the betting framework for e-values (i-bet (Duan et al. 2022)). All active variants require only that treatment assignment is randomized—no distributional assumptions about outcomes are needed for validity. This makes them robust complements to model-based analyses. This manuscript focuses on binary outcomes (e-RTb), event-only monitoring (e-RTe), continuous endpoints (e-RTc), and time-to-event analyses (e-RTs).
@@ -1079,27 +1085,23 @@ Across the simulation-validated variants, simulations demonstrate proper Type I 
 
 When early stopping occurs across all variants, it typically happens at approximately 45–56% of the planned sample size or event count.
 
-These results should be interpreted carefully. From a clinical trial perspective, it is uncertain whether these methods can replace traditional frequentist or Bayesian paradigms, but they may provide a continuous monitoring option that requires no alpha spending and no prespecified interim analysis schedule. If the e-process crosses its threshold, one could consider stopping the trial. If it does not cross, the trial may proceed to its planned conclusion and primary analysis.
+These results should be interpreted as evidence for a monitoring role rather than as a replacement for the planned primary analysis. If the e-process crosses its threshold, the protocol may trigger stopping or DSMB review. If it does not cross, the trial proceeds to its planned conclusion and primary analysis.
 
 ## Traditional statistics at crossing
 
-When an e-RT crosses its threshold ($`\geq 1/\alpha`$), one may ask what a traditional frequentist analysis would report at that exact moment. In the simulated crossing trials, conventional analyses usually moved in the same direction and often produced small p-values or confidence intervals excluding the null. This is reassuring, but it should be treated as descriptive rather than inferential.
-
-However, there is a critical distinction. The traditional analysis at crossing is *formally invalid* because the analyst observed the data at multiple time points and stopped at a favorable one. The frequentist p-value is anti-conservative (too small) and the standard confidence interval has less than 95% coverage at this data-driven stopping time. The e-value, by contrast, is valid regardless of the stopping rule—this is the entire point of the anytime-valid guarantee. The e-value itself carries the inferential weight; traditional statistics at crossing are best used as clinical descriptors and diagnostic checks.
+When an e-RT crosses its threshold ($`\geq 1/\alpha`$), conventional p-values and confidence intervals computed at that same moment are selected summaries: the trial has stopped at a favorable time. They may be useful clinical descriptors, and in simulations they usually moved in the same direction as the e-process, but they should not carry the inferential claim. The e-value carries the anytime-valid evidence; traditional statistics at crossing are diagnostic and descriptive.
 
 ## What is the null hypothesis being tested?
 
 This approach tests whether treatment assignment can be predicted from outcomes—equivalently, whether outcomes are exchangeable between arms. Under the null, $`Y_i \perp T_i`$ at each observation: knowing the outcome provides no information about which arm the patient belongs to. This is neither Fisher’s sharp null (every individual has exactly zero treatment effect) nor the weak null of equal population means.
 
-A useful analogy is a casino. Under the null, the house is fair: no betting strategy can systematically grow wealth. The e-value quantifies accumulated evidence that the game is beatable. Rejecting the null means we have found a profitable strategy—outcomes predict assignments better than chance. The user is also referenced to the pioneer lessons by (Ramdas 2021).
-
-This framing clarifies both the method’s strength and its limitation. The strength is generality: any departure from exchangeability—constant effects, heterogeneous effects, or even randomization failures—makes outcomes informative and wealth grows. The limitation is that the test detects only departures that a *cumulative backward-looking* betting strategy can exploit. In practical terms, the null hypothesis is best understood as: “there exists no stable, learnable relationship between outcomes and treatment assignment that persists long enough for an adaptive strategy to exploit.” This is appropriate for most trials where effects are expected to be consistent over enrollment, but investigators should be aware that non-stationary effects and abrupt direction reversals are blind spots for the current cumulative wager; recency-weighted extensions are discussed below.
+Rejecting the null means outcomes predict assignments better than randomization alone would allow. This framing clarifies both the method’s strength and its limitation. The strength is generality: constant effects, heterogeneous effects, and some randomization failures can all make outcomes informative. The limitation is that the current adaptive wager detects departures only when they are stable enough for a cumulative backward-looking strategy to exploit. Non-stationary effects and abrupt direction reversals are therefore blind spots for the current cumulative wager; recency-weighted extensions are discussed below.
 
 ## Relationship to existing work
 
 The betting framework for hypothesis testing was developed by Shafer (2021). E-values and e-processes have been extensively studied (Vovk and Wang 2021; Ramdas et al. 2022; Ramdas and Wang 2025). Duan et al. (2022) introduced interactive rank testing by betting (i-bet), which applies the betting framework directly to randomized experiments: an analyst sequentially bets on treatment assignments based on observed outcomes, with wealth forming a test martingale under the null. The binary approach implements this framework with a specific adaptive betting strategy tied to outcome values. Betting approaches have been established for estimating means of bounded random variables (Waudby-Smith and Ramdas 2023). The continuous extension adapts these principles to the two-sample randomization setting using a standardization strategy.
 
-Sokolova and Sokolov (2026b) and the accompanying `evalinger` implementation (Sokolova and Sokolov 2026a) are especially important comparators for the present work. The first draft of e-RT was dated December 4, 2025, so the randomization-betting construction developed independently of that manuscript. This chronology is noted only to clarify the origin of e-RT, not to diminish the importance of their contribution. Their work provides a mature design-calibrated perspective on clinical-trial e-processes, particularly through growth-rate-optimal (GROW) wagers chosen from prespecified alternatives. The present work uses their contribution as a central point of comparison: e-RT is effect-size agnostic by default, whereas GROW-style design wagers encode a planned alternative to improve expected evidence growth. The two views are compatible because randomization supplies the validity engine and the wager policy supplies the efficiency profile. In this manuscript, design-calibrated wagers are therefore presented as optional efficiency tools within e-RT, not as replacements for the adaptive agnostic monitor.
+Sokolova and Sokolov (2026a) and the accompanying `evalinger` implementation (Sokolova and Sokolov 2026b) are especially important comparators for the present work. The first draft of e-RT was dated December 4, 2025, so the randomization-betting construction developed independently of that manuscript. This chronology is noted only to clarify the origin of e-RT, not to diminish the importance of their contribution. Their work provides a mature design-calibrated perspective on clinical-trial e-processes, particularly through growth-rate-optimal (GROW) wagers chosen from prespecified alternatives. The present work uses their contribution as a central point of comparison: e-RT is effect-size agnostic by default, whereas GROW-style design wagers encode a planned alternative to improve expected evidence growth. The two views are compatible because randomization supplies the validity engine and the wager policy supplies the efficiency profile. In this manuscript, design-calibrated wagers are therefore presented as optional efficiency tools within e-RT, not as replacements for the adaptive agnostic monitor.
 
 Koning (2025) develops e-values for group invariance, including permutation tests, using batch-based likelihood ratio statistics normalized by permutation expectations. Grünwald et al. (2021) developed the ‘Safe Log-rank Test’ based on evaluating likelihood ratios with specific priors on the hazard ratio to ensure growth rate optimality. In contrast, e-RTs constructs a linear test martingale directly from the log-rank score increment. Rather than requiring likelihood integration or a correct proportional-hazards model for validity, e-RTs derives validity from the randomization probabilities within each risk set. The wager policy may be fixed, adaptive from the prior score, or design-calibrated from a prespecified hazard ratio; the working hazard ratio affects efficiency, not Type I error control.
 
@@ -1107,13 +1109,15 @@ Pairwise and prioritized composite endpoints remain important future work. Gener
 
 The e-RTb shares the same martingale foundation as i-bet but differs in key respects: it operates prospectively as patients enroll rather than retrospectively on completed data; it requires no covariates or working models; and it uses betting fractions that adapt continuously to running outcome estimates rather than fixed-magnitude wagers guided by covariate-based predictions. This yields a simpler method that may be suitable for real-time trial monitoring.
 
-It is possible that some of the concepts here were discussed by other authors in different contexts that were not immediately available for this author. Reader is encouraged to reach out if that is the case, and the author will happily adjust accordingly.
-
 ## Limitations
 
 Several limitations should be noted. This is an experimental method under development. Simulations are not exhaustive, and the operating characteristics reported are specific to the scenarios tested. It is uncertain how these methods would behave in more complex models, including competing risk and multi-state settings, which are deliberately deferred from the active scope.
 
 The methods test only whether there are differences between arms; they do not provide point estimates or confidence intervals. The adaptive learning of $`\hat{\delta}`$ requires a burn-in period during which little evidence accumulates. For trials where parametric assumptions are plausible, model-based sequential methods will generally have better power. Our simulations used specific betting strategies; other choices may yield different operating characteristics. The betting strategy design section provides guidance on strategy selection, but optimal calibration for specific clinical scenarios remains an open question. Finally, it is unclear how these methods will behave when heterogeneity in treatment effects exists or there are temporal instabilities in effect size. Extensions to relative effect size approaches (e.g., odds ratio) are under development.
+
+## When not to use e-RT
+
+The methods are not intended to replace every sequential design. They are a poor primary choice when a strong parametric model is credible and maximum model-based efficiency is the main goal; when the primary output must be an unbiased point estimate or confidence interval rather than evidence against exchangeability; when the effect is expected to reverse direction during enrollment; when competing risks, multistate processes, informative censoring, or informative outcome observation dominate the endpoint; or when several endpoints will be monitored without a multiplicity or e-value-combination plan. In these settings, e-RT may still be useful as a sensitivity monitor, but it should not be the only design justification without dedicated simulation.
 
 ## Future Directions
 
@@ -1221,15 +1225,15 @@ Shafer, Glenn. 2021. “Testing by Betting: A Strategy for Statistical and Scien
 
 </div>
 
-<div id="ref-evalinger2026" class="csl-entry">
+<div id="ref-sokolova2026evalues" class="csl-entry">
 
-Sokolova, Alexandra, and Vadim Sokolov. 2026a. *Evalinger: E-Values for Adaptive Clinical Trial Monitoring*. <a href="https://github.com/VadimSokolov/evalinger" class="uri">Https://github.com/VadimSokolov/evalinger</a>.
+Sokolova, Alexandra, and Vadim Sokolov. 2026a. *E-Values for Adaptive Clinical Trials: Anytime-Valid Monitoring in Practice*. <https://doi.org/10.48550/arXiv.2602.06379>.
 
 </div>
 
-<div id="ref-sokolova2026evalues" class="csl-entry">
+<div id="ref-evalinger2026" class="csl-entry">
 
-Sokolova, Alexandra, and Vadim Sokolov. 2026b. *E-Values for Adaptive Clinical Trials: Anytime-Valid Monitoring in Practice*. <https://doi.org/10.48550/arXiv.2602.06379>.
+Sokolova, Alexandra, and Vadim Sokolov. 2026b. *R Package Evalinger: E-Values for Adaptive Clinical Trial Monitoring*. <a href="https://github.com/VadimSokolov/evalinger" class="uri">Https://github.com/VadimSokolov/evalinger</a>.
 
 </div>
 

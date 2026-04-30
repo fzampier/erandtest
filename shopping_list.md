@@ -14,7 +14,10 @@ This is the working add/remove/change list for Version 8.
 - Add parametric design-calibrated e-RTc wagers based on prespecified mean, SD, and effect.
 - Add a future-work note on pairwise/GPC endpoints, making clear that a future
   version should preserve the assignment-prediction randomization-test
-  structure.
+  structure. **implemented**
+- Explore continuous futility monitoring for e-RTb through reciprocal e-values
+  against a clinically meaningful-benefit null such as `ARR >= MCID`.
+  **exploratory module parked, not manuscript-integrated**
 
 ## Added In Code, Needs Manuscript Integration
 
@@ -25,15 +28,20 @@ This is the working add/remove/change list for Version 8.
 - Type M error at crossing for e-RTc simulations on the Cohen's `d` scale. **implemented and integrated**
 - e-RTs fixed-magnitude, adaptive half-Kelly, design-calibrated, misspecified
   design, and oracle simulation framework, with Type I error, power, Type M, and
-  Type S diagnostics.
+  Type S diagnostics. **implemented and integrated**
 - e-RTs staggered-entry check comparing paired complete-follow-up
   time-on-study identity with calendar-event-order monitoring.
+  **implemented and integrated**
 - Curated fixed-seed trajectory examples for e-RTb, e-RTe, e-RTc, and e-RTs.
+  **implemented and integrated**
 - Full active-manuscript reproducibility chain with `Makefile`, dependency
   check, inventory check, generated table inputs, and cleanup of obsolete
   pilot outputs. **implemented**
 - Former e-RTwr scripts, generated tables, and results parked under
   `explorations/ertwr/`. **implemented**
+- Exploratory e-RTb reciprocal-futility simulation module parked under
+  `explorations/ertb_futility/`, including design-calibrated and
+  nuisance-robust candidate processes. **implemented, not manuscript-integrated**
 
 ## Remove Or Deprecate
 
@@ -101,6 +109,15 @@ This is the working add/remove/change list for Version 8.
   - bet on whether the preferred member was randomized to treatment;
   - keep the parked disjoint-pair sign process in `explorations/ertwr/` as
     background, not as an active e-RT method.
+- e-RTb futility future work:
+  - decide whether the clinically relevant futility null should be `ARR >= MCID`
+    or a softer boundary;
+  - prove the reciprocal process carefully, separating baseline-specific design
+    calibration from nuisance-robust guarantees;
+  - investigate whether a less conservative nuisance-robust construction is
+    possible without assuming the baseline event risk;
+  - consider whether futility should be offered as a separate monitoring layer
+    rather than a core V8 manuscript claim.
 
 ## Open Questions
 
@@ -111,3 +128,21 @@ This is the working add/remove/change list for Version 8.
 - What should a future true randomization-test pairwise method be called?
 - Should Type M at crossing be reported as median exaggeration, mean exaggeration, or quantiles because the ratio may be unstable when the true effect is small?
 - Should Type S be reported for all endpoints, or emphasized mainly for directional e-RTs simulations?
+- Should reciprocal e-value futility be included in V8 as a future-work
+  paragraph only, or developed into a supplement after the proof is checked?
+
+## Candidate Cuts For A Shorter Journal Version
+
+The arXiv V8 manuscript can reasonably remain broad. For a shorter BMC or
+journal submission, the most defensible cuts are:
+
+- Move the e-RTe burn-in/ramp/Kelly-intensity sensitivity subsection and table
+  to a supplement.
+- Move didactic trajectory figures to a supplement, retaining only one
+  representative figure or the wager-policy comparison figures.
+- Compress the design-wager misspecification narrative after the main tables;
+  keep the validity/power separation but reduce scenario-by-scenario prose.
+- Move pairwise/GPC future-work discussion to a shorter paragraph.
+- Keep Section 2, Table 1, the Type M/crossing-reporting material, Table 15,
+  and "when not to use e-RT"; those are high-value reviewer-facing material.
+- Defer software/API examples until the R package interface stabilizes.
