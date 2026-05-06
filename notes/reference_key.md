@@ -15,19 +15,7 @@ Use these bracket labels in working notes or comments when quick author names ar
 - [R9] `waudbysmith2023estimating`: Waudby-Smith and Ramdas, 2023. Estimating bounded means by betting.
 - [R10] `ramdas2021game`: Ramdas, 2021. Game-theoretic probability lecture notes.
 
-## V9 References Added Or Parked
+## V9 References Added
 
 - [S1] `sokolova2026evalues`: Sokolova and Sokolov, 2026. E-values for adaptive clinical trials: anytime-valid monitoring in practice.
 - [S2] `evalinger2026`: Sokolova and Sokolov, 2026. `evalinger` R package for e-value adaptive clinical trial monitoring.
-- [W1] `yu2022sample`: Yu and Ganju, 2022. Sample size formula for a win ratio endpoint. Parked with pairwise explorations.
-- [W2] `pocock2012winratio`: Pocock et al., 2012. Win ratio for prioritized clinical outcomes. Parked with pairwise explorations.
-- [W3] `buyse2010gpc`: Buyse, 2010. Generalized pairwise comparisons. Mentioned only as future work in the active manuscript.
-- [W4] `wrestimates`: `WRestimates` R package for win-ratio sample size, power, and confidence intervals. Parked with pairwise explorations.
-- [W5] `buysetest`: `BuyseTest` R package for generalized pairwise comparisons and win-ratio estimation. Parked with pairwise explorations.
-
-## Package Roles
-
-- Active V9 no longer requires `WRestimates` or `BuyseTest`.
-- Parked pairwise material under `explorations/ertwr/` used `WRestimates` for
-  Yu-Ganju design sample sizes and `BuyseTest` for final all-pairs GPC
-  reference analyses.

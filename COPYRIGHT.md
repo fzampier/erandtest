@@ -5,8 +5,8 @@ R source code. They are not all licensed the same way.
 
 ## Code
 
-The source code and scripts in `R/`, `R/simulations/`, and exploratory code
-under `explorations/` are released under the MIT License. See `LICENSE`.
+The source code and scripts in `R/` and `R/simulations/` are released under the
+MIT License. See `LICENSE`.
 
 ## Manuscript and Generated Research Artifacts
 

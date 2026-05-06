@@ -1,0 +1,32 @@
+\begin{table}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\caption{Sensitivity of adaptive e-RTb and e-RTe to burn-in/ramp schedule and Kelly intensity. Each row uses the same trial-data scenarios as Table~\ref{tab:compare_erte_binary}; values summarize 1{,}000 fixed-seed simulations. Tuned columns show the best power over fixed 10/20-event, fixed 30/50-event, default, proportional 5/10\%, and proportional 10/20\% burn-in/ramp schedules crossed with 25\%, 50\%, 75\%, and 100\% Kelly intensity.}
+\begin{tabular}{@{}cccccccl@{}}
+\toprule
+ARR & Baseline & Events & e-RTb Default & e-RTb Tuned & e-RTe Default & e-RTe Tuned & Winner \\
+\midrule
+5.0 pp & 10\% & 66 & 12.2\% & 19.6\% (30/50 events, 100\%K) & 6.4\% & 48.3\% (5/10\%, 100\%K) & e-RTe \\
+5.0 pp & 15\% & 172 & 25.2\% & 27.7\% (5/10\%, 75\%K) & 42.0\% & 48.3\% (5/10\%, 100\%K) & e-RTe \\
+5.0 pp & 20\% & 318 & 32.9\% & 36.4\% (10/20\%, 75\%K) & 43.1\% & 43.1\% (default, 100\%K) & e-RTe \\
+5.0 pp & 25\% & 493 & 40.9\% & 41.2\% (10/20\%, 75\%K) & 42.6\% & 42.6\% (default, 100\%K) & e-RTe \\
+5.0 pp & 30\% & 689 & 43.8\% & 46.9\% (10/20\%, 75\%K) & 37.2\% & 38.0\% (5/10\%, 100\%K) & e-RTb \\
+5.0 pp & 35\% & 896 & 47.9\% & 51.7\% (10/20\%, 75\%K) & 36.1\% & 38.8\% (5/10\%, 100\%K) & e-RTb \\
+5.0 pp & 40\% & 1{,}104 & 46.4\% & 51.0\% (5/10\%, 50\%K) & 29.3\% & 30.1\% (5/10\%, 100\%K) & e-RTb \\
+7.5 pp & 15\% & 63 & 20.6\% & 27.0\% (default, 75\%K) & 6.6\% & 46.6\% (10/20\%, 100\%K) & e-RTe \\
+7.5 pp & 20\% & 124 & 31.6\% & 34.0\% (10/20\%, 75\%K) & 32.5\% & 46.1\% (10/20 events, 100\%K) & e-RTe \\
+7.5 pp & 25\% & 199 & 37.9\% & 40.0\% (10/20\%, 75\%K) & 38.5\% & 40.2\% (10/20\%, 100\%K) & $\sim$Tied \\
+7.5 pp & 30\% & 284 & 42.3\% & 44.2\% (10/20\%, 75\%K) & 38.6\% & 38.9\% (10/20\%, 100\%K) & e-RTb \\
+7.5 pp & 35\% & 375 & 46.6\% & 46.6\% (default, 50\%K) & 35.3\% & 36.1\% (5/10\%, 100\%K) & e-RTb \\
+7.5 pp & 40\% & 467 & 51.8\% & 53.1\% (10/20\%, 75\%K) & 35.9\% & 36.6\% (10/20\%, 100\%K) & e-RTb \\
+10.0 pp & 15\% & 29 & 13.5\% & 25.5\% (default, 100\%K) & 0.0\% & 46.8\% (5/10\%, 75\%K) & e-RTe \\
+10.0 pp & 20\% & 60 & 22.2\% & 31.0\% (default, 100\%K) & 2.7\% & 41.9\% (10/20\%, 100\%K) & e-RTe \\
+10.0 pp & 25\% & 100 & 37.1\% & 41.4\% (default, 75\%K) & 25.2\% & 43.4\% (10/20 events, 100\%K) & e-RTe \\
+10.0 pp & 30\% & 148 & 42.4\% & 42.6\% (10/20\%, 75\%K) & 37.5\% & 43.9\% (10/20 events, 100\%K) & e-RTe \\
+10.0 pp & 35\% & 198 & 45.9\% & 48.2\% (10/20\%, 75\%K) & 34.6\% & 36.7\% (10/20 events, 100\%K) & e-RTb \\
+10.0 pp & 40\% & 250 & 51.3\% & 52.2\% (10/20\%, 75\%K) & 33.6\% & 34.0\% (10/20\%, 100\%K) & e-RTb \\
+\bottomrule
+\end{tabular}
+\label{tab:erte_tuning_sensitivity}
+\end{table}

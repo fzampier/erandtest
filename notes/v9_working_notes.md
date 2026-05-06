@@ -29,20 +29,3 @@ randomization monitoring framework for:
    validity requirements.
 4. Keep Type M diagnostics clearly separated from the anytime-valid e-value
    claim.
-
-## Parked Explorations
-
-- Former pairwise/GPC endpoint ideas remain under `explorations/ertwr/` and are
-  not active manuscript claims.
-- Reciprocal-futility work remains under `explorations/ertb_futility/` and is
-  not part of `make all`.
-
-## Journal Derivative Notes
-
-Likely cuts for a shorter journal derivative:
-
-- move e-RTe tuning sensitivity to supplement;
-- move most didactic trajectory figures to supplement;
-- compress design-wager misspecification prose after the main tables;
-- shorten pairwise/GPC future work;
-- defer software/API examples until a stable package interface exists.

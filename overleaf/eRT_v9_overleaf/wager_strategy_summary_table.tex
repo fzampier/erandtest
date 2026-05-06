@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Summary: wager-policy design considerations by e-RT variant.}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Property & e-RTe & e-RTb & e-RTc \\
+\midrule
+Update unit & Event & Patient & Patient \\
+Default policy & Full Kelly & Half Kelly & Sign direction \\
+Design-wager role & Event-rate planning & ARR planning & Normal-shift model \\
+Over-betting sensitivity & Moderate & High & High \\
+Main tuning issue & Event-stream length & Kelly shrinkage & Scale/model choice \\
+\bottomrule
+\end{tabular}
+\label{tab:wage_summary}
+\end{table}

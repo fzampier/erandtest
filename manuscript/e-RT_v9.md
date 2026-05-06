@@ -8,7 +8,7 @@ E-values and e-processes offer an alternative framework (Shafer 2021; Vovk and W
 
 Duan et al. (2022) introduced interactive rank testing by betting (i-bet), which tests treatment effects by wagering on treatment assignments given observed outcomes. The intuition is discussed by (Ramdas 2021). Under the null hypothesis, randomization ensures that assignments are independent of outcomes, so no betting strategy can systematically accumulate wealth.
 
-Sokolova and Sokolov (2026a) recently developed a practitioner-oriented framework for e-value monitoring in adaptive clinical trials, including design-calibrated binary e-processes, futility tools, platform-trial extensions, and an open-source implementation in the `evalinger` package. Their work emphasizes a design-calibrated view of e-process construction: the betting strategy is chosen to optimize expected evidence growth under a prespecified clinically meaningful alternative. This connects to growth-rate-optimal (GROW) wagering in the broader e-value literature (Ramdas and Wang 2025), and provides the central external contrast for the present work: e-RT is effect-size agnostic by default, while design-calibrated wagers are treated here as optional efficiency tools rather than as prerequisites for monitoring.
+Sokolova and Sokolov (2026a) recently developed a practitioner-oriented framework for e-value monitoring in adaptive clinical trials, including design-calibrated binary e-processes and an open-source implementation in the `evalinger` package. Their work emphasizes a design-calibrated view of e-process construction: the betting strategy is chosen to optimize expected evidence growth under a prespecified clinically meaningful alternative. This connects to growth-rate-optimal (GROW) wagering in the broader e-value literature (Ramdas and Wang 2025), and provides the central external contrast for the present work: e-RT is effect-size agnostic by default, while design-calibrated wagers are treated here as optional efficiency tools rather than as prerequisites for monitoring.
 
 We propose e-RT, an e-value randomization-test framework for prospective monitoring of randomized trials. Like i-bet (Duan et al. 2022), e-RT uses betting martingales for inference, but monitors as patients enroll, requires no covariates or working models for validity, and can learn default wager policies from accumulating data rather than fixing them by a hypothesized effect size. Design-calibrated wagers are added as optional efficiency modes, not as the defining feature of the method.
 
@@ -125,7 +125,7 @@ Following Duan et al. (2022), we construct a wealth process by wagering on treat
 The wealth updates as:
 ``` math
 \begin{equation}
-W_i = W_{i-1} \times 
+W_i = W_{i-1} \times
 \begin{cases}
 \lambda_i / p & \text{if } T_i = 1 \\
 (1 - \lambda_i) / (1-p) & \text{if } T_i = 0
@@ -147,7 +147,7 @@ Let:
 estimated from patients $`1, \ldots, i-1`$. The betting fraction is:
 ``` math
 \begin{equation}
-\lambda_i = 
+\lambda_i =
 \begin{cases}
 0.5 + 0.5 \cdot c_i \cdot \hat{\delta}_{i-1} & \text{if } Y_i = 1 \\
 0.5 - 0.5 \cdot c_i \cdot \hat{\delta}_{i-1} & \text{if } Y_i = 0
@@ -712,7 +712,7 @@ This design wager is parametric by construction. The normal-shift model is not n
 Treatment is still randomized with probability $`p`$ of intervention. After we choose $`\lambda_i`$, the wealth updates exactly as in the binary approach:
 ``` math
 \begin{equation}
-W_i = W_{i-1} \times 
+W_i = W_{i-1} \times
 \begin{cases}
 \lambda_i / p & \text{if } T_i = 1 \ (\text{intervention}) \\
 (1 - \lambda_i) / (1-p) & \text{if } T_i = 0 \ (\text{control})
@@ -919,7 +919,7 @@ When an e-RT crosses its threshold ($`\geq 1/\alpha`$), conventional p-values an
 
 This approach tests whether treatment assignment can be predicted from outcomes—equivalently, whether outcomes are exchangeable between arms. Under the null, $`Y_i \perp T_i`$ at each observation: knowing the outcome provides no information about which arm the patient belongs to. This is neither Fisher’s sharp null (every individual has exactly zero treatment effect) nor the weak null of equal population means.
 
-Rejecting the null means outcomes predict assignments better than randomization alone would allow. This framing clarifies both the method’s strength and its limitation. The strength is generality: constant effects, heterogeneous effects, and some randomization failures can all make outcomes informative. The limitation is that the current adaptive wager detects departures only when they are stable enough for a cumulative backward-looking strategy to exploit. Non-stationary effects and abrupt direction reversals are therefore blind spots for the current cumulative wager; recency-weighted extensions are discussed below.
+Rejecting the null means outcomes predict assignments better than randomization alone would allow. This framing clarifies both the method’s strength and its limitation. The strength is generality: constant effects, heterogeneous effects, and some randomization failures can all make outcomes informative. The limitation is that the current adaptive wager detects departures only when they are stable enough for a cumulative backward-looking strategy to exploit. Non-stationary effects and abrupt direction reversals are therefore blind spots for the current cumulative wager.
 
 ## Relationship to existing work
 
@@ -929,23 +929,17 @@ Sokolova and Sokolov (2026a) and the accompanying `evalinger` implementation (So
 
 Koning (2025) develops e-values for group invariance, including permutation tests, using batch-based likelihood ratio statistics normalized by permutation expectations.
 
-Pairwise and prioritized composite endpoints remain important future work. Generalized pairwise comparisons and win-ratio methods compare treatment and control patients using clinically prioritized rules (Buyse 2010; Wang and Pocock 2016). A first exploratory implementation considered disjoint treatment-control pair signs as an e-process, with `BuyseTest` used as an all-pairs GPC reference (Ozenne and Peron 2025). We no longer include that prototype as an active e-RT variant because it bets on pairwise outcome direction after treatment assignment is known, rather than betting on randomized assignment. A future e-RT-compatible pairwise method should keep the randomization-test structure: form pairs predictably, observe the pair outcomes, determine which member has the preferable clinical outcome, and then bet whether that member was randomized to treatment. The former prototype is retained in the repository as an exploration, not as support for the active manuscript claims.
-
 The e-RTb shares the same martingale foundation as i-bet but differs in key respects: it operates prospectively as patients enroll rather than retrospectively on completed data; it requires no covariates or working models; and it uses betting fractions that adapt continuously to running outcome estimates rather than fixed-magnitude wagers guided by covariate-based predictions. This yields a simpler method that may be suitable for real-time trial monitoring.
 
 ## Limitations
 
-Several limitations should be noted. This is an experimental method under development. Simulations are not exhaustive, and the operating characteristics reported are specific to the scenarios tested. It is uncertain how these methods would behave in more complex endpoint settings, which are deliberately deferred from the active scope.
+Several limitations should be noted. This is an experimental method under development. Simulations are not exhaustive, and the operating characteristics reported are specific to the scenarios tested.
 
-The methods test only whether there are differences between arms; they do not provide point estimates or confidence intervals. The adaptive learning of $`\hat{\delta}`$ requires a burn-in period during which little evidence accumulates. For trials where parametric assumptions are plausible, model-based sequential methods will generally have better power. Our simulations used specific betting strategies; other choices may yield different operating characteristics. The betting strategy design section provides guidance on strategy selection, but optimal calibration for specific clinical scenarios remains an open question. Finally, it is unclear how these methods will behave when heterogeneity in treatment effects exists or there are temporal instabilities in effect size. Extensions to relative effect size approaches (e.g., odds ratio) are under development.
+The methods test only whether there are differences between arms; they do not provide point estimates or confidence intervals. The adaptive learning of $`\hat{\delta}`$ requires a burn-in period during which little evidence accumulates. For trials where parametric assumptions are plausible, model-based sequential methods will generally have better power. Our simulations used specific betting strategies; other choices may yield different operating characteristics. The betting strategy design section provides guidance on strategy selection, but optimal calibration for specific clinical scenarios remains an open question. Finally, it is unclear how these methods will behave when heterogeneity in treatment effects exists or there are temporal instabilities in effect size.
 
 ## When not to use e-RT
 
 The methods are not intended to replace every sequential design. They are a poor primary choice when a strong parametric model is credible and maximum model-based efficiency is the main goal; when the primary output must be an unbiased point estimate or confidence interval rather than evidence against exchangeability; when the effect is expected to reverse direction during enrollment; when informative outcome observation dominates the endpoint; or when several endpoints will be monitored without a multiplicity or e-value-combination plan. In these settings, e-RT may still be useful as a sensitivity monitor, but it should not be the only design justification without dedicated simulation.
-
-## Future Directions
-
-Several extensions merit exploration. First, the current betting strategy uses a cumulative estimate $`\hat{\delta}`$ that weights all historical observations equally. This makes the method vulnerable to time-varying effects: if treatment benefit reverses to harm mid-trial, the strategy continues betting on stale information and wealth erodes despite continuous violation of exchangeability. Adaptive weighting schemes—such as exponential decay, rolling windows, or hybrid estimators blending long-term and recent signals—could improve robustness to non-stationary effects. Second, the betting intensity could itself adapt to recent performance: increasing $`\lambda`$ during sustained wealth growth (exploiting a confirmed edge) and dampening it following drawdowns (protecting against regime change). Third, pairwise and prioritized composite endpoints may be compatible with e-RT if formulated as assignment-prediction randomization tests: form pairs predictably, observe pair outcomes, determine the clinically preferable member, and then bet on whether that member was randomized to treatment. These refinements trade power under stable effects against robustness to drift and complexity, and the optimal balance likely depends on the clinical context.
 
 ## Conclusion
 
@@ -959,7 +953,7 @@ This is an experimental method under development. Application to real patients s
 
 ## LLM use statement
 
-Large language models were extensively used in this work. Before using LLMs, the author formulated the central idea that e-value and e-process machinery could be used to bet on randomized assignments from observed outcomes, yielding a randomization-based continuous monitoring tool. The author then uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming and drafting support. Subsequent versions were refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. Claude Opus 4.6 aided with the deaths-only extension and the wager asymmetry analysis in V6, and with renaming, generalization of e-RTd to e-RTe, and the e-RTu universal abstraction in V7. OpenAI Codex aided the Version 8 and Version 9 repository organization, simulation refactoring, wager-policy comparisons, pairwise endpoint explorations, e-RTc design-wager implementation, and manuscript cleanup.
+Large language models were extensively used in this work. Before using LLMs, the author formulated the randomization-betting construction underlying e-RT. The author then uploaded the references in this manuscript to Gemini 3.0 Pro for brainstorming and drafting support. Subsequent versions were refined, tested, and debugged using Claude 4.5 Opus and ChatGPT 5.1 Pro. OpenAI Codex aided the Version 8 and Version 9 repository organization, simulation refactoring, wager-policy comparisons, e-RTc design-wager implementation, and manuscript cleanup.
 
 ## Acknowledgments
 
@@ -985,17 +979,11 @@ The manuscript source, R implementation files, simulation scripts, generated CSV
 
 7.  Seventh Version (Mar 08, 2026): Renamed binary e-RT to e-RTb after its introduction as the prototype. Generalized e-RTd (deaths-only) to e-RTe (event-only), broadening applicability beyond mortality. Added e-RTu (universal) section describing a domain-agnostic betting engine abstraction (under development). Updated all cross-references and discussion to reflect six variants.
 
-8.  Eighth Version (Apr 30, 2026): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; added parametric normal-shift design wagers for e-RTc; committed simulation result tables for reproducibility; deferred e-RTms, e-RTu, and pairwise-comparison prototypes from the active manuscript scope; and removed the embedded code appendix in favor of the project repository.
+8.  Eighth Version (Apr 30, 2026): Separated randomization validity from wager policy; added adaptive, design-fixed, misspecified-design, and oracle wager simulations for e-RTb/e-RTe; added Type M error at crossing diagnostics; added parametric normal-shift design wagers for e-RTc; committed simulation result tables for reproducibility; deferred earlier prototype variants from the active manuscript scope; and removed the embedded code appendix in favor of the project repository.
 
-9.  Ninth Version (May 06, 2026): Refocused the active manuscript on e-RTb, e-RTe, and e-RTc; removed the fourth endpoint family from the active manuscript, reproducibility chain, generated artifacts, and documentation; and carried forward the conditional-exchangeability clarification for event-only monitoring.
+9.  Ninth Version (May 06, 2026): Refocused the active manuscript on e-RTb, e-RTe, and e-RTc; removed the fourth endpoint family from the active manuscript, reproducibility chain, generated artifacts, and documentation; removed parked exploratory material from the public repository; and carried forward the conditional-exchangeability clarification for event-only monitoring.
 
 <div id="refs" class="references csl-bib-body hanging-indent">
-
-<div id="ref-buyse2010gpc" class="csl-entry">
-
-Buyse, Marc. 2010. “Generalized Pairwise Comparisons of Prioritized Outcomes in the Two-Sample Problem.” *Statistics in Medicine* 29: 3245–57. <https://doi.org/10.1002/sim.3923>.
-
-</div>
 
 <div id="ref-pmlr-v177-duan22a" class="csl-entry">
 
@@ -1012,12 +1000,6 @@ Gelman, Andrew, and John Carlin. 2014. “Beyond Power Calculations: Assessing T
 <div id="ref-koning2025" class="csl-entry">
 
 Koning, Nick W. 2025. “Measuring Evidence Against Exchangeability and Group Invariance with e-Values.” Unpublished manuscript.
-
-</div>
-
-<div id="ref-ozenne2025buysetest" class="csl-entry">
-
-Ozenne, Brice, and Julien Peron. 2025. *BuyseTest: Implementation of the Generalized Pairwise Comparisons*.
 
 </div>
 
@@ -1066,12 +1048,6 @@ Ville, Jean. 1939. “Étude Critique de La Notion de Collectif.” PhD thesis, 
 <div id="ref-vovk2021" class="csl-entry">
 
 Vovk, Vladimir, and Ruodu Wang. 2021. “E-Values: Calibration, Combination and Applications.” *Annals of Statistics* 49 (3): 1736–54. <https://doi.org/10.1214/20-AOS2020>.
-
-</div>
-
-<div id="ref-wang2016winratio" class="csl-entry">
-
-Wang, Dong, and Stuart Pocock. 2016. “A Win Ratio Approach to Comparing Continuous Non-Normal Outcomes in Clinical Trials.” *Pharmaceutical Statistics* 15: 238–45. <https://doi.org/10.1002/pst.1743>.
 
 </div>
 
