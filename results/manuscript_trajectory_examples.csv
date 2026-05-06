@@ -7,5 +7,3 @@
 "e-RTe","25% vs 20% event rates, 500 events",20266611,30,500,0.4,0.4,12,348.5,0.697,5.80252867200002,6677.56363880533,0.000749999999999973,"manuscript/traj_eRTe_alt.pdf"
 "e-RTc","Null, matched design wager for d = 0.40",20267504,30,200,0,0,0,NA,NA,0.0169008083849343,6.53528854766026,0,"manuscript/traj_eRTC_null_d0.4_80pow.pdf"
 "e-RTc","True d = 0.40, matched design wager",20268590,30,200,0.67,0.666666666666667,20,119,0.595,12.8135226380905,1966.90645637596,0.00458333333333341,"manuscript/traj_eRTC_alt_d0.4_80pow.pdf"
-"e-RTs","Null HR 1.00, fixed 0.25 wager",20269507,30,631,0,0,0,NA,NA,0.0128785084460544,6.07414485823278,0,"manuscript/traj_survivaleRT_null.pdf"
-"e-RTs","True HR 0.80, fixed 0.25 wager",20270616,30,631,0.61,0.6,18,315,0.499207606973059,20.8322106975596,2675.9356203842,0.0101980982567353,"manuscript/traj_survivaleRT_08.pdf"

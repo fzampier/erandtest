@@ -1,63 +1,45 @@
 # Changelog
 
-## Version 8 In Preparation
+## Version 9 In Preparation
 
-This repository is the clean V8-forward workspace for e-RT. It starts from the
-active arXiv Version 7 material, while leaving the local V7 archive untouched.
+This repository is the clean V9-forward workspace for e-RT. It preserves the
+randomization-based monitoring lineage from earlier drafts while focusing the
+active manuscript and reproducibility chain on e-RTb, e-RTe, and e-RTc.
 
 ### Scope
 
-- Kept the active manuscript focused on e-RTb, e-RTe, e-RTc, and e-RTs.
-- Deferred e-RTms, e-RTu, and pairwise win-ratio/GPC prototypes from the main
-  V8 manuscript to avoid overextending the paper before their dependence and
-  randomization-test questions are settled.
+- Kept the active manuscript focused on binary, event-only, and continuous
+  endpoint monitoring.
 - Reframed e-RT around a separation between the randomization-based validity
   engine and the endpoint-specific wager policy.
+- Deferred e-RTms, e-RTu, and pairwise win-ratio/GPC prototypes from the main
+  manuscript to avoid overextending the paper before their dependence and
+  randomization-test questions are settled.
 
 ### Manuscript
 
 - Added Sokolova and Sokolov as a central external comparison for
   design-calibrated e-processes and GROW-style wagers.
-- Clarified in the relationship-to-existing-work section that the first e-RT
-  draft predated the Sokolova/Sokolov manuscript while acknowledging their work
-  as a central influence on the V8 design-calibrated framing.
-- Settled the main V8 framing: e-RT is effect-size agnostic by default, with
+- Settled the main framing: e-RT is effect-size agnostic by default, with
   design-calibrated and GROW-style wagers treated as optional efficiency tools.
 - Added a unified validity argument making predictability, conditional expected
-  multiplier 1, and the validity/power separation explicit for all variants.
-- Replaced the inherited e-RTs staggered-entry paragraph with a standalone V8
-  check, distinguishing exact complete-follow-up time-on-study identity from a
-  separate calendar-event-order monitoring simulation.
+  multiplier 1, and the validity/power separation explicit for all active
+  variants.
 - Reorganized the binary and event-only sections around adaptive versus
   design-fixed wager policies.
-- Moved the former e-RTwr material out of the active manuscript and reframed
-  pairwise/GPC endpoints as future work requiring an assignment-prediction
-  randomization-test formulation.
+- Clarified the event-only null as conditional exchangeability of observed event
+  labels under the event-monitoring history.
 - Added e-RTc design-wager material using a parametric normal-shift working
   model.
-- Added e-RTs wager-policy material comparing fixed-magnitude, adaptive
-  half-Kelly, and design-calibrated log-rank risk-set wagers.
 - Added Type M error at crossing as a recurring diagnostic.
-- Added Gelman and Carlin's Type S/Type M design-analysis citation and e-RTs
-  Type S diagnostics.
-- Updated the Version Control section to describe the V8 changes.
+- Added a DSMB-facing crossing-report subsection, a protocol prespecification
+  checklist, and a "when not to use e-RT" scope subsection.
 - Removed the embedded R-code appendix from the manuscript and refer readers to
   the repository as the computational source of truth.
-- Harmonized the binary/event-only wager-policy discussion after review so the
-  manuscript tables, figures, and prose use the 5,000-replicate same-N
-  comparison outputs.
-- Added a three-step recipe lead-in to the unified validity section and an
-  endpoint-oriented variant-selection table for trialists.
-- Added a DSMB-facing crossing-report subsection, a protocol
-  prespecification checklist, and a "when not to use e-RT" scope subsection.
-- Pruned repeated plain-language explanations and tightened the e-RTe, e-RTc,
-  time-to-event, and discussion prose for the arXiv V8 manuscript.
-- Harmonized Sokolova/Sokolov citation ordering so the e-values manuscript is
-  cited as the central 2026a comparator and the `evalinger` package as 2026b.
 
 ### Code And Simulations
 
-- Added reusable modules for e-RTb, e-RTe, e-RTc, and e-RTs.
+- Added reusable modules for e-RTb, e-RTe, and e-RTc.
 - Added a top-level `Makefile` with dependency checking, result regeneration,
   figure/table regeneration, manuscript build, and inventory validation targets.
 - Added `R/check_dependencies.R` and `R/check_inventory.R` for lightweight
@@ -68,32 +50,22 @@ active arXiv Version 7 material, while leaving the local V7 archive untouched.
 - Added e-RTe diagnostics that compute ARR at crossing from the full randomized
   trial snapshot while keeping the e-process itself event-only.
 - Added e-RTe/e-RTb tuning sensitivity simulations over fixed and proportional
-  burn-in/ramp schedules and 25%, 50%, 75%, and 100% Kelly intensity settings;
-  removed the older inflated-sample-size e-RTe operating table from the active
-  manuscript.
+  burn-in/ramp schedules and 25%, 50%, 75%, and 100% Kelly intensity settings.
 - Added e-RTc simulations comparing adaptive, underestimated design, matched
   design, overestimated design, and oracle policies.
-- Added e-RTs simulations comparing fixed, adaptive, underestimated design,
-  matched design, overestimated design, and oracle policies.
-- Added e-RTs manuscript figures for wager-policy power and Type M error at
-  crossing.
-- Added a standalone e-RTs staggered-entry script with 1,000-replicate results,
-  summary notes, and a refreshed supplement figure.
 - Added a standalone fixed-seed trajectory-example generator and rebuilt the
-  manuscript e-RTb, e-RTe, e-RTc, and e-RTs didactic trajectory figures.
+  manuscript e-RTb, e-RTe, and e-RTc didactic trajectory figures.
 - Parked the former e-RTwr pilot, tuning, Sokolova-style GROW comparison,
   WRestimates sample-size checks, BuyseTest validation, composite endpoint
   simulations, and generated tables under `explorations/ertwr/`.
 - Added an exploratory e-RTb reciprocal-futility module under
   `explorations/ertb_futility/`. This module compares design-calibrated and
   nuisance-robust reciprocal e-processes for the futility null `ARR >= MCID`
-  and is not part of the active V8 manuscript reproducibility chain.
+  and is not part of the active V9 manuscript reproducibility chain.
 - Added a generated binary over-betting stress table for the wager-asymmetry
   discussion.
 - Committed active generated CSV result tables under `results/` so manuscript
   numbers can be audited directly from the repository.
-- Removed old e-RTms figure PDFs and low-replicate/pilot CSV outputs from the
-  active repo.
 
 ### Documentation
 

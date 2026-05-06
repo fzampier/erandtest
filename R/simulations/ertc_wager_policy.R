@@ -1,5 +1,5 @@
 # =============================================================================
-# V8 e-RTc Wager Policy Comparison
+# V9 e-RTc Wager Policy Comparison
 # =============================================================================
 #
 # Compares the adaptive continuous e-RTc wager with a parametric normal-shift

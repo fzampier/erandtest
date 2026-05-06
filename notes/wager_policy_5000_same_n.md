@@ -12,7 +12,7 @@ Output:
 results/wager_policy_5000_same_n.csv
 ```
 
-This supersedes the inflated e-RTe comparison for the V8 wager-policy table. Both e-RTb and e-RTe now use the same enrolled-patient sample size from `power.prop.test` with 80% power and alpha 0.05. No event-only inflation is applied.
+This supersedes the inflated e-RTe comparison for the V9 wager-policy table. Both e-RTb and e-RTe now use the same enrolled-patient sample size from `power.prop.test` with 80% power and alpha 0.05. No event-only inflation is applied.
 
 The simulation uses a fixed seed:
 

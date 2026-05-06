@@ -4,17 +4,22 @@ Working instructions for Codex and future coding/research agents in this reposit
 
 ## Project Identity
 
-This repository is the clean V8-forward workspace for the e-RT manuscript and code. It preserves continuity with the active arXiv Version 7 material, while keeping historical draft archives outside this repository untouched.
+This repository is the clean V9-forward workspace for the e-RT manuscript and
+code. It preserves continuity with the active arXiv Version 7 material, while
+keeping historical draft archives outside this repository untouched.
 
-The main scientific goal for V8 is to sharpen e-RT as a randomization-based continuous monitoring framework and to separate:
+The main scientific goal for V9 is to sharpen e-RT as a randomization-based
+continuous monitoring framework and to separate:
 
-- the validity engine: randomized assignment makes the betting game fair under the null;
-- the wager policy: adaptive, fixed, design-calibrated, or oracle-for-simulation-only.
+- the validity engine: randomized assignment makes the betting game fair under
+  the null;
+- the wager policy: adaptive, fixed, design-calibrated, or
+  oracle-for-simulation-only.
 
 ## Source Of Truth
 
-- Canonical manuscript source: `manuscript/e-RT_v8.tex`.
-- Readable mirror: `manuscript/e-RT_v8.md`.
+- Canonical manuscript source: `manuscript/e-RT_v9.tex`.
+- Readable mirror: `manuscript/e-RT_v9.md`.
 - Preferred active reproducibility commands:
 
 ```sh
@@ -28,7 +33,8 @@ make inventory
 Use `make all` for the complete active chain. The artifact map lives in
 `notes/reproducibility_inventory.md`.
 
-Do not edit the Markdown mirror as the authoritative manuscript unless the user explicitly asks for a Markdown-only drafting pass.
+Do not edit the Markdown mirror as the authoritative manuscript unless the user
+explicitly asks for a Markdown-only drafting pass.
 
 ## Editing Principles
 
@@ -36,34 +42,44 @@ Do not edit the Markdown mirror as the authoritative manuscript unless the user 
 - Keep historical draft archives outside this repository untouched.
 - Prefer small, reviewable manuscript edits.
 - When adding new claims, add matching citations or notes for citations to add.
-- Use direct quotes from copyrighted papers only when short and necessary; prefer careful paraphrase with citations.
-- Be explicit when distinguishing proven validity from simulation-supported power.
+- Use direct quotes from copyrighted papers only when short and necessary;
+  prefer careful paraphrase with citations.
+- Be explicit when distinguishing proven validity from simulation-supported
+  power.
 
-## V8 Scientific Direction
+## V9 Scientific Direction
 
-V8 should introduce wager policy as a first-class design layer:
+V9 introduces wager policy as a first-class design layer:
 
 - adaptive wager: learned from accumulating data;
 - fixed wager: prespecified constant;
-- design-calibrated wager: derived from a design alternative, similar in spirit to GROW calibration;
-- oracle wager: uses the true simulated effect and is allowed only as a simulation benchmark.
+- design-calibrated wager: derived from a design alternative, similar in spirit
+  to GROW calibration;
+- oracle wager: uses the true simulated effect and is allowed only as a
+  simulation benchmark.
 
-The main V8 claim is settled: e-RT is effect-size agnostic by default, and
+The main V9 claim is settled: e-RT is effect-size agnostic by default, and
 design-calibrated wagers are optional efficiency tools when a credible design
 alternative exists.
 
-V8 now defers e-RTu, e-RTms, and the pairwise win-ratio/GPC prototype from
-the active manuscript. The active paper should stay centered on e-RT as a
+The active manuscript variants are:
+
+- e-RTb for binary event/no-event outcomes;
+- e-RTe for event-only monitoring;
+- e-RTc for continuous outcomes.
+
+V9 defers e-RTms, e-RTu, and the pairwise win-ratio/GPC prototype from the
+active manuscript. The active paper should stay centered on e-RT as a
 randomization-based assignment-prediction test.
 
-Key diagnostic additions for V8:
+Key diagnostic additions for V9:
 
-- Type M error at first e-process crossing for e-RTb and e-RTe; for e-RTe, report ARR from the full randomized-trial snapshot when denominators are available, while keeping the event-only tilt as the native monitoring scale.
-- Type M error at first e-process crossing for e-RTc, reported on the Cohen's `d` scale.
-- Type M and Type S error at first e-process crossing for e-RTs, reported on
-  the hazard-ratio scale.
+- Type M error at first e-process crossing for e-RTb and e-RTe; for e-RTe,
+  report ARR from the full randomized-trial snapshot when denominators are
+  available, while keeping the event-only tilt as the native monitoring scale.
+- Type M error at first e-process crossing for e-RTc, reported on the Cohen's
+  `d` scale.
 - Crossing-time effect estimates versus final-study estimates.
-- e-RTms and e-RTu are parked as future work rather than active V8 sections.
 
 ## Code Direction
 
@@ -71,9 +87,9 @@ Initial active code files:
 
 - `R/ertb.R`: binary e-RTb baseline from V7.
 - `R/erte.R`: event-only e-RTe baseline from V7.
-- `R/ertc.R`: continuous e-RTc V8 module, preserving the standalone V7 adaptive sign-direction wager and adding parametric normal-shift design/oracle wagers.
-- `R/erts.R`: time-to-event e-RTs module with fixed, adaptive, design, and oracle log-rank risk-set wager policies.
-- `R/simulations/`: V8 simulation scripts.
+- `R/ertc.R`: continuous e-RTc module, preserving the standalone V7 adaptive
+  sign-direction wager and adding parametric normal-shift design/oracle wagers.
+- `R/simulations/`: active simulation scripts.
 - `explorations/ertwr/`: parked pairwise win/loss prototype, not part of the
   active manuscript or `make all`.
 - `explorations/ertb_futility/`: exploratory reciprocal e-value futility
@@ -87,37 +103,17 @@ Initial active code files:
 
 Current code direction:
 
-- Refactor e-RTb to support `wager = c("adaptive", "design", "fixed", "oracle")`.
-- Refactor e-RTe similarly, noting that design mode operates on the event-coin scale.
-- Refactor e-RTc similarly, noting that design mode uses a normal-shift working model for `Pr(T = 1 | Y)` and is parametric by default.
-- e-RTs now supports fixed-magnitude, adaptive half-Kelly, design-calibrated,
-  and oracle-for-simulation-only risk-set wagers.
-- Add misspecification grids comparing adaptive, design-calibrated, fixed, and oracle wagers.
-- Type M error at crossing has been added to e-RTb/e-RTe simulation outputs. The e-RTe simulation now feeds only event arm labels to the e-process but computes crossing-time ARR from the full simulated trial snapshot.
-
-## e-RTs Conventions
-
-The current e-RTs implementation uses the log-rank risk-set identity:
-
-- at each event, compute the randomized treatment proportion among patients
-  still at risk;
-- update wealth using `W_j = W_{j-1}(1 + lambda_j U_j)`, where
-  `U_j = X_j - p_j`;
-- fixed mode uses adaptive direction with a constant magnitude
-  `lambda_max = 0.25`;
-- adaptive mode estimates the prior log hazard ratio from the cumulative score
-  and uses half-Kelly by default;
-- design mode maps a prespecified hazard ratio to a risk-set-specific
-  GROW-style wager.
-- manuscript figures for power and Type M diagnostics are generated by
-  `R/simulations/erts_wager_policy_figures.R`.
-- staggered-entry checks are generated by
-  `R/simulations/erts_staggered_entry_check.R`; distinguish complete-follow-up
-  time-on-study identity from calendar-event-order monitoring.
-
-For HR below 1, treatment benefit corresponds to a negative log-rank score and
-a negative design wager on this increment scale. The working hazard ratio is an
-efficiency assumption, not a validity assumption.
+- Keep e-RTb support for `wager = c("adaptive", "design", "fixed", "oracle")`.
+- Keep e-RTe aligned with the same wager-policy family, noting that design mode
+  operates on the event-coin scale.
+- Keep e-RTc aligned with the same wager-policy family, noting that design mode
+  uses a normal-shift working model for `Pr(T = 1 | Y)` and is parametric by
+  default.
+- Add or refresh misspecification grids comparing adaptive, design-calibrated,
+  fixed, and oracle wagers.
+- Type M error at crossing has been added to e-RTb/e-RTe simulation outputs. The
+  e-RTe simulation now feeds only event arm labels to the e-process but computes
+  crossing-time ARR from the full simulated trial snapshot.
 
 ## Pairwise Endpoint Explorations
 
@@ -135,9 +131,9 @@ It studies continuous futility monitoring through reciprocal e-processes for
 the clinically meaningful-benefit null `ARR >= MCID`, with MCID 5 percentage
 points in the current simulations. The current script compares:
 
-- a design-calibrated conditional likelihood-ratio process tied to control
-  event risk 30%, treatment event risk 25%, and a no-benefit or half-MCID
-  futility alternative;
+- a design-calibrated conditional likelihood-ratio process tied to control event
+  risk 30%, treatment event risk 25%, and a no-benefit or half-MCID futility
+  alternative;
 - a nuisance-robust conditional likelihood-ratio process using only worst-case
   assignment-probability bounds implied by `ARR >= MCID`.
 

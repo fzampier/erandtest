@@ -16,5 +16,3 @@ Panels are selected deterministically. Null panels prefer no false crossings; al
 | e-RTe | 25% vs 20% event rates, 500 events | manuscript/traj_eRTe_alt.pdf | 20266611 | 500 | 40.0% | 40.0% | 12 | 348.5 | 69.7% | 5.80 | 6677.56 | 0.0007 |
 | e-RTc | Null, matched design wager for d = 0.40 | manuscript/traj_eRTC_null_d0.4_80pow.pdf | 20267504 | 200 | 0.0% | 0.0% |  0 | NA |  | 0.02 | 6.54 | 0.0000 |
 | e-RTc | True d = 0.40, matched design wager | manuscript/traj_eRTC_alt_d0.4_80pow.pdf | 20268590 | 200 | 67.0% | 66.7% | 20 | 119.0 | 59.5% | 12.81 | 1966.91 | 0.0046 |
-| e-RTs | Null HR 1.00, fixed 0.25 wager | manuscript/traj_survivaleRT_null.pdf | 20269507 | 631 | 0.0% | 0.0% |  0 | NA |  | 0.01 | 6.07 | 0.0000 |
-| e-RTs | True HR 0.80, fixed 0.25 wager | manuscript/traj_survivaleRT_08.pdf | 20270616 | 631 | 61.0% | 60.0% | 18 | 315.0 | 49.9% | 20.83 | 2675.94 | 0.0102 |

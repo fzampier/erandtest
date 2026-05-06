@@ -6,7 +6,7 @@ authors:
     given-names: "Fernando G."
 repository-code: "https://github.com/fzampier/erandtest"
 url: "https://github.com/fzampier/erandtest"
-date-released: "2026-04-30"
+date-released: "2026-05-06"
 license: "MIT"
 keywords:
   - "e-values"
@@ -14,7 +14,7 @@ keywords:
   - "randomization tests"
   - "sequential analysis"
   - "clinical trials"
-abstract: "Reproducibility repository for the V8 e-RT manuscript and simulation code."
+abstract: "Reproducibility repository for the V9 e-RT manuscript and simulation code."
 preferred-citation:
   type: unpublished
   title: "Sequential Randomization Tests Using e-values: Applications for trial monitoring"

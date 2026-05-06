@@ -2,7 +2,7 @@
 # Manuscript artifact inventory check
 # =============================================================================
 
-manuscript_file <- "manuscript/e-RT_v8.tex"
+manuscript_file <- "manuscript/e-RT_v9.tex"
 inventory_file <- "notes/reproducibility_inventory.md"
 
 if (!file.exists(manuscript_file)) stop("Missing ", manuscript_file, call. = FALSE)

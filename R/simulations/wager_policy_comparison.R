@@ -1,5 +1,5 @@
 # =============================================================================
-# V8 Wager Policy Comparison: e-RTb and e-RTe
+# V9 Wager Policy Comparison: e-RTb and e-RTe
 # =============================================================================
 #
 # Compares adaptive half-Kelly e-RTb and adaptive full-Kelly e-RTe against

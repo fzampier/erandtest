@@ -1,25 +1,25 @@
 # erandtest
 
-Research repository for the Version 8 e-RT manuscript and simulation code. This
-repo is the reproducibility companion for the V8 preprint submitted to arXiv and
+Research repository for the Version 9 e-RT manuscript and simulation code. This
+repo is the reproducibility companion for the V9 preprint submitted to arXiv and
 the working base for a journal manuscript.
 
 e-RT, short for e-value Randomized Trial, is a family of randomization-based
 sequential monitoring methods for randomized trials. The central idea is to
-construct an e-process by betting on randomized assignments or predictably
-formed treatment-control contrasts. Under the null hypothesis, randomization
+construct an e-process by betting on randomized assignments or observed event
+labels. Under the null hypothesis, randomization
 makes the betting game fair, so the resulting wealth process controls Type I
 error at arbitrary stopping times.
 
-This repository carries the V8-forward manuscript and code lineage. Earlier
+This repository carries the V9-forward manuscript and code lineage. Earlier
 draft material is retained only where needed for continuity; the active source
-of truth is the V8 manuscript and the reproducibility chain described below.
+of truth is the V9 manuscript and the reproducibility chain described below.
 
 ## Start Here
 
-- Manuscript source: `manuscript/e-RT_v8.tex`
-- Compiled manuscript: `manuscript/e-RT_v8.pdf`
-- Readable mirror: `manuscript/e-RT_v8.md`
+- Manuscript source: `manuscript/e-RT_v9.tex`
+- Compiled manuscript: `manuscript/e-RT_v9.pdf`
+- Readable mirror: `manuscript/e-RT_v9.md`
 - Bibliography: `manuscript/references.bib`
 - Artifact map: `notes/reproducibility_inventory.md`
 - Citation metadata: `CITATION.cff`
@@ -42,7 +42,7 @@ make all
 
 ## Scientific Scope
 
-V8 separates two ideas that were partly blended in prior drafts:
+V9 separates two ideas that were partly blended in prior drafts:
 
 - **Validity engine:** randomization makes treatment assignment unpredictable
   under the null.
@@ -50,7 +50,7 @@ V8 separates two ideas that were partly blended in prior drafts:
   fixed, design-calibrated, misspecified for stress testing, or oracle-only for
   simulation benchmarking.
 
-The default scientific position for V8 is that e-RT is effect-size agnostic:
+The default scientific position for V9 is that e-RT is effect-size agnostic:
 continuous monitoring can begin without specifying a hypothesized treatment
 effect. Design-calibrated wagers, including GROW-style wagers, are optional
 efficiency tools when a credible clinical design alternative exists.
@@ -60,7 +60,6 @@ The active manuscript variants are:
 - `e-RTb`: binary event/no-event outcomes.
 - `e-RTe`: event-only monitoring, using only event arm labels.
 - `e-RTc`: continuous outcomes.
-- `e-RTs`: time-to-event outcomes.
 
 The multi-state and universal abstractions from V7 (`e-RTms` and `e-RTu`) and
 the pairwise win-ratio/GPC prototype are deferred from the main manuscript so
@@ -70,7 +69,7 @@ the paper can stay focused on randomization-based assignment-prediction tests.
 
 - `manuscript/`: canonical LaTeX source, Markdown mirror, compiled PDF,
   bibliography, manuscript-ready figure PDFs, and generated LaTeX tables.
-- `R/`: reusable endpoint modules for e-RTb, e-RTe, e-RTc, and e-RTs.
+- `R/`: reusable endpoint modules for e-RTb, e-RTe, and e-RTc.
 - `R/simulations/`: fixed-seed simulation and manuscript-artifact generators.
 - `results/`: active generated CSV outputs supporting manuscript tables,
   figures, and numerical claims.
@@ -136,8 +135,8 @@ The LaTeX source is canonical:
 make manuscript
 ```
 
-This regenerates `manuscript/e-RT_v8.md` with `pandoc` and compiles
-`manuscript/e-RT_v8.pdf` with `latexmk`.
+This regenerates `manuscript/e-RT_v9.md` with `pandoc` and compiles
+`manuscript/e-RT_v9.pdf` with `latexmk`.
 
 The current manuscript build is expected to complete cleanly. If future table
 edits introduce layout warnings, inspect the generated PDF before relying on the
@@ -157,9 +156,8 @@ separate copyright and reuse considerations; see `COPYRIGHT.md`.
   credible, but they are optional modes rather than the default identity of
   e-RT. Misspecification can reduce power or inflate the apparent effect at
   crossing.
-- Type M error at crossing is tracked for e-RTb, e-RTe, e-RTc, and e-RTs
-  because early stopping enriches for favorable random fluctuation. e-RTs also
-  reports Type S sign error among crossing trials.
+- Type M error at crossing is tracked for e-RTb, e-RTe, and e-RTc because
+  early stopping enriches for favorable random fluctuation.
 - Pairwise win-ratio/GPC ideas are parked in `explorations/ertwr/`. The current
   prototype is not an active e-RT variant because it bets on pairwise outcome
   direction after treatment assignment is known, rather than betting on

@@ -1,5 +1,5 @@
 # =============================================================================
-# V8 Manuscript Trajectory Examples
+# V9 Manuscript Trajectory Examples
 # =============================================================================
 #
 # Rebuilds the didactic trajectory figures used in the manuscript. The panels
@@ -20,8 +20,6 @@
 #   manuscript/traj_eRTe_alt.pdf
 #   manuscript/traj_eRTC_null_d0.4_80pow.pdf
 #   manuscript/traj_eRTC_alt_d0.4_80pow.pdf
-#   manuscript/traj_survivaleRT_null.pdf
-#   manuscript/traj_survivaleRT_08.pdf
 #   results/manuscript_trajectory_examples.csv
 #   notes/manuscript_trajectory_examples.md
 
@@ -29,7 +27,6 @@ suppressPackageStartupMessages({
   source("R/ertb.R")
   source("R/erte.R")
   source("R/ertc.R")
-  source("R/erts.R")
   library(ggplot2)
   library(scales)
 })
@@ -287,20 +284,6 @@ make_ertc_trace <- function(n_patients, true_d, design_d = 0.40) {
   )
 }
 
-make_erts_trace <- function(n_events, true_hr) {
-  trial <- simulate_trial_survival(n_events, hr = true_hr)
-  compute_eRTs(
-    trial$time,
-    trial$status,
-    trial$treatment,
-    wager = "fixed",
-    fixed_lambda = 0.25,
-    burn_in = 30,
-    ramp = 50,
-    alpha = alpha
-  )$wealth
-}
-
 panels <- list()
 
 n_ertb_80 <- ertb_n(arr = 0.10, target_power = 0.80)
@@ -391,28 +374,6 @@ panels$ertc_alt <- select_panel(
   seed_offset = 8000
 )
 
-n_erts <- logrank_design_events(0.80, target_power = 0.80, alpha = alpha)
-
-panels$erts_null <- select_panel(
-  make_trace = function() make_erts_trace(n_erts, true_hr = 1.00),
-  endpoint = "e-RTs",
-  scenario = "Null HR 1.00, fixed 0.25 wager",
-  n_total = n_erts,
-  target_crossing_rate = 0,
-  prefer_no_null_crossing = TRUE,
-  seed_offset = 9000
-)
-
-panels$erts_alt <- select_panel(
-  make_trace = function() make_erts_trace(n_erts, true_hr = 0.80),
-  endpoint = "e-RTs",
-  scenario = "True HR 0.80, fixed 0.25 wager",
-  n_total = n_erts,
-  target_crossing_rate = 0.61,
-  target_crossing_frac = 0.50,
-  seed_offset = 10000
-)
-
 save_panel(
   panels$ertb_null_80,
   "manuscript/traj_null_10pct_80pow.pdf",
@@ -469,21 +430,6 @@ save_panel(
   sprintf("true d = 0.40, N = %d", n_ertc),
   "Patient"
 )
-save_panel(
-  panels$erts_null,
-  "manuscript/traj_survivaleRT_null.pdf",
-  "e-RTs null example",
-  "HR = 1.00, 631 planned events",
-  "Event"
-)
-save_panel(
-  panels$erts_alt,
-  "manuscript/traj_survivaleRT_08.pdf",
-  "e-RTs alternative example",
-  "HR = 0.80, 631 planned events",
-  "Event"
-)
-
 summary <- do.call(rbind, lapply(panels, `[[`, "summary"))
 summary$figure_file <- c(
   "manuscript/traj_null_10pct_80pow.pdf",
@@ -493,9 +439,7 @@ summary$figure_file <- c(
   "manuscript/traj_eRTe_null.pdf",
   "manuscript/traj_eRTe_alt.pdf",
   "manuscript/traj_eRTC_null_d0.4_80pow.pdf",
-  "manuscript/traj_eRTC_alt_d0.4_80pow.pdf",
-  "manuscript/traj_survivaleRT_null.pdf",
-  "manuscript/traj_survivaleRT_08.pdf"
+  "manuscript/traj_eRTC_alt_d0.4_80pow.pdf"
 )
 rownames(summary) <- NULL
 

@@ -1,5 +1,5 @@
 # =============================================================================
-# Lightweight dependency check for the V8 standalone repository
+# Lightweight dependency check for the V9 standalone repository
 # =============================================================================
 
 required_packages <- c(

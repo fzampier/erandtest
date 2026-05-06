@@ -1,5 +1,5 @@
 # =============================================================================
-# V8 Wager Policy Figures and Manuscript Table
+# V9 Wager Policy Figures and Manuscript Table
 # =============================================================================
 #
 # Builds manuscript-ready trajectory figures and summary tables for the

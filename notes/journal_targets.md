@@ -11,5 +11,4 @@ Current author instructions indicate:
 - LaTeX accepted, though Word is preferred.
 - Manuscript should use minimal formatting.
 
-Practical implication: develop a full V8/arXiv manuscript first, then create a compressed journal-specific version once the argument and simulations stabilize.
-
+Practical implication: develop a full V9/arXiv manuscript first, then create a compressed journal-specific version once the argument and simulations stabilize.
