@@ -374,7 +374,7 @@ In e-RTe, only events are observed. The event-coin probability is:
 p_{\text{alt}} = \frac{p_{\text{trt}}}{p_{\text{trt}} + p_{\text{ctrl}}} = \frac{0.20}{0.20 + 0.25} = 0.444
 \end{equation}
 ```
-This is an 11.2-point tilt from 0.5—more than double the 5-point ARR. The signal is concentrated because events filter out the uninformative non-events.
+This is a 5.6-point tilt from 0.5—slightly larger than the 5-point ARR. The signal is concentrated because events filter out the uninformative non-events; at lower baseline event rates, this event-coin tilt can be several times larger than the ARR.
 
 This advantage diminishes as the baseline event rate increases. At higher event rates, e-RTb sees more informative events per patient, and the event-coin tilt shrinks because both numerator and denominator grow:
 
