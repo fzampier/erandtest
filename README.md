@@ -8,6 +8,10 @@ randomized assignments or observed event labels. Under the null hypothesis,
 randomization makes the betting game fair, so the resulting wealth process
 controls Type I error at arbitrary stopping times.
 
+The code, frozen outputs, and figures behind the article version of this work
+are in a separate repository, https://github.com/fzampier/ert-methods-paper,
+archived at https://doi.org/10.5281/zenodo.22906388.
+
 ## Start Here
 
 - Manuscript source: `manuscript/e-RT_v9.tex`
